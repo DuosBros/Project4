@@ -1,0 +1,229 @@
+<div class="container-fluid" style="position: relative; margin-left: 3%; margin-right:3%;" ng-style="{'top' : isMobile ? '0em' : '5em', 'z-index': isMobile ? 0 : 1}">
+    <div class="row">
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-7">
+            <div class="col-row">
+                <h1>
+                    Orders
+                    <button type="button" ng-if="!edit" class="btn btn-default" ng-click="addOrder()" ng-disabled="!validateProducts()">Save</button>
+                    <button type="button" ng-if="edit" class="btn btn-default" ng-click="editOrder()" ng-disabled="!validateProducts()">Save</button>
+                    <button type="button" class="btn btn-default" ng-click="close()">Back</button>
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-if="incorrectProducts.length > 0">
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-7">
+            <div class="col-row">
+                <p class="text-danger">
+                    Tên sản phẩm sai. muốn đặt sản phẩm mới thì viết cho Phg.Tên sản phẩm sai. muốn đặt sản phẩm mới thì viết cho Phg.
+                </p>
+            </div>
+        </div>
+    </div>
+    </br>
+    <div class="row" ng-show="vsError">
+        <div class="alert alert-danger" role="alert">
+            <strong>This VS already exists!</strong>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="well well-sm">
+                <h3>Contact info</h3>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-4" for="street">Street and Number</label>
+                        <div class="col-sm-8">
+                            <input id="street" type="text"
+                                placeholder="Street and Number" class="smartform-street-and-number form-control input-sm" ng-model="streetAndNumber"/>
+                        </div>
+
+                        <label class="col-sm-4" for="city">City</label>
+                        <div class="col-sm-8">
+                            <input id="city" type="text" ng-model="order.address.city"
+                                placeholder="City" class="smartform-city form-control input-sm" disabled/>
+                        </div>
+
+                        <label class="col-sm-4" for="zip">Zip code</label>
+                        <div class="col-sm-8">
+                            <input id="zip" type="text" ng-model="order.address.psc"
+                                placeholder="Zip code" class="smartform-zip form-control input-sm" disabled/>
+                        </div>
+
+                        <label class="col-sm-4" for="firstName">First Name</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" id="firstName" placeholder="First name" ng-model="order.address.firstName">
+                        </div>
+
+                        <label class="col-sm-4" for="lastName">Last Name</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" id="lastName" placeholder="Last name" ng-model="order.address.lastName">
+                        </div>
+
+                        <label class="col-sm-4">Phone number</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" placeholder="Phone number" ng-model="order.address.phone">
+                        </div>
+
+                        <label class="col-sm-4">Company</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" placeholder="Company" ng-model="order.address.company">
+                        </div>
+                        <input type="text" style="display: none" class="smartform-street" id="hiddenStreet">
+                        <input type="text" style="display: none" class="smartform-number" id="hiddenStreetNumber">
+                    </div>
+                </form>
+            </div>
+
+            <div class="well well-sm">
+                <h3>Summary</h3>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-4">Total price</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" placeholder="Total sum (Kč)"  ng-model="order.totalPrice" disabled>
+                        </div>
+
+                        <label class="col-sm-4">Note</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" placeholder="Note" ng-model="order.note">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div> 
+
+        <div class="col-sm-6">
+            <div class="well well-sm">
+                <h3>Dates and Deliveries</h3>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-4">Order Date</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" ng-model="order.payment.orderDate" name="date" bs-datepicker>
+                        </div>
+
+                        <label class="col-sm-4">Delivery price</label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control input-sm" placeholder="Price (Kč)" ng-model="order.payment.price"
+                                ng-change="calculateTotalPrice()">
+                        </div>
+
+                        <label class="col-sm-4">Delivery</label>
+                        <div class="col-sm-8">
+                            <select ng-model="deliverySelector" class="form-control input-sm">
+                                <option value="vs_gls">VS + GLS</option>
+                                <option value="vs_cp">VS + Česká Pošta</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                        </div>
+
+                        <label class="col-sm-4" ng-show="deliverySelector == 'vs_cp' || deliverySelector == 'vs_gls'">VS</label>
+                        <div class="col-sm-8" ng-show="deliverySelector == 'vs_gls' || deliverySelector == 'vs_cp'">
+                            <input type="number" class="form-control input-sm" placeholder="VS" ng-model="order.payment.vs">
+                        </div>
+
+                        <label class="col-sm-4">Bank account payment</label>
+                        <div class="col-sm-8">
+                            <input type="checkbox" ng-model="order.payment.bankAccountPayment"
+                                bs-tooltip="order.payment.bankAccountPayment ? 'Gửi không có dobirka' : 'Gửi có dobirka'">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-6" ng-if="!isMobile">
+            <div class="well well-sm">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <h3>Products</h3>
+                    </div>
+                    <div class="col-sm-2">
+                        <h5 style="text-align: center;">Count</h5>
+                    </div>
+                    <div class="col-sm-2">
+                        <h5 style="text-align: center;">Product price</h5>
+                    </div>
+                    <div class="col-sm-2">
+                        <h5 style="text-align: center;">Product sum</h5>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div ng-repeat="product in order.products">
+                        <div class="row">
+                            <div class="col-sm-5" ng-class="{'has-error': incorrectProducts.indexOf($index) >= 0}" style="padding-right: 0px" bs-tooltip="'Product name'">
+                                <input type="text" class="form-control input-sm" ng-model="product.productName"
+                                    bs-options="product for product in productNames" ng-change="productWatcher()"
+                                    placeholder="Type product" bs-typeahead ng-disabled="areProductsDisabled()">
+                            </div>
+                            <div class="col-sm-2" style="padding-left: 0px; padding-right: 0px" bs-tooltip="'Count'">
+                                <input type="number" class="form-control input-sm" min="0" ng-model="product.count"
+                                    ng-change="calculateTotalPricePerProduct(product); calculateTotalPrice()"
+                                    placeholder="Count" ng-disabled="areProductsDisabled()">
+                            </div>
+                            <div class="col-sm-2" style="padding-left: 0px; padding-right: 0px" bs-tooltip="'Price per one'">
+                                <input type="number" class="form-control input-sm" min="-9150000" ng-model="product.pricePerOne"
+                                    ng-change="calculateTotalPricePerProduct(product); calculateTotalPrice()"
+                                    placeholder="Price" ng-disabled="areProductsDisabled()">
+                            </div>
+                            <div class="col-sm-2" style="padding-left: 0px; padding-right: 0px" bs-tooltip="'Total price for this product'">
+                                <input type="number" class="form-control input-sm" placeholder="0" ng-model="product.totalPricePerProduct" disabled>
+                            </div>
+                            <div class="col-sm-1" style="padding-left: 0px">
+                                <button ng-if="!$last" class="btn btn-default btn-sm" data-placement="bottom" bs-tooltip="'Remove this product'"
+                                    ng-click="deleteProduct($index, $last); calculateTotalPrice()" ng-disabled="areProductsDisabled()">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-danger" ng-show="areProductsDisabled()">Không thể thay đổi giá vì làm việc thích hợp của nhà kho. Liên hệ với An.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6" ng-if="isMobile">
+            <div class="well well-sm">
+                <h3>Products</h3>
+                <div ng-repeat="product in order.products">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-4">Product Name</label>
+                            <div class="col-sm-8" bs-tooltip="'Product name'">
+                                <input type="text" class="form-control input-sm" ng-model="product.productName"
+                                    bs-options="product for product in productNames" ng-change="productWatcher()"
+                                    placeholder="Type product" bs-typeahead ng-disabled="areProductsDisabled()">
+                            </div>
+                            <label class="col-sm-4">Product Count</label>
+                            <div class="col-sm-8" bs-tooltip="'Count'">
+                                <input type="number" class="form-control input-sm" min="0" ng-model="product.count"
+                                    ng-change="calculateTotalPricePerProduct(product); calculateTotalPrice()"
+                                    placeholder="Count" ng-disabled="areProductsDisabled()">
+                            </div>
+                            <label class="col-sm-4">Product Price</label>
+                            <div class="col-sm-8" bs-tooltip="'Price per one'">
+                                <input type="number" class="form-control input-sm" min="-9150000" ng-model="product.pricePerOne"{{product.pricePerOne}}
+                                    ng-change="calculateTotalPricePerProduct(product); calculateTotalPrice()"
+                                    placeholder="Price" ng-disabled="areProductsDisabled()">
+                            </div>
+                            <label class="col-sm-4">Total Product Price</label>
+                            <div class="col-sm-8" bs-tooltip="'Total price for this product'">
+                                <input type="number" class="form-control input-sm" placeholder="0" ng-model="product.totalPricePerProduct" disabled>
+                            </div>
+                            <div class="col-sm-1" ng-show="isMobile">
+                                <button ng-if="!$last" class="btn btn-default btn-sm" ng-click="deleteProduct($index, $last); calculateTotalPrice()" ng-disabled="areProductsDisabled()">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <p class="text-danger" ng-show="areProductsDisabled()">Không thể thay đổi giá vì làm việc thích hợp của nhà kho. Liên hệ với An.</p>
+            </div>
+        </div>
+    </div>
+</div>

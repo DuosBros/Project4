@@ -1,0 +1,253 @@
+<div ng-if="generatingPdf" class="col-sm-2 col-sm-offset-5" style="position: fixed; margin-top: 20em; z-index: 999999">
+    <img src="loading.svg" width="40" height="40" style="margin-left: 6.5em"/>
+</div>
+<div class="container-fluid"
+    ng-style="{'z-index' : isMobile ? 0 : 2, 'top': isMobile ? '0em' : '3.7em', 'position': isMobile ? 'relative' : 'fixed'}"
+    style="background: white; left: 0; right: 0; padding-left: 3%; padding-right:3%;">
+    <div class="row" style="padding-top: 1em">
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-3">
+            <h1>
+                Orders
+                <a href="/orders/new" ng-show="!disabledActions" class="btn btn-default">Add Order</a>
+                <button class="btn btn-default" ng-click="printLabels()"
+                    bs-tooltip="'Print labels of checked orders'" ng-disabled="labelsToPrint.length == 0" data-placement="bottom">
+                    Print labels
+                </button>
+            </h1>
+        </div>
+        <div class="col-sm-3">
+            <div class="alert alert-danger" role="alert" ng-if="showWarehouseNotification">
+                <strong>Some Products are not available for booking!</strong>
+                </br>
+                Please, check <strong><a href="/warehouse">Warehouse</a></strong> for more info!
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <!--<h4 style="margin-top: 0px; float: right">
+                Queue:&nbsp;&nbsp;
+                <button ng-class="queue.length >= 3 ? 'btn btn-success btn-sm' : 'btn btn-default btn-sm'" ng-click="showQueue()">
+                    <span class="badge" bs-tooltip="'Items in queue'" data-placement="bottom">{{queue.length}}</span>&nbsp;&nbsp;&nbsp;&nbsp;View
+                </button>
+            </h4>-->
+            <div class="alert alert-danger" role="alert" ng-if="notPaidDeliveredOrders.length > 0">
+                <strong>Some Orders were delivered but not paid!</strong>
+                </br>
+                <strong>VS: </strong><span>{{notPaidDeliveredOrders.join(", ")}}</span>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <input type="text" ng-model="filter" class="form-control input-sm" placeholder="Filter Orders" ng-show="!isMobile">
+        </div>
+    </div>
+
+    <div class="row" ng-show="!isMobile">
+        <div class="col-sm-2" style="text-align: center">
+            <h4>Name</h4>
+        </div>
+        <div class="col-sm-1" style="text-align: center">
+            <h4>Delivery</h4>
+        </div>
+        <div class="col-sm-1" style="text-align: center">
+            <h4>Ordered date</h4>
+        </div>
+        <div class="col-sm-2" style="text-align: center">
+            <h4>Payment date</h4>
+        </div>
+        <div class="col-sm-1" style="text-align: center">
+            <h4>Price</h4>
+        </div>
+        <div class="col-sm-3" style="text-align: center">
+            <h4>Notes</h4>
+        </div>
+        <div class="col-sm-2" style="text-align: center">
+            <h4>Actions</h4>
+        </div>
+    </div>
+</div>
+<div class="container-fluid"
+        ng-style="{'z-index' : isMobile ? 0 : 1, 'top': isMobile ? '0em' : '17em'}" style="position: relative; margin-left: 3%; margin-right:3%">
+    <div class="row" ng-repeat="order in filteredOrders()">
+        <div class="row" style="background-color: {{getBackgroundColor(order)}}" ng-click="collapseOrder(order)">
+            <div class="row" style="margin-left: 0%; margin-right:0%" ng-show="$first">
+                <hr style="margin-top: 0px; margin-bottom: 0px; border-color: inherit">
+            </div>
+            <div class="col-sm-2" style="text-align: center">
+                <span ng-show="isMobile"><small>{{$index + 1}}.</small><br></span>
+                <span ng-show="isMobile"><small>Name: </small></span>
+                <span ng-show="!isMobile" style="float: left">{{$index + 1}}.</span>
+                {{order.address.lastName}} {{order.address.firstName}}
+            </div>
+            <div class="col-sm-1" style="text-align: center; padding-left: 0px; padding-right: 0px">
+                <span ng-show="isMobile"><small>Payment: </small></span>
+                <span ng-if="order.payment.vs"> {{order.payment.vs}}</span>
+            </div>
+            <div class="col-sm-1" style="text-align: center; padding-left: 0px; padding-right: 0px">
+                <span ng-show="isMobile"><small>Order Date: </small></span>
+                {{order.payment.orderDate | date: 'd. M. y'}}
+            </div>
+            <div class="col-sm-2" style="text-align: center; padding-left: 0px; padding-right: 0px">
+                <span ng-show="isMobile"><small>Payment Date: </small></span>
+                <span ng-if="order.payment.paymentDate">{{order.payment.paymentDate | date: 'd. M. y'}}</span>
+                <span ng-if="!order.payment.paymentDate">N/A</span>
+            </div>
+            <div class="col-sm-1" style="text-align: center; padding-left: 0px; padding-right: 0px">
+                <span ng-show="isMobile"><small>Total Price: </small></span>
+                <b>{{order.totalPrice}} Kč</b>
+            </div>
+            <div class="col-sm-3" style="text-align: center; padding-left: 0px; padding-right: 0px">
+                <span ng-show="isMobile && order.note"><small>Note: </small></span>
+                {{order.note}}
+            </div>
+            <div class="col-sm-2" style="text-align: center" ng-show="!isMobile">
+                <button class="btn btn-default btn-xs" data-placement="bottom" ng-click="$event.stopPropagation(); editOrder(order.id)"
+                        bs-tooltip="'Edit order'" ng-hide="isOldAndPaid(order)">
+                    <span class="glyphicon glyphicon-edit" style="font-size: 1.5em"></span>
+                </button>
+                <button class="btn btn-default btn-xs" data-placement="bottom" ng-click="$event.stopPropagation(); setPaid(order.id, order)"
+                    bs-tooltip="order.payment.paid ? 'Mark as Not paid' : 'Mark as Paid'" ng-hide="isOldAndPaid(order)">
+                    <span class="glyphicon glyphicon-ok" style="font-size: 1.5em"></span>
+                </button>
+                <button ng-disabled="!order.payment.vs || generatingPdf" class="btn btn-default btn-xs" data-placement="bottom"
+                        ng-click="$event.stopPropagation(); createPdf(order.id)" bs-tooltip="'Generate PDF'">
+                    <span class="glyphicon glyphicon-list-alt" style="font-size: 1.5em"></span>
+                </button>
+                <button ng-disabled="!order.payment.vs || order.payment.paid || order.deliveryCompany == 'CP'" class="btn btn-default btn-xs"
+                        data-placement="bottom" ng-click="$event.stopPropagation(); exportOrder(order.id)" bs-tooltip="'Send to zaslat.cz'"
+                        ng-hide="isOldAndPaid(order)">
+                    <span class="glyphicon glyphicon-export" style="font-size: 1.5em"></span>
+                </button>
+                <button class="btn btn-default btn-xs" data-placement="bottom" ng-click="$event.stopPropagation(); deleteOrder(order.id)"
+                        bs-tooltip="'Remove order'">
+                    <span class="glyphicon glyphicon-remove" style="font-size: 1.5em"></span>
+                </button>
+                <button class="btn btn-default btn-xs" ng-click="$event.stopPropagation(); handleLabelsToPrintChange(order.zaslatShipmentId)"
+                        bs-tooltip="labelsToPrint.indexOf(order.zaslatShipmentId) == -1 ? 'Print label' : 'Don`t print label'"
+                            ng-disabled="!order.zaslatShipmentId" data-placement="bottom">
+                        <span class="glyphicon glyphicon-barcode" style="font-size: 1.5em"></span>
+                        <span ng-show="labelsToPrint.indexOf(order.zaslatShipmentId) == -1"
+                            class="glyphicon glyphicon-plus" style="font-size: 1.5em; color: green"></span>
+                        <span ng-show="labelsToPrint.indexOf(order.zaslatShipmentId) > -1"
+                            class="glyphicon glyphicon-remove" style="font-size: 1.5em; color: red"></span>
+                </button>
+            </div>
+            <div class="col-sm-2" style="text-align: center" ng-show="isMobile">
+                <button class="btn btn-default btn-xs" ng-click="$event.stopPropagation(); editOrder(order.id)"
+                        ng-hide="isOldAndPaid(order)">
+                    <span class="glyphicon glyphicon-edit" style="font-size: 1.5em"></span>
+                </button>
+                <button class="btn btn-default btn-xs" ng-click="$event.stopPropagation(); setPaid(order.id, order)"
+                        ng-hide="isOldAndPaid(order)">
+                    <span class="glyphicon glyphicon-ok" style="font-size: 1.5em"></span>
+                </button>
+                <button ng-disabled="!order.payment.vs || generatingPdf" class="btn btn-default btn-xs"
+                        ng-click="$event.stopPropagation(); createPdf(order.id)">
+                    <span class="glyphicon glyphicon-list-alt" style="font-size: 1.5em"></span>
+                </button>
+                <button ng-disabled="!order.payment.vs || order.payment.paid || order.deliveryCompany == 'CP'" class="btn btn-default btn-xs"
+                        ng-click="$event.stopPropagation(); exportOrder(order.id)" ng-hide="isOldAndPaid(order)">
+                    <span class="glyphicon glyphicon-export" style="font-size: 1.5em"></span>
+                </button>
+                <button class="btn btn-default btn-xs" ng-click="$event.stopPropagation(); deleteOrder(order.id)">
+                    <span class="glyphicon glyphicon-remove" style="font-size: 1.5em"></span>
+                </button>
+                <button class="btn btn-default btn-xs" ng-click="$event.stopPropagation(); handleLabelsToPrintChange(order.zaslatShipmentId)"
+                        ng-disabled="!order.zaslatShipmentId" data-placement="bottom">
+                    <span class="glyphicon glyphicon-barcode" style="font-size: 1.5em"></span>
+                    <span ng-show="labelsToPrint.indexOf(order.zaslatShipmentId) > -1"
+                        class="glyphicon glyphicon-remove" style="font-size: 1.5em; color: red"></span>
+                </button>
+            </div>
+        </div>
+        <!-- collapsible content -->
+        <div class="row" ng-show="!order.collapsed" style="padding-bottom: 1em; background-color: {{getBackgroundColor(order)}}">
+            <div class="col-sm-5" style="padding-left: 2em">
+                <h4>Customer Info</h4>
+                <div class="col-sm-6">
+                    <strong>First name:</strong> {{order.address.firstName}}<br>
+                    <strong>Last name:</strong> {{order.address.lastName}}<br>
+                    <strong>Phone:</strong> {{order.address.phone}}<br>
+                    <strong>Street:</strong> {{order.address.street}}
+                </div>
+                <div class="col-sm-6">
+                    <strong>City:</strong> {{order.address.city}}<br>
+                    <strong>Street number:</strong> {{order.address.streetNumber}}<br>
+                    <strong>ZIP:</strong> {{order.address.psc}}<br>
+                    <strong>Company:</strong> {{order.address.company}}
+                </div>
+            </div>
+            <div class="col-sm-6" style="padding-left: 2em">
+                <h4>Products</h4>
+                <div class="row" ng-show="!isMobile" style="padding-left: 1em">
+                    <div class="col-sm-4">
+                        <strong>Name</strong>
+                    </div>
+                    <div class="col-sm-2" style="text-align: center">
+                        <strong>Count</strong>
+                    </div>
+                    <div class="col-sm-3" style="text-align: center">
+                        <strong>Price per one</strong>
+                    </div>
+                    <div class="col-sm-3" style="text-align: center">
+                        <strong>Total product price</strong>
+                    </div>
+                </div>
+                <div class="row" ng-show="!isMobile" ng-repeat="product in order.products" style="padding-left: 1em">
+                    <div class="col-sm-4">
+                        {{product.productName}}
+                    </div>
+                    <div class="col-sm-2" style="text-align: center">
+                        {{product.count}}
+                    </div>
+                    <div class="col-sm-3" style="text-align: center">
+                        {{product.pricePerOne}} Kč
+                    </div>
+                    <div class="col-sm-3" style="text-align: center">
+                        <i>{{product.totalPricePerProduct}}</i> Kč
+                    </div>
+                </div>
+                <div class="row" ng-show="isMobile" style="padding-left: 1em; padding-right: 1em" ng-repeat="product in order.products">
+                    <div class="col-sm-4">
+                        <strong>Name: </strong>{{product.productName}}
+                    </div>
+                    <div class="col-sm-2">
+                        <strong>Count: </strong>{{product.count}}
+                    </div>
+                    <div class="col-sm-3">
+                        <strong>Price per one: </strong>{{product.pricePerOne}} Kč
+                    </div>
+                    <div class="col-sm-3">
+                        <strong>Total product price: </strong><i>{{product.totalPricePerProduct}}</i> Kč
+                    </div>
+                    <hr ng-if="!$last" style="margin-top: 0px; margin-bottom: 0px; border-color: gray">
+                </div>
+                <hr style="margin-top: 0px; margin-bottom: 0px; border-color: inherit;">
+                <div class="row">
+                    <div class="col-sm-6" ng-style="{'text-align' : isMobile ? 'center' : ''}">
+                        <strong style="padding-left: 1em">Delivery price:</strong> {{order.payment.price ? order.payment.price : 0}} Kč
+                    </div>
+                    <div class="col-sm-6" ng-style="{'text-align' : isMobile ? 'center' : ''}">
+                        <span style="float: right; padding-right: 5em">
+                            <strong>Total price: {{order.totalPrice}} Kč</strong>
+                        </span>
+                    </div>
+                    <div class="col-sm-6" ng-style="{'text-align' : isMobile ? 'center' : ''}">
+                        <strong style="padding-left: 1em">Bank account payment:</strong> {{order.payment.bankAccountPayment ? 'Yes' : 'No'}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="row">
+            <hr style="margin-top: 0px; margin-bottom: 0px; border-color: inherit">
+        </div>
+    </div>
+    <div class="row" ng-show="isMobile" style="text-align: center">
+        <h1>
+            <a href="/orders/new" ng-show="!disabledActions" class="btn btn-default">Add Order</a>
+        </h1>
+    </div>
+    <br/><br/>
+    <br/><br/>
+</div>

@@ -1,0 +1,47 @@
+<div class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"> History of <strong>{{productName}} </strong> </h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-1">
+                    </div>
+                    <div class="col-sm-10">
+                        <table class="table table-condensed" ng-if="productWarehouseHistory && productWarehouseHistory.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th style="text-align: center">Difference</th>
+                                    <th style="text-align: center">Changed by</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="historyItem in productWarehouseHistory | orderBy: reverse:true">
+                                    <td>{{historyItem.timestamp | date: 'd. M. y HH:mm:ss'}}</td>
+                                    <td style="text-align: center">
+                                        <span ng-if="historyItem.difference > 0">+</span>{{historyItem.difference}}
+                                    </td>
+                                    <td style="text-align: center">
+                                        <span ng-if="historyItem.user">{{historyItem.user}}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <span ng-if="!productWarehouseHistory || productWarehouseHistory.length == 0" style="text-align: center">
+                            <strong>No Data!</strong>
+                        </span>
+                    </div>
+                    <div class="col-sm-1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="close()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

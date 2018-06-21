@@ -1,0 +1,146 @@
+<div class="container-fluid"
+	ng-style="{'z-index' : isMobile ? 0 : 2, 'top': isMobile ? '0em' : '3.7em', 'position': isMobile ? 'relative' : 'fixed'}"
+    style="background: white; left: 0; right: 0; padding-left: 3%; padding-right:3%;">
+    <div class="row" style="padding-top: 1em">
+		<div class="col-sm-1">
+		</div>
+		<div class="col-sm-7">
+            <h1>Scripts</h1>
+        </div>
+    </div>
+</div>
+<div class="container-fluid"
+	ng-style="{'z-index' : isMobile ? 0 : 1, 'top': isMobile ? '0em' : '14em'}" style="position: relative; margin-left: 3%; margin-right:3%">
+	<div class="row">
+        <div class="col-sm-12">
+            <div class="col-sm-4"></div>
+
+            <div ng-if="working" class="col-sm-4" style="padding-left: 10em">
+                <img src="loading.svg" width="40" height="40" style="margin-left: 6.5em"/>
+            </div>
+
+            <div class="col-sm-4 alert alert-success" role="alert" ng-show="success" style="text-align: center">
+                <strong>Success!</strong> {{message}}
+            </div>
+
+            <div class="col-sm-4 alert alert-danger" role="alert" ng-show="error" style="text-align: center">
+                <strong>Error!</strong> {{message}}
+            </div>
+
+            <div class="col-sm-4"></div>
+        </div>
+
+		<div class="col-sm-1">
+        </div>
+        <div class="col-sm-11">
+            <div class="col-sm-6">
+                <h2>Export By VS</h2>
+                <div class="col-sm-6" style="padding-left: 0px">
+                    <div class="input-group">
+                        <input type="number" class="form-control" ng-model="vsToExport" placeholder="VS">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" ng-click="exportByVs(vsToExport)" ng-disabled="!vsToExport || working">Export</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <h2>Export Data</h2>
+                <form class="navbar-form navbar-left" style="padding-left: 0px">
+                    <div class="form-group">
+                      <input type="number" class="form-control" placeholder="From day" ng-model="exportFromDay">
+                      <input type="number" class="form-control" placeholder="From month" ng-model="exportFromMonth">
+                      <input type="number" class="form-control" placeholder="From year" ng-model="exportFromYear">
+                      <input type="number" class="form-control" placeholder="To day" ng-model="exportToDay">
+                      <input type="number" class="form-control" placeholder="To month" ng-model="exportToMonth">
+                      <input type="number" class="form-control" placeholder="To year" ng-model="exportToYear">
+                    </div>
+                    <button type="button" class="btn btn-default"
+                        ng-click="exportData(exportFromDay, exportFromMonth, exportFromYear, exportToDay, exportToMonth, exportToYear)"
+                        ng-disabled="working || !exportFromDay || !exportFromMonth || !exportFromYear || !exportToDay || !exportToMonth || !exportToYear">
+                            Export
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-11">
+            <div class="col-sm-6">
+                <h2>Export No VS Data</h2>
+                <form class="navbar-form navbar-left" style="padding-left: 0px">
+                    <div class="form-group">
+                      <input type="number" class="form-control" placeholder="From day" ng-model="exportNoVsFromDay">
+                      <input type="number" class="form-control" placeholder="From month" ng-model="exportNoVsFromMonth">
+                      <input type="number" class="form-control" placeholder="From year" ng-model="exportNoVsFromYear">
+                      <input type="number" class="form-control" placeholder="To day" ng-model="exportNoVsToDay">
+                      <input type="number" class="form-control" placeholder="To month" ng-model="exportNoVsToMonth">
+                      <input type="number" class="form-control" placeholder="To year" ng-model="exportNoVsToYear">
+
+                      <input type="text" class="form-control" placeholder="First name" ng-model="firstName">
+                      <input type="text" class="form-control" placeholder="Last name" ng-model="lastName">
+                      <input type="text" class="form-control" placeholder="Street" ng-model="street">
+                      <input type="text" class="form-control" placeholder="City" ng-model="city">
+                      <input type="text" class="form-control" placeholder="zip" ng-model="zip">
+                      <input type="text" class="form-control" placeholder="street number" ng-model="streetNumber">
+                      <input type="text" class="form-control" placeholder="phone" ng-model="phone">
+                    </div>
+                    <button type="button" class="btn btn-default"
+                        ng-click="exportNoVsData(exportNoVsFromDay, exportNoVsFromMonth, exportNoVsFromYear, exportNoVsToDay,
+                            exportNoVsToMonth, exportNoVsToYear, firstName, lastName, street, city, zip, streetNumber, phone)"
+                        ng-disabled="working || !exportNoVsFromDay || !exportNoVsFromMonth || !exportNoVsFromYear ||
+                            !exportNoVsToDay || !exportNoVsToMonth || !exportNoVsToYear || !firstName || !lastName || !street || !city || !zip || !streetNumber || !phone">
+                            Export No VS Data
+                    </button>
+                </form>
+            </div>
+
+            <div class="col-sm-6">
+                <h2>AddUser</h2>
+                <form class="navbar-form navbar-left" style="padding-left: 0px">
+                    <div class="form-group">
+                      <input type="text" class="form-control" placeholder="username" ng-model="username">
+                      <input type="text" class="form-control" placeholder="password" ng-model="password">
+                    </div>
+                    <button type="button" class="btn btn-default"
+                        ng-click="addUser(username, password)"
+                        ng-disabled="working || !username || !password">
+                            Add user
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-11">
+            <div class="col-sm-6">
+                <h2>Add sender</h2>
+                <form class="navbar-form navbar-left" style="padding-left: 0px">
+                    <div class="form-group">
+                      <input type="text" class="form-control" placeholder="First name" ng-model="firstNameSender">
+                      <input type="text" class="form-control" placeholder="Last name" ng-model="lastNameSender">
+                      <input type="text" class="form-control" placeholder="Street" ng-model="streetSender">
+                      <input type="text" class="form-control" placeholder="City" ng-model="citySender">
+                      <input type="text" class="form-control" placeholder="Zip" ng-model="zipSender">
+                      <input type="text" class="form-control" placeholder="Street number" ng-model="streetNumberSender">
+                      <input type="text" class="form-control" placeholder="Phone" ng-model="phoneNumberSender">
+                      <input type="text" class="form-control" placeholder="Company" ng-model="companySender">
+                      <input type="text" class="form-control" placeholder="Country" ng-model="countrySender">
+                      <input type="text" class="form-control" placeholder="Label" ng-model="labelSender">
+                    </div>
+                    <button type="button" class="btn btn-default"
+                        ng-click="addSender(firstNameSender, lastNameSender, streetSender, citySender,
+                        zipSender, streetNumberSender, phoneNumberSender, companySender, countrySender, labelSender)"
+                        ng-disabled="working || !firstNameSender || !lastNameSender || !streetSender ||
+                            !citySender || !zipSender || !streetNumberSender || !phoneNumberSender || !companySender || !countrySender || !labelSender">
+                            Add Sender
+                    </button>
+                </form>
+            </div>
+        </div>
+	</div>
+	
+	<br/><br/><br/><br/><br/><br/><br/><br/>
+</div>

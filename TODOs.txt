@@ -1,0 +1,71 @@
+﻿
+
+improve test env
+
+
+
+05/03 - 1h costs + maintanence
+1h smart
+14/05 - 2h signature
+15/05 - 1h sign
+21/05 - 1h troubleshooting - upgrade NodeJS version!!!
+08/06 - 2h dropbox + minor changes
+09/06 - 3h dropbox
+13/06 - 2h
+14/06 - 1h update
+17/06 - 1h zaslat investigation + revert
+19/06 - 2h export data API
+20/06 - 3h vsless to scr
+21/06 - 2h more scriptsss
+-----------------------------------------------
+22h
+
+
+
+security -https, ve vyhledavani?
+
+scripts - heroku= api
+dumpDB!!! - yes
+copyToLocal!!! -yes CONNECTO TO MONGO!!!!
+domain own? yes
+
+github not free
+
+168USD/year
+
+-----
+tool- domena
+
+
+
+zralok - 86g
+ginko - 68
+pampeliska 500g - 512g
+colagen - 141g
+vit E - 71
+lecithin - 242
+coenzym - 76g
+prostata 108
+omega 142
+zelezo 83
+pupalka - 80
+ostropestrec - 82
+vapnik - 231
+glucosamin - 166
+chitosan 88
+diabetes 128
+rybib olej 192
+hydrate and tone facial toner 152
+activated charcoal facial cleanser 193
+vit C facial cleanser 193
+vit Cc prep and tone facial toner 152
+advanced retinol serum 90
+hyaluronic 30ml 88
+multiactive hydrating night cream 164
+pure hyaluronic acid serum 132
+nehty vlasy kuze 100
+vceli materi kasicka 100
+papulka 79
+hyaluronic 60ml 132
+hyaluronic 120ml 256
+Super nutrient moisturizer 64

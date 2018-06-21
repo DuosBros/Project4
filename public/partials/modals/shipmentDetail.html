@@ -1,0 +1,44 @@
+<div class="modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"> <strong> Shipment Detail </strong> </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-1">
+                    </div>
+                    <div class="col-sm-10">
+                        <h3>Shipment {{shipmentId}}</h2>
+                        <h4>Current status: {{currentStatus}}</h3>
+                        </br>
+                        <h4>History</h3>
+                        <table class="table table-condensed" ng-if="shipmentPackage.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th style="text-align: center">Status</th>
+                                    <th style="text-align: center">Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="historyItem in shipmentPackage">
+                                    <td>{{historyItem.date | date: 'd. M. y'}} {{historyItem.time}}</td>
+                                    <td style="text-align: center">{{historyItem.status}}</td>
+                                    <td style="text-align: center">{{historyItem.name}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <span ng-if="shipmentPackage.length == 0">No history found</span>
+                    </div>
+                    <div class="col-sm-1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="close()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

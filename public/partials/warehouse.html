@@ -1,0 +1,86 @@
+<div class="container-fluid"
+	ng-style="{'z-index' : isMobile ? 0 : 2, 'top': isMobile ? '0em' : '3.7em', 'position': isMobile ? 'relative' : 'fixed'}"
+    style="background: white; left: 0; right: 0; padding-left: 3%; padding-right:3%;">
+    <div class="row" style="padding-top: 1em">
+		<div class="col-sm-1">
+		</div>
+		<div class="col-sm-10">
+			<h1>
+				Warehouse
+				<button style="float: right" type="button" ng-click="openAddProductModal()" class="btn btn-primary"
+						ng-show="loggedUser == 'admin'">
+					Add product
+				</button>
+			</h1>
+        </div>
+    </div>
+
+    <div class="row" ng-show="!isMobile">
+		<div class="col-sm-1"></div>
+	    <div class="col-sm-11">
+	        <div class="col-sm-3" style="text-align: center">
+	        </div>
+	        <div class="col-sm-2" style="text-align: center">
+				<h3>Booked</h3>
+	        </div>
+	        <div class="col-sm-3" style="text-align: center">
+	        	<h3>Available for Booking</h3>
+	        </div>
+	        <div class="col-sm-2" style="text-align: center">
+	        	<h3>In store</h3>
+	        </div>
+			<div class="col-sm-2" style="text-align: center">
+	        </div>
+	    </div>
+    </div>
+</div>
+<div class="container-fluid"
+	ng-style="{'z-index' : isMobile ? 0 : 1, 'top': isMobile ? '0em' : '14em'}" style="position: relative; margin-left: 3%; margin-right:3%">
+	<br/><br/>
+	<div class="row" ng-repeat="(key, value) in mappedProductsCounts" ng-class="showNotification(key)">
+		<div class="row">
+			<div class="col-sm-1"></div>
+			<div class="col-sm-11">
+				<div class="row">
+					<div class="col-sm-3" style="text-align: left">
+						<span ng-show="isMobile"><small>Product: </small></span>
+						<strong>{{key}}</strong>
+					</div>
+					<div class="col-sm-2" style="text-align: center" data-placement="bottom" bs-tooltip="'Thuốc đã khách đặt roi'">
+						<span ng-show="isMobile"><small>Booked: </small></span>
+						{{productSales[key].notPaid}}
+					</div>
+					<div class="col-sm-3" style="text-align: center" data-placement="bottom" bs-tooltip="'Thuốc có thể đặt'">
+						<span ng-show="isMobile"><small>Available for Booking: </small></span>
+						<strong>{{value.total - productSales[key].notPaid - productSales[key].paid}}</strong>
+					</div>
+					<div class="col-sm-2" style="text-align: center" data-placement="bottom" bs-tooltip="'Thuốc trong kho'">
+						<span ng-show="isMobile"><small>In store: </small></span>
+						{{value.total - productSales[key].paid}}
+					</div>
+					<div class="col-sm-2" style="text-align: center">
+						<button type="button" ng-click="openAddModal(key)" class="btn btn-default btn-xs">Add</button>
+						<button type="button" ng-click="openEditModal(key)" class="btn btn-default btn-xs"
+							ng-show="loggedUser == 'admin'">
+							Edit
+						</button>
+						<button type="button" ng-click="openHistoryModal(key)" class="btn btn-default btn-xs">History</button>
+						<button type="button" ng-click="removeProduct(key)" class="btn btn-default btn-xs"
+							bs-tooltip="'Remove product'" data-placement="bottom" ng-show="loggedUser == 'admin'">
+							<span class="glyphicon glyphicon-remove"></span>
+						</button>
+						<button type="button" ng-click="openConfigureProductModal(key)" class="btn btn-default btn-xs"
+							bs-tooltip="'Configure product'" data-placement="bottom" ng-show="loggedUser == 'admin'">
+							<span class="glyphicon glyphicon-wrench"></span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<hr style="margin-top: 0px; margin-bottom: 0em" ng-if="!$last">
+		</div>
+	</div>
+
+	<br/><br/><br/><br/>
+</div>

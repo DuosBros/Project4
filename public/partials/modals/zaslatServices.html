@@ -1,0 +1,81 @@
+<div class="row">
+    <div class="col-sm-6">
+        </br>
+        <div class="well well-sm">
+            <h3>Package</h3>
+            </br>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-4" for="street">Width</label>
+                    <div class="col-sm-8">
+                        <input type="text"
+                            placeholder="Package width (cm)" class="form-control input-sm"
+                            ng-model="packageDimensions.width"/>
+                    </div>
+
+                    <label class="col-sm-4" for="street">Height</label>
+                    <div class="col-sm-8">
+                        <input type="text"
+                            placeholder="Package height (cm)" class="form-control input-sm"
+                            ng-model="packageDimensions.height"/>
+                    </div>
+
+                    <label class="col-sm-4" for="street">Length</label>
+                    <div class="col-sm-8">
+                        <input type="text"
+                            placeholder="Package length (cm)" class="form-control input-sm"
+                            ng-model="packageDimensions.length"/>
+                    </div>
+
+                    <label class="col-sm-4" for="street">Weight</label>
+                    <div class="col-sm-8">
+                        <input type="text"
+                            placeholder="Package weight (kg)" class="form-control input-sm"
+                            ng-model="packageDimensions.weight"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        </br>
+        <div class="well well-sm">
+            <h3>Services</h3>
+            </br>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-6" for="street">Total Price</label>
+                    <div class="col-sm-6">
+                        <input type="text"
+                            placeholder="Total Price" class="form-control input-sm"
+                            ng-value="order.payment.bankAccountPayment ? 0 : order.totalPrice" disabled/>
+                    </div>
+
+                    <label class="col-sm-6" for="street">Bank Account Payment</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control input-sm"
+                            ng-value="order.payment.bankAccountPayment ? 'Yes' : 'No'" disabled/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-sm-12">
+        <div class="well well-sm">
+            <h3>Other</h3>
+            </br>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-3" for="note">Note</label>
+                    <div class="col-sm-9">
+                        <input type="text"
+                            placeholder="Note" class="form-control input-sm"
+                            ng-model="shipment.note"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

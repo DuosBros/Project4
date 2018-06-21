@@ -1,0 +1,125 @@
+
+<div class="container-fluid"
+	ng-style="{'z-index' : isMobile ? 0 : 2, 'top': isMobile ? '0em' : '3.7em', 'position': isMobile ? 'relative' : 'fixed'}"
+    style="background: white; left: 0; right: 0; padding-left: 3%; padding-right:3%;">
+    <div class="row" style="padding-top: 1em">
+		<div class="col-sm-1">
+		</div>
+		<div class="col-sm-3">
+            <h1>Shipments</h1>
+        </div>
+        <div class="col-sm-4" style="margin-top: 1em">
+            <div class="alert alert-info" role="alert" ng-if="loadingData" style="text-align: center">
+                <strong>
+                    <span ng-if="firstFetch">Loading..</span>
+                    <span ng-if="!firstFetch">Reloading data..</span>
+                </strong>
+            </div>
+            <div class="alert alert-danger" role="alert" ng-if="loadingError" style="text-align: center">
+                <strong>Zaslat.cz is not responding..</strong>
+            </div>
+        </div>
+        <div class="col-sm-2">
+        </div>
+        <!--<div class="col-sm-2">
+            <h1>
+                <button class="btn btn-default" ng-click="openSendersModal()">
+                    Edit Senders
+                </button>
+            </h1>
+        </div>-->
+    </div>
+</div>
+
+<div class="container"
+	ng-style="{'z-index' : isMobile ? 0 : 1, 'top': isMobile ? '0em' : '14em'}" style="position: relative;">
+	<div class="row">
+        <div class="row" style="padding-left: 0px">
+            <div class="col-sm-4" style="padding-left: 0px">
+                <strong>Shipment</strong>
+            </div>
+            <div class="col-sm-2" style="text-align: center">
+                <strong>VS</strong>
+            </div>
+            <div class="col-sm-2" style="text-align: center">
+                <strong>Status</strong>
+            </div>
+            <div class="col-sm-2" style="text-align: center">
+                <strong>Date</strong>
+            </div>
+            <div class="col-sm-2" style="text-align: center">
+                <strong>Actions</strong>
+            </div>
+        </div>
+        <hr>
+        <div class="row" ng-repeat="(key, value) in shipments" ng-class="{'bg-success' : value.status == 'DELIVERED'}" ng-click="toggleCollapse(key)">
+            <div class="row" style="padding-top: 0.3em; padding-bottom: 0.3em">
+                <div class="col-sm-4" style="padding-left: 2em">
+                    {{key}}
+                </div>
+                <div class="col-sm-2" style="text-align: center">
+                    {{value.reference}}
+                </div>
+                <div class="col-sm-2" style="text-align: center">
+                    {{value.status}}
+                </div>
+                <div class="col-sm-2" style="text-align: center">
+                    <span ng-if="value.date">{{value.date | date: 'd. M. y'}}</span>
+                    <span ng-if="!value.date">Unknown</span>
+                </div>
+                <div class="col-sm-2" style="text-align: center">
+                    <span style="text-align: center" ng-if="!isMobile">
+                        <button class="btn btn-default btn-xs" data-placement="bottom" ng-click="$event.stopPropagation(); showDetails(key)" bs-tooltip="'Tracking info'">
+                            <span class="glyphicon glyphicon-info-sign" style="font-size: 1.5em"></span>
+                        </button>
+                    </span>
+                    <span style="text-align: center" ng-if="isMobile">
+                        <button class="btn btn-default btn-xs" ng-click="$event.stopPropagation(); showDetails(key)">
+                            <span class="glyphicon glyphicon-info-sign" style="font-size: 1.5em"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <div class="row" ng-if="value.collapsed && value.orderInfo">
+                <div class="col-sm-6" style="padding-left: 2em">
+                    <h4>Customer Info</h4>
+                    <div class="col-sm-6">
+                        <strong>First name:</strong> {{value.orderInfo.address.firstName}}<br>
+                        <strong>Last name:</strong> {{value.orderInfo.address.lastName}}<br>
+                        <strong>Phone:</strong> {{value.orderInfo.address.phone}}<br>
+                        <strong>Street:</strong> {{value.orderInfo.address.street}}
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>City:</strong> {{value.orderInfo.address.city}}<br>
+                        <strong>Street number:</strong> {{value.orderInfo.address.streetNumber}}<br>
+                        <strong>ZIP:</strong> {{value.orderInfo.address.psc}}<br>
+                        <strong>Company:</strong> {{value.orderInfo.address.company}}
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <h4>Products</h4>
+                    <div class="row" ng-repeat="product in value.orderInfo.products">
+                        <div class="col-sm-6">
+                            <strong>Name:</strong> {{product.productName}}
+                        </div>
+                        <div class="col-sm-6">
+                            <strong>Count:</strong> {{product.count}}
+                        </div>
+                    </div>
+                    <hr style="margin-top: 0px; margin-bottom: 0px; border-color: inherit; margin-right: 8em">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <strong>Delivery price:</strong> {{value.orderInfo.payment.price ? value.orderInfo.payment.price : 0}} Kč
+                        </div>
+                        <div class="col-sm-6">
+                            <strong>Total price:</strong> {{value.orderInfo.totalPrice}} Kč
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr style="margin-top: 0px; margin-bottom: 0px; border-color: inherit">
+        </div>
+	</div>
+
+	<br/><br/><br/><br/>
+</div>
