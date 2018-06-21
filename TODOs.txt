@@ -20,16 +20,7 @@ improve test env
 -----------------------------------------------
 22h
 
-
-
-security -https, ve vyhledavani?
-
-scripts - heroku= api
-dumpDB!!! - yes
-copyToLocal!!! -yes CONNECTO TO MONGO!!!!
-domain own? yes
-
-github not free
+PRO ACC HEROKU UPGRADE!!! - from tutorial
 
 168USD/year
 
