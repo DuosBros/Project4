@@ -16,9 +16,9 @@ improve test env
 17/06 - 1h zaslat investigation + revert
 19/06 - 2h export data API
 20/06 - 3h vsless to scr
-21/06 - 2h more scriptsss
+21/06 - 2h more scriptsss + 3h heroku
 -----------------------------------------------
-22h
+25h
 
 diff DB
 
