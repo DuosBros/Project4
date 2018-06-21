@@ -6,15 +6,6 @@ var methodOverride = require('method-override');
 var morgan = require('morgan');
 var app = express();
 
-var https = require('https');
-var fs = require('fs');
-
-var credentials = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('cert.pem')
-};
-
-
 app.use(helmet());
 
 app.set('views', __dirname + '/public/views');
@@ -66,9 +57,9 @@ MongoClient.connect(dbUrl, {}, function(err, db) {
     console.log("MongoDB connected at " + dbUrl);
     app.set('mongodb', db);
 
-    var httpsServer = https.createServer(credentials, app);
-    httpsServer.listen(process.env.PORT || 3000);
-    io = require('socket.io')(httpsServer);
+    var server = require('http').createServer(app);
+    server.listen(process.env.PORT || 3000);
+    io = require('socket.io')(server);
     app.set('socket.io.listener', io);
 
 
