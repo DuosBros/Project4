@@ -67,7 +67,7 @@ MongoClient.connect(dbUrl, {}, function(err, db) {
     app.set('mongodb', db);
 
     var httpsServer = https.createServer(credentials, app);
-    httpsServer.listen(3000);
+    httpsServer.listen(process.env.PORT || 3000);
     io = require('socket.io')(httpsServer);
     app.set('socket.io.listener', io);
 
@@ -83,7 +83,7 @@ MongoClient.connect(dbUrl, {}, function(err, db) {
     require('./routes/scripts.js')(app);
     require('./routes/default')(app);
 
-    console.log("Server running at port 3000");
+    console.log("Server running!");
 });
 
 
