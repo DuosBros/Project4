@@ -23,7 +23,8 @@ app.engine('html', require('ejs').renderFile);
 app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(express.static(__dirname + "/public"));
-app.set('mongodb.url', 'mongodb://localhost:27017/medpharma');
+//app.set('mongodb.url', 'mongodb://localhost:27017/medpharma');
+app.set('mongodb.url', 'mongodb://medpharma:TranMedGroup!234@ds153890.mlab.com:53890/heroku_gvlqrgxg')
 //app.set('mongodb.url', 'mongodb://localhost:27017/tranmedgroup');
 app.set('salt', 'superSecr123.bullsh18t');
 app.set('tokenExpiracy', 60 * 30 * 2 * 2 * 12);

@@ -20,7 +20,8 @@ improve test env
 -----------------------------------------------
 22h
 
-PRO ACC HEROKU UPGRADE!!! - from tutorial
+diff DB
+
 
 168USD/year
 
