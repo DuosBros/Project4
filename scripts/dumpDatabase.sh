@@ -1,2 +1,2 @@
 today=`date '+%Y_%m_%d'`;
-mongodump --port 27017 --out "C:/Users/trannann/Dropbox/DB backup/$today/dump/"
+mongodump --host ds153890.mlab.com:53890 -u medpharma -p 'TranMedGroup!234' -d heroku_gvlqrgxg --out "exports"

@@ -6,6 +6,12 @@ const fs = require('fs');
 var passwordHash = require('password-hash');
 var owasp = require('owasp-password-strength-test');
 var ObjectID = require('mongodb').ObjectID;
+var cron = require('node-cron');
+const shell = require('shelljs');
+var archiver = require('archiver');
+var archive = archiver('zip', {
+    zlib: { level: 9 } // Sets the compression level.
+  });
 
 var handler;
 var mongo;
@@ -25,7 +31,50 @@ Handler = function(app) {
     handler = this;
     mongo = app.get('mongodb');
     pdfGeneration = new PdfHandler(app);
+
+    cron.schedule('0 1 * * *', function() {
+        shell.exec('sh scripts/dumpDatabase.sh');
+
+        var today = new Date().toDateString();
+        moveDumpToDropbox('orders.bson', today);
+        moveDumpToDropbox('orders.metadata.json', today);
+
+        moveDumpToDropbox('costs.bson', today);
+        moveDumpToDropbox('costs.metadata.json', today);
+
+        moveDumpToDropbox('products.bson', today);
+        moveDumpToDropbox('products.metadata.json', today);
+
+        moveDumpToDropbox('senders.bson', today);
+        moveDumpToDropbox('senders.metadata.json', today);
+
+        moveDumpToDropbox('users.bson', today);
+        moveDumpToDropbox('users.metadata.json', today);
+
+        moveDumpToDropbox('warehouse.bson', today);
+        moveDumpToDropbox('warehouse.metadata.json', today);
+    });
 };
+
+function moveDumpToDropbox(filename, today) {
+    var timeout = Math.floor(Math.random() * 50) + 1;
+    console.log(timeout * 1000);
+    setTimeout(function() {
+        fs.readFile('exports/heroku_gvlqrgxg/' + filename, function read(err, data) {
+            if (err) {
+                throw err;
+            }
+
+            dbx.filesUpload({path:'/DB backup/' + today + "/" + filename, contents: data, mode: 'overwrite'})
+            .then(function() {
+                console.log(filename + ' successfully backedup');
+            })
+            .catch(function(error) {
+                console.log('error while uploading document to dropbox: ' + JSON.stringify(error));
+            });
+        });
+    }, timeout * 1000)
+}
 
 Handler.prototype.export = function(fromDay, fromMonth, fromYear, toDay, toMonth, toYear) {
     var deferred = Q.defer();
