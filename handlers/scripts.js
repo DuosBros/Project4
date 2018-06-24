@@ -32,28 +32,28 @@ Handler = function(app) {
     mongo = app.get('mongodb');
     pdfGeneration = new PdfHandler(app);
 
-    cron.schedule('0 1 * * *', function() {
-        shell.exec('sh scripts/dumpDatabase.sh');
+    // cron.schedule('0 1 * * *', function() {
+    //     shell.exec('sh scripts/dumpDatabase.sh');
 
-        var today = new Date().toDateString();
-        moveDumpToDropbox('orders.bson', today);
-        moveDumpToDropbox('orders.metadata.json', today);
+    //     var today = new Date().toDateString();
+    //     moveDumpToDropbox('orders.bson', today);
+    //     moveDumpToDropbox('orders.metadata.json', today);
 
-        moveDumpToDropbox('costs.bson', today);
-        moveDumpToDropbox('costs.metadata.json', today);
+    //     moveDumpToDropbox('costs.bson', today);
+    //     moveDumpToDropbox('costs.metadata.json', today);
 
-        moveDumpToDropbox('products.bson', today);
-        moveDumpToDropbox('products.metadata.json', today);
+    //     moveDumpToDropbox('products.bson', today);
+    //     moveDumpToDropbox('products.metadata.json', today);
 
-        moveDumpToDropbox('senders.bson', today);
-        moveDumpToDropbox('senders.metadata.json', today);
+    //     moveDumpToDropbox('senders.bson', today);
+    //     moveDumpToDropbox('senders.metadata.json', today);
 
-        moveDumpToDropbox('users.bson', today);
-        moveDumpToDropbox('users.metadata.json', today);
+    //     moveDumpToDropbox('users.bson', today);
+    //     moveDumpToDropbox('users.metadata.json', today);
 
-        moveDumpToDropbox('warehouse.bson', today);
-        moveDumpToDropbox('warehouse.metadata.json', today);
-    });
+    //     moveDumpToDropbox('warehouse.bson', today);
+    //     moveDumpToDropbox('warehouse.metadata.json', today);
+    // });
 };
 
 function moveDumpToDropbox(filename, today) {
