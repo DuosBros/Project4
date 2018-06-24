@@ -34,12 +34,15 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 			var mappedData = {};
 			var chartPoints = Object.keys(mappedSummary).reverse();
 			var monthlyTurnOvers = [];
+			var monthlyOrderedTurnOvers = [];
 			for(var i = 0; i < chartPoints.length; i++) {
 				monthlyTurnOvers[i] = mappedSummary[chartPoints[i]].turnover;
+				monthlyOrderedTurnOvers[i] = mappedSummary[chartPoints[i]].orderedTurnover;
 			}
 
 			mappedData.months = chartPoints;
 			mappedData.turnovers = monthlyTurnOvers;
+			mappedData.orderedTurnovers = monthlyOrderedTurnOvers;
 			return mappedData;
 		}
 
@@ -137,7 +140,7 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 			data.labels = aggregatedChartData.months;
 			data.datasets = [];
 			data.datasets[0] = {};
-			data.datasets[0].label = "Sales per Month (Kč)";
+			data.datasets[0].label = "Sales per Month (Payment date - Kč)";
 			data.datasets[0].backgroundColor = 'rgba(255, 99, 132, 0.2)';
 			data.datasets[0].borderColor = 'rgba(255, 99, 132, 1)';
 			data.datasets[0].data = aggregatedChartData.turnovers;
@@ -149,7 +152,16 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 			data.datasets[1].borderColor = 'rgba(40, 50, 250, 0.2)';
 			data.datasets[1].data = Array.from({length: aggregatedChartData.turnovers.length}, i => avgTurnover);
 
+			data.datasets[2] = {};
+			data.datasets[2].label = "Sales per Month (Order date - Kč)";
+			data.datasets[2].backgroundColor = 'rgba(99, 255, 132, 0.2)';
+			data.datasets[2].borderColor = 'rgba(99, 255, 132, 1)';
+			data.datasets[2].data = aggregatedChartData.orderedTurnovers;
+
 			var ctx = document.getElementById("totalSalesChart").getContext("2d");
+
+			$scope.averageSales = avgTurnover;
+			$scope.lastMonthSales = aggregatedChartData.turnovers[aggregatedChartData.turnovers.length - 1];
 
 			var myLineChart = new Chart(ctx, {
 				type: 'line',
@@ -221,6 +233,70 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 			});
 		}
 
+		$scope.generateOrderedVSToCashSalesChart = function(aggregatedChartData) {
+			$scope.totalNumberOfOrderedOrders = 0;
+			var dataArrayVS = [];
+			var dataArrayCash = [];
+			var data = {};
+			data.labels = Object.keys(aggregatedChartData).reverse();
+
+			data.labels.forEach(function(label) {
+				if (aggregatedChartData[label].turnover > 0) {
+					dataArrayVS.push(aggregatedChartData[label].orderedVsOrders.length);
+					dataArrayCash.push(aggregatedChartData[label].orderedCashOrders.length);
+					$scope.totalNumberOfOrderedOrders += aggregatedChartData[label].orderedVsOrders.length;
+					$scope.totalNumberOfOrderedOrders += aggregatedChartData[label].orderedCashOrders.length;
+				} else {
+					dataArrayVS.push(0);
+					dataArrayCash.push(0);
+					$scope.totalNumberOfOrderedOrders += 0;
+					$scope.totalNumberOfOrderedOrders += 0;
+				}
+			});
+
+			var newestLabel = data.labels[data.labels.length - 1];
+			$scope.lastMonthOrderedOrders = aggregatedChartData[newestLabel].cashOrders.length + aggregatedChartData[newestLabel].orderedVsOrders.length;
+			$scope.averageNumberOfOrderedOrders = Math.round($scope.totalNumberOfOrderedOrders / Object.keys(aggregatedChartData).length);
+
+			data.datasets = [];
+
+			var dataset1 = {
+				label: 'VS orders',
+				backgroundColor: 'rgba(255, 99, 132, 0.2)',
+				borderColor: 'rgba(0, 0, 0, 1)',
+				borderWidth: 1,
+				data: dataArrayVS
+			}
+
+			var dataset2 = {
+				label: 'Cash orders',
+				backgroundColor: 'rgba(40, 50, 250, 0.2)',
+				borderColor: 'rgba(0, 0, 0, 1)',
+				borderWidth: 1,
+				data: dataArrayCash
+			}
+
+			data.datasets.push(dataset1);
+			data.datasets.push(dataset2);
+
+			var ctx = document.getElementById("orderedVsCashSalesChart").getContext("2d");
+
+			var myBarChart = new Chart(ctx, {
+				type: 'bar',
+				data: data,
+				options: {
+					scales: {
+						xAxes: [{
+							stacked: true
+						}],
+						yAxes: [{
+							stacked: true
+						}]
+					}
+				}
+			});
+		}
+
 		medPharmaCharts.getProductsSales()
 		.then(function(productSales) {
 			$scope.allProductSales = productSales;
@@ -235,7 +311,7 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 
 		medPharmaSummaries.getAggregatedOrdersAndCosts()
 		.then(function(aggregatedData) {
-			return medPharmaSummaries.mapDataToSummary(aggregatedData.orders, aggregatedData.costs);
+			return medPharmaSummaries.mapDataToSummary(aggregatedData.paidOrders, aggregatedData.costs, aggregatedData.allOrders);
 		})
 		.then(function(mappedData) {
 			$scope.totalCosts = mappedData.totalCosts;
@@ -245,5 +321,6 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 			$scope.allSalesData = $scope.mapTotalSales($scope.mappedSummary);
 			$scope.generateTotalSalesChart($scope.allSalesData);
 			$scope.generateVSToCashSalesChart($scope.mappedSummary);
+			$scope.generateOrderedVSToCashSalesChart($scope.mappedSummary);
 		})
 }]);

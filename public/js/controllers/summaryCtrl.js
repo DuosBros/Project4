@@ -11,7 +11,7 @@ myApp.controller('SummaryCtrl', ['$scope', 'medPharmaCosts', 'medPharmaOrders', 
 		if(medPharmaOthers.getLoggedInUser()) {
 			medPharmaSummaries.getAggregatedOrdersAndCosts()
 			.then(function(aggregatedData) {
-				return medPharmaSummaries.mapDataToSummary(aggregatedData.orders, aggregatedData.costs);
+				return medPharmaSummaries.mapDataToSummary(aggregatedData.paidOrders, aggregatedData.costs, aggregatedData.allOrders);
 			})
 			.then(function(mappedData) {
 				$scope.totalCosts = mappedData.totalCosts;

@@ -18,10 +18,10 @@ improve test env
 20/06 - 3h vsless to scr
 21/06 - 2h more scriptsss + 3h heroku
 23/06 - 2h heroku final + 2h DB backup
+24/06 - 2.5h charts
 -----------------------------------------------
-29h
+31.5h
 
-btw mohl bys pls predelat ty grafy misto paid date na order date?
 
 168USD/year
 

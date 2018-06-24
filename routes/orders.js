@@ -48,12 +48,32 @@ module.exports = function(app) {
         }
     });
 
-    app.get('/rest/orders/filter/month', function(req, res) {
+    app.get('/rest/orders/paid/filter/month', function(req, res) {
         var token = tools.extractToken(req);
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.getAllOrdersMonthly()
+                return handler.getAllPaidOrdersMonthly()
+            })
+            .then(function(orders) {
+                res.json(orders);
+                res.end();
+            })
+            .fail(function(err) {
+                tools.replyError(err, res);
+            })
+            .done();
+        } else {
+            res.status(403).send({message: 'No authentication token!'});
+        }
+    });
+
+    app.get('/rest/orders/ordered/filter/month', function(req, res) {
+        var token = tools.extractToken(req);
+        if(token) {
+            authenticationHandler.validateToken(token)
+            .then(function() {
+                return handler.getAllOrderedOrdersMonthly();
             })
             .then(function(orders) {
                 res.json(orders);

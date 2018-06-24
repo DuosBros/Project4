@@ -54,6 +54,7 @@
 		</div>
 		<div class="col-sm-7">
 			<h2>Sales per Month</h2>
+			<h3>Average: {{averageSales}} Kč, Current month: {{lastMonthSales}} Kč</h3>
 		</div>
 	</div>
 	<div class="row">
@@ -72,7 +73,7 @@
 		<div class="col-sm-1">
 		</div>
 		<div class="col-sm-7">
-			<h2>Orders per Month</h2>
+			<h2>Paid orders per Month</h2>
 			<h3>Average: {{averageNumberOfOrders}}, Current month: {{lastMonthOrders}}</h3>
 		</div>
 	</div>
@@ -81,6 +82,26 @@
 	    <div class="col-sm-10">
 	        <div class="row" style="height: 500px">
                 <canvas id="vsCashSalesChart"></canvas>
+	        </div>
+	    </div>
+	    <div class="col-sm-1">
+		</div>
+	</div>
+
+	<br/><br/>
+	<div class="row">
+		<div class="col-sm-1">
+		</div>
+		<div class="col-sm-7">
+			<h2>Ordered orders per Month</h2>
+			<h3>Average: {{averageNumberOfOrderedOrders}}, Current month: {{lastMonthOrderedOrders}}</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-1"></div>
+	    <div class="col-sm-10">
+	        <div class="row" style="height: 500px">
+                <canvas id="orderedVsCashSalesChart"></canvas>
 	        </div>
 	    </div>
 	    <div class="col-sm-1">

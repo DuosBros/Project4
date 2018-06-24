@@ -182,7 +182,7 @@ Handler.prototype.isValidVS = function(vs, orderId) {
     return deferred.promise;
 }
 
-Handler.prototype.getAllOrdersMonthly = function() {
+Handler.prototype.getAllPaidOrdersMonthly = function() {
     var deferred = Q.defer();
     var orders = mongo.collection('orders');
     var filter = {$match:
@@ -194,6 +194,39 @@ Handler.prototype.getAllOrdersMonthly = function() {
                               _id: {
                                   month: { $month: "$payment.paymentDate" },
                                   year: { $year: "$payment.paymentDate" }
+                              },
+                              turnover: { $sum: '$totalPrice' },
+                              totalDeliveryCosts: { $sum: "$payment.price" },
+                              cashOrders: { $addToSet: { $cond : [ {$eq: ['$deliveryType', 'Cash']}, '$id', undefined] } },
+                              vsOrders: { $addToSet: { $cond : [ {$eq: ['$deliveryType', 'VS']}, '$id', undefined] } }
+                          },
+                };
+
+    orders.aggregate([filter, group])
+    .toArray(function(err, orders) {
+        if(err) {
+            console.log('ERROR while getting all orders grouped by month> ' + err);
+            deferred.reject(err);
+        } else {
+            deferred.resolve(orders);
+        }
+    });
+
+    return deferred.promise;
+}
+
+Handler.prototype.getAllOrderedOrdersMonthly = function() {
+    var deferred = Q.defer();
+    var orders = mongo.collection('orders');
+    var filter = {$match:
+                    {
+                        'state': ACTIVE_ORDERS_STATE
+                    }
+                 };
+    var group = { $group: {
+                              _id: {
+                                  month: { $month: "$payment.orderDate" },
+                                  year: { $year: "$payment.orderDate" }
                               },
                               turnover: { $sum: '$totalPrice' },
                               totalDeliveryCosts: { $sum: "$payment.price" },
