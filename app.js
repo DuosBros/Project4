@@ -22,8 +22,8 @@ app.set('tokenExpiracy', 60 * 30 * 2 * 2 * 12);
 app.set('DELETED_ORDERS_STATE', 'abandoned');
 app.set('ACTIVE_ORDERS_STATE', 'active');
 app.set('ARCHIVED_ORDERS_STATE', 'archived');
-//app.set('zaslat-base-uri', 'https://www.zaslat.cz/api/v1/');
-app.set('zaslat-base-uri', 'https://test.zaslat.cz/api/v1/');
+app.set('zaslat-base-uri', 'https://www.zaslat.cz/api/v1/');
+//app.set('zaslat-base-uri', 'https://test.zaslat.cz/api/v1/');
 app.set('zaslat-pickup-uri', 'pickups/add');
 app.set('zaslat-get-pickups-uri', 'pickups/list')
 app.set('zaslat-rates-uri', 'rates/get')
