@@ -26,6 +26,7 @@ module.exports = function(app) {
                 res.end();
             })
             .fail(function(err) {
+                console.log(JSON.stringify(err));
                 tools.replyError(err, res);
             })
             .done();
