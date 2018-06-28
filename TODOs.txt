@@ -19,9 +19,14 @@ improve test env
 21/06 - 2h more scriptsss + 3h heroku
 23/06 - 2h heroku final + 2h DB backup
 24/06 - 2.5h charts
+25/06 - 1h testing
+27/06 - 30min preparing for prod
 -----------------------------------------------
-31.5h
+33h
 
+
+SOCKET TEST!!!
+2171 PDF
 
 168USD/year
 
