@@ -1,32 +1,5 @@
 ﻿
 
-improve test env
-
-
-
-05/03 - 1h costs + maintanence
-1h smart
-14/05 - 2h signature
-15/05 - 1h sign
-21/05 - 1h troubleshooting - upgrade NodeJS version!!!
-08/06 - 2h dropbox + minor changes
-09/06 - 3h dropbox
-13/06 - 2h
-14/06 - 1h update
-17/06 - 1h zaslat investigation + revert
-19/06 - 2h export data API
-20/06 - 3h vsless to scr
-21/06 - 2h more scriptsss + 3h heroku
-23/06 - 2h heroku final + 2h DB backup
-24/06 - 2.5h charts
-25/06 - 1h testing
-27/06 - 30min preparing for prod
------------------------------------------------
-33h
-
-
-SOCKET TEST!!!
-2171 PDF
 
 168USD/year
 
