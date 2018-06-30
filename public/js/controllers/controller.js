@@ -187,11 +187,10 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
             return medPharmaOrders.getOrder(orderId);
         })
         .then(function(order) {
-            if(!medPharmaOthers.validateItemExists(order, $scope)) {
+            if (!medPharmaOthers.validateItemExists(order, $scope)) {
 
             } else {
-                var setValue;
-                if(order.payment.paid) {
+                if (order.payment.paid) {
                     order.payment.paid = false;
                     order.payment.paymentDate = undefined;
                 } else {
