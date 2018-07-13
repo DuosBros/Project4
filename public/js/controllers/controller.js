@@ -133,7 +133,9 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
     }
 
     $scope.getBackgroundColor = function(order) {
-        if(order.inQueue) {
+        if (order.state == 'expired') {
+            return '#bfbfbf;';
+        } else if (order.inQueue) {
             return '#d9edf7;';
         } else if(order.payment.paid) {
             return '#dff0d8;';
@@ -196,6 +198,7 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
                 } else {
                     order.payment.paid = true;
                     order.payment.paymentDate = new Date();
+                    order.state = 'active';
                 }
                 medPharmaOrders.saveOrder(orderId, order, $scope.user)
                 .then(function(res) {

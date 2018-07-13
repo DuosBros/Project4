@@ -1,13 +1,14 @@
 
 
 var Q = require('q');
+var cron = require('node-cron');
 var AuthenticationHandler = require('../handlers/others.js').Handler;
 var authenticationHandler;
 var mongo;
 
 var DELETED_ORDERS_STATE;
 var ACTIVE_ORDERS_STATE;
-var ARCHIVED_ORDERS_STATE;
+var EXPIRED_ORDERS_STATE;
 var socketIoListener;
 var ordersHandler;
 
@@ -17,6 +18,7 @@ Handler = function(app) {
     DELETED_ORDERS_STATE = app.get('DELETED_ORDERS_STATE');
     ACTIVE_ORDERS_STATE = app.get('ACTIVE_ORDERS_STATE');
     ARCHIVED_ORDERS_STATE = app.get('ARCHIVED_ORDERS_STATE');
+    EXPIRED_ORDERS_STATE = app.get('EXPIRED_ORDERS_STATE');
     socketIoListener = app.get('socket.io.listener');
     ordersHandler = this;
 
@@ -49,7 +51,44 @@ Handler = function(app) {
             .done();
         });
     });
+
+    cron.schedule('0 2 * * *', function() {
+        expireOrders();
+    });
 };
+
+function expireOrders() {
+    var deferred = Q.defer();
+    var orders = mongo.collection('orders');
+
+    var expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() - 14);
+
+    var testDate = new Date();
+    testDate.setDate(testDate.getDate() - 90);
+
+    var query = {
+        'payment.orderDate': {'$gt': testDate, '$lt': expirationDate},
+        'state': {$in: [ACTIVE_ORDERS_STATE]},
+        'payment.paymentDate': {$exists: false},
+        'zaslatShipmentId': {$exists: false}
+    };
+
+    orders.update(query, {$set: {state: 'expired'}}, {multi: true},
+        function(err, result) {
+            if (err) {
+                var error = new Error('error while expiring order');
+                console.log(error + '> ' + err);
+                error.status = 500;
+                deferred.reject(error);
+            } else {
+                deferred.resolve(result);
+            }
+        }
+    );
+
+    return deferred.promise;
+}
 
 Handler.prototype.getAllOrdersInQueue = function(from, to) {
     var deferred = Q.defer();
@@ -62,7 +101,7 @@ Handler.prototype.getAllOrdersInQueue = function(from, to) {
     } else {
         query = {};
     }
-    query.state = ACTIVE_ORDERS_STATE;
+    query.state = {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE]};
     query.inQueue = true;
 
     orders.find(query)
@@ -74,6 +113,7 @@ Handler.prototype.getAllOrdersInQueue = function(from, to) {
             deferred.resolve(orders);
         }
     });
+
     return deferred.promise;
 }
 
@@ -90,7 +130,7 @@ Handler.prototype.getAllOrders = function(from, to) {
     } else {
         query = {};
     }
-    query.state = ACTIVE_ORDERS_STATE;
+    query.state = {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE]};
 
     orders.find(query, { 'sort': [['id', 'desc']]} )
     .toArray(function(err, orders) {
@@ -280,7 +320,7 @@ Handler.prototype.getOrder = function(orderId) {
     var orders = mongo.collection('orders');
     var id = parseInt(orderId);
 
-    orders.findOne({id: id, state: ACTIVE_ORDERS_STATE}, {},
+    orders.findOne({id: id, state: {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE]}}, {},
             function(err, order) {
                 if(err) {
                     console.log('ERROR while getting order with ID: ' + orderId + '> ' + err);
@@ -369,7 +409,8 @@ Handler.prototype.setZaslatData = function(orderId, shipmentId, shipmentType, no
     var setObject = {
         'zaslatDate': new Date(),
         'zaslatShipmentId': shipmentId,
-        'note': note
+        'note': note,
+        'state': 'active'
     }
     if(shipmentType == 'OCCASIONAL') {
         setObject.inQueue = true;

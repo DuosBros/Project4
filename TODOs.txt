@@ -1,9 +1,11 @@
 ﻿
-11/07 - attempt to work with forever - 1h
+11/07 - 1h - attempt to work with forever
+12/07 - 1h - logs + new task analysis
+13/07 - 2h - expiration
+----------------------------------------------------
+4h
 
 168USD/year
-
------
 
 
 zralok - 86g
