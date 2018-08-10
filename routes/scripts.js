@@ -8,6 +8,33 @@ module.exports = function(app) {
 
     var tools = require('../tools/tools.js');
 
+    app.post('/rest/scripts/expire', function(req, res) {
+        var token = tools.extractToken(req);
+        var variableSymbols = req.body;
+        var parsedVS = [];
+
+        for(var i = 0; i < variableSymbols.length; i++) {
+            parsedVS.push(parseInt(variableSymbols[i]));
+        }
+
+        if(token) {
+            authenticationHandler.validateToken(token)
+            .then(function() {
+                return handler.expireOrders(parsedVS);
+            })
+            .then(function() {
+                res.json();
+                res.end();
+            })
+            .fail(function(err) {
+                tools.replyError(err, res);
+            })
+            .done();
+        } else {
+            res.status(403).send({message: 'No authentication token!'});
+        }
+    });
+
     app.get('/rest/scripts/vs/:vs', function(req, res) {
         var token = tools.extractToken(req);
         var vs = parseInt(req.params.vs);

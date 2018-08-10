@@ -22,6 +22,21 @@ myApp.controller('ScriptsCtrl', ['$scope', 'medPharmaOthers', 'medPharmaScripts'
             })
         }
 
+        $scope.expireOrders = function(vs) {
+            $scope.initVariables();
+
+            var vsArray = vs.split(",");
+
+            medPharmaScripts.expireOrders(vsArray)
+            .then(function() {
+                var message = 'VS ' + vs + ' successfully expired';
+                $scope.handleSuccess(message);
+            })
+            .catch(function(err) {
+                $scope.handleError(err);
+            })
+        }
+
         $scope.addUser = function(username, password) {
             $scope.initVariables();
 

@@ -46,6 +46,26 @@ medPharmaServices.factory('medPharmaScripts', ['$http', '$q', 'medPharmaUtilitie
             return deferred.promise;
         }
 
+        medPharmaScripts.expireOrders = function(data) {
+            var deferred = $q.defer();
+
+            var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
+            $http({
+                method : 'POST',
+                url : '/rest/scripts/expire',
+                headers: requestHeaders,
+                cache : false,
+                data: data
+                })
+                .then(function() {
+                    deferred.resolve();
+                },
+                function(err) {
+                    deferred.reject(err);
+                });
+            return deferred.promise;
+        }
+
         medPharmaScripts.exportNoVsData = function(data) {
             var deferred = $q.defer();
 

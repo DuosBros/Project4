@@ -139,6 +139,21 @@
                     </button>
                 </form>
             </div>
+
+            <div class="col-sm-6">
+                <h2>Expire orders</h2>
+                <form class="navbar-form navbar-left" style="padding-left: 0px">
+                    <div class="form-group">
+                      <input type="text" class="form-control" placeholder="variable symbols"
+                        ng-model="expireVs">
+                    </div>
+                    <button type="button" class="btn btn-default"
+                        ng-click="expireOrders(expireVs)"
+                        ng-disabled="working || !expireVs">
+                            Expire orders
+                    </button>
+                </form>
+            </div>
         </div>
 	</div>
 	

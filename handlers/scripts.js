@@ -76,6 +76,29 @@ function moveDumpToDropbox(filename, today) {
     }, timeout * 1000)
 }
 
+Handler.prototype.expireOrders = function(variableSymbols) {
+    var deferred = Q.defer();
+
+    var orders = mongo.collection('orders');
+
+    var query = {state: 'active', 'payment.vs': {'$in': variableSymbols}};
+    console.log(variableSymbols);
+    orders.update(query, {$set: {state: 'expired'}}, {multi: true},
+    function(err, result) {
+        if (err) {
+            var error = new Error('error while expiring order');
+            console.log(error + '> ' + err);
+            error.status = 500;
+            deferred.reject(error);
+        } else {
+            console.log("successfully expired orders: " + variableSymbols);
+            deferred.resolve(result);
+        }
+    });
+
+    return deferred.promise;
+}
+
 Handler.prototype.export = function(fromDay, fromMonth, fromYear, toDay, toMonth, toYear) {
     var deferred = Q.defer();
 
