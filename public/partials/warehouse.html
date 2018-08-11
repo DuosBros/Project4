@@ -37,39 +37,39 @@
 <div class="container-fluid"
 	ng-style="{'z-index' : isMobile ? 0 : 1, 'top': isMobile ? '0em' : '14em'}" style="position: relative; margin-left: 3%; margin-right:3%">
 	<br/><br/>
-	<div class="row" ng-repeat="(key, value) in mappedProductsCounts" ng-class="showNotification(key)">
+	<div class="row" ng-repeat="product in productsCountArray | orderBy: 'name'" ng-class="showNotification(product.name)">
 		<div class="row">
 			<div class="col-sm-1"></div>
 			<div class="col-sm-11">
 				<div class="row">
 					<div class="col-sm-3" style="text-align: left">
 						<span ng-show="isMobile"><small>Product: </small></span>
-						<strong>{{key}}</strong>
+						<strong>{{product.name}}</strong>
 					</div>
 					<div class="col-sm-2" style="text-align: center" data-placement="bottom" bs-tooltip="'Thuốc đã khách đặt roi'">
 						<span ng-show="isMobile"><small>Booked: </small></span>
-						{{productSales[key].notPaid}}
+						{{productSales[product.name].notPaid}}
 					</div>
 					<div class="col-sm-3" style="text-align: center" data-placement="bottom" bs-tooltip="'Thuốc có thể đặt'">
 						<span ng-show="isMobile"><small>Available for Booking: </small></span>
-						<strong>{{value.total - productSales[key].notPaid - productSales[key].paid}}</strong>
+						<strong>{{product.total - productSales[product.name].notPaid - productSales[product.name].paid}}</strong>
 					</div>
 					<div class="col-sm-2" style="text-align: center" data-placement="bottom" bs-tooltip="'Thuốc trong kho'">
 						<span ng-show="isMobile"><small>In store: </small></span>
-						{{value.total - productSales[key].paid}}
+						{{product.total - productSales[product.name].paid}}
 					</div>
 					<div class="col-sm-2" style="text-align: center">
-						<button type="button" ng-click="openAddModal(key)" class="btn btn-default btn-xs">Add</button>
-						<button type="button" ng-click="openEditModal(key)" class="btn btn-default btn-xs"
+						<button type="button" ng-click="openAddModal(product.name)" class="btn btn-default btn-xs">Add</button>
+						<button type="button" ng-click="openEditModal(product.name)" class="btn btn-default btn-xs"
 							ng-show="loggedUser == 'admin'">
 							Edit
 						</button>
-						<button type="button" ng-click="openHistoryModal(key)" class="btn btn-default btn-xs">History</button>
-						<button type="button" ng-click="removeProduct(key)" class="btn btn-default btn-xs"
+						<button type="button" ng-click="openHistoryModal(product.name)" class="btn btn-default btn-xs">History</button>
+						<button type="button" ng-click="removeProduct(product.name)" class="btn btn-default btn-xs"
 							bs-tooltip="'Remove product'" data-placement="bottom" ng-show="loggedUser == 'admin'">
 							<span class="glyphicon glyphicon-remove"></span>
 						</button>
-						<button type="button" ng-click="openConfigureProductModal(key)" class="btn btn-default btn-xs"
+						<button type="button" ng-click="openConfigureProductModal(product.name)" class="btn btn-default btn-xs"
 							bs-tooltip="'Configure product'" data-placement="bottom" ng-show="loggedUser == 'admin'">
 							<span class="glyphicon glyphicon-wrench"></span>
 						</button>

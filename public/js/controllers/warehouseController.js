@@ -229,6 +229,18 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
             })
             .then(function(databaseProductsData) {
                 $scope.mappedProductsCounts = medPharmaWarehouse.mapProductNamesToAmounts($scope.allProductNames, databaseProductsData);
+                $scope.productsCountArray = [];
+
+                for (var key in $scope.mappedProductsCounts) {
+                    if ($scope.mappedProductsCounts.hasOwnProperty(key)) {
+                        var item = {
+                            name: key,
+                            total: $scope.mappedProductsCounts[key].total,
+                            calculationDate: $scope.mappedProductsCounts[key].calculationDate
+                        }
+                        $scope.productsCountArray.push(item);
+                    }
+                }
             })
         }
 

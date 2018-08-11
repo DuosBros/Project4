@@ -4,8 +4,9 @@
 13/07 - 2h - expiration
 09/08 - 1h - expiration script part1
 10/08 - 1h - expiration part2
+11/08 - 1h - sorting
 ----------------------------------------------------
-6h
+7h
 
 168USD/year
 
