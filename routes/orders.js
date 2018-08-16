@@ -10,10 +10,21 @@ module.exports = function(app) {
         var token = tools.extractToken(req);
         var from = req.query.from;
         var to = req.query.to;
+
+        var limit;
+        var sinceId;
+
+        if (req.query.limit) {
+            limit = parseInt(req.query.limit);
+        }
+        if (req.query.sinceId) {
+            sinceId = parseInt(req.query.sinceId);
+        }
+
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.getAllOrders(from, to)
+                return handler.getAllOrders(from, to, limit, sinceId);
             })
             .then(function(orders) {
                 res.json(orders);

@@ -7,7 +7,7 @@ medPharmaServices.factory('medPharmaOrders', ['$http', '$q', '$cookies', 'medPha
 
     var medPharmaOrders = {};
 
-    medPharmaOrders.getAllOrders = function(from, to) {
+    medPharmaOrders.getAllOrders = function(from, to, limit, sinceId) {
         var deferred = $q.defer();
 
         var url = '/rest/orders';
@@ -18,6 +18,14 @@ medPharmaServices.factory('medPharmaOrders', ['$http', '$q', '$cookies', 'medPha
         } else if(to) {
             url += '?to=' + to;
         }
+
+        if (limit) {
+            url += '&limit=' + limit;
+        }
+        if (sinceId) {
+            url += '&sinceId=' + sinceId;
+        }
+
         var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
         $http({
             method : 'GET',

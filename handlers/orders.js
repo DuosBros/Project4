@@ -117,9 +117,11 @@ Handler.prototype.getAllOrdersInQueue = function(from, to) {
     return deferred.promise;
 }
 
-Handler.prototype.getAllOrders = function(from, to) {
+Handler.prototype.getAllOrders = function(from, to, limit, sinceId) {
     var deferred = Q.defer();
     var orders = mongo.collection('orders');
+
+    var pipeline = [];
 
     if (from && to) {
         query = {'payment.orderDate': {'$gt': new Date(from), '$lt': new Date(to)}};
@@ -132,7 +134,26 @@ Handler.prototype.getAllOrders = function(from, to) {
     }
     query.state = {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE]};
 
-    orders.find(query, { 'sort': [['id', 'desc']]} )
+    if (sinceId) {
+        query.id = {'$lt': sinceId};
+    }
+
+    var filter = {
+        $match: query
+    };
+
+    var sort = {$sort: { 'id': -1}};
+
+
+    pipeline.push(filter);
+    pipeline.push(sort);
+
+    if (limit) {
+        var limit = {$limit: limit};
+        pipeline.push(limit);
+    }
+
+    orders.aggregate(pipeline)
     .toArray(function(err, orders) {
         if(err) {
             console.log('ERROR while getting all orders> ' + err);

@@ -9,13 +9,11 @@
 14/08 - 1h - pagination
 15/08 - 1h - pagination
 16/08 - 1h - filtering improvements
+19/08 - 2h - speed
 ----------------------------------------------------
-11h
+13h
 
 paging devnotes
-
-
-editorder slow
 
 1. normalne mas preload 100 orders s moznosti load more - klasicke chovani bez filteru - zaroven se na backgroundu nactou vsechny
 
@@ -23,6 +21,8 @@ editorder slow
 
 3. jakmile smazes filter, zase se naloaduji ty puvodni omezene
     - je treba si pamatovat, kolik jich bylo - promenna ordersCount aby se dala jako limit pro nasledujici call
+
+4. sockety pro ALL ORDERS!!!
 
 168USD/year
 

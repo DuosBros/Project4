@@ -25,6 +25,7 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
 
     if($scope.user) {
         getAllOrders();
+        getAllOrdersEagerly();
         medPharmaZaslat.getAllShipments()
         .then(function(shipments) {
             $scope.zaslatShipments = shipments;
@@ -34,12 +35,20 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
         medPharmaOthers.redirectToLoginPage();
     }
 
+    $scope.$watch('filter', function(newVal, oldVal) {
+        $scope.oldFilterLength = oldVal ? oldVal.length : 0;
+        if ((oldVal && oldVal.length >= 2) && (!newVal || (newVal && newVal.length < 2) )) {
+            getAllOrders(undefined, $scope.ordersCount, true);
+        }
+    });
+
     $scope.filteredOrders = function() {
         var filteredOrders = [];
         if (!$scope.filter || $scope.filter == '' || $scope.filter.length < 2) {
             filteredOrders = $scope.orders;
         } else {
             var filter = $scope.filter.toLowerCase();
+            $scope.orders = $scope.allOrders;
             $scope.orders.forEach(function(order) {
                 var orderFiltered = false;
 
@@ -585,21 +594,42 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
         }
     }
 
-    function getAllOrders() {
+    function getAllOrders(sinceId, limit, refresh) {
+        if (!limit) {
+            limit = 100;
+        }
+        $scope.loading = true;
+        medPharmaOrders.getAllOrders('December 31, 2017 23:59:59', 'December 31, 2018 23:59:59', limit, sinceId)
+        .then(function(orders) {
+            orders.forEach(function(order) {
+                order.collapsed = true;
+            })
+
+            if (!$scope.orders || refresh) {
+                $scope.orders = [];
+            }
+            $scope.orders = $scope.orders.concat(orders);
+            $scope.loading = false;
+            $scope.newOrdersCount = orders.length;
+            $scope.ordersCount = $scope.orders.length;
+            //$scope.buildQueue($scope.orders);
+        });
+    }
+
+    function getAllOrdersEagerly() {
         medPharmaOrders.getAllOrders('December 31, 2017 23:59:59', 'December 31, 2018 23:59:59')
         .then(function(orders) {
             orders.forEach(function(order) {
                 order.collapsed = true;
             })
-            var newestOrders = orders.slice(0, 35);
-            var olderOrders = orders.slice(35, orders.length);
-            $scope.orders = newestOrders;
 
-            setTimeout(function() {
-                $scope.orders = newestOrders.concat(olderOrders);
-            }, 1000);
-            //$scope.buildQueue($scope.orders);
+            $scope.allOrders = orders;
         });
+    }
+
+    $scope.loadMore = function() {
+        var sinceId = $scope.orders[$scope.orders.length - 1].id;
+        getAllOrders(sinceId);
     }
 
     $scope.buildQueue = function(orders) {
@@ -616,11 +646,21 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
             $scope.orders.push(orderId);
             return;
         }
+        if(!orderId) {
+            $scope.allOrders.push(orderId);
+            return;
+        }
         //order deleted
         if(!order) {
             for(var i = 0; i < $scope.orders.length; i++) {
                 if($scope.orders[i].id == orderId) {
                     $scope.orders.splice(i, 1);
+                    break;
+                }
+            }
+            for(var i = 0; i < $scope.allOrders.length; i++) {
+                if($scope.allOrders[i].id == orderId) {
+                    $scope.allOrders.splice(i, 1);
                     break;
                 }
             }
@@ -639,7 +679,13 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
         for(var i = 0; i < $scope.orders.length; i++) {
             if($scope.orders[i].id == orderId) {
                 $scope.orders[i] = order;
-                return;
+                break;
+            }
+        }
+        for(var i = 0; i < $scope.allOrders.length; i++) {
+            if($scope.allOrders[i].id == orderId) {
+                $scope.allOrders[i] = order;
+                break;
             }
         }
     }
