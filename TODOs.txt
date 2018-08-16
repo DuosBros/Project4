@@ -5,17 +5,35 @@
 09/08 - 1h - expiration script part1
 10/08 - 1h - expiration part2
 11/08 - 1h - sorting
+13/08 - 1h - pagination
+14/08 - 1h - pagination
+15/08 - 1h - pagination
+16/08 - 1h - filtering improvements
 ----------------------------------------------------
-7h
+11h
+
+paging devnotes
+
+
+editorder slow
+
+1. normalne mas preload 100 orders s moznosti load more - klasicke chovani bez filteru - zaroven se na backgroundu nactou vsechny
+
+2. pokud zadas filter, ty naloadovane ordery se replacnou s filtrovanym vysledkem ale z toho celku
+
+3. jakmile smazes filter, zase se naloaduji ty puvodni omezene
+    - je treba si pamatovat, kolik jich bylo - promenna ordersCount aby se dala jako limit pro nasledujici call
 
 168USD/year
 
 1. cerneni
 2. sort products
-3. slow - limit to 100
+3. slow - limit to 100 - try preload all and filter as before
 4. filter products in charts
 5. signature
 6. DP too small
+7. editace notification tresholdu u produktu
+8. new chart tran msgs
 
 zralok - 86g
 ginko - 68

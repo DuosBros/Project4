@@ -36,26 +36,58 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
 
     $scope.filteredOrders = function() {
         var filteredOrders = [];
-        if(!$scope.filter || $scope.filter == '') {
+        if (!$scope.filter || $scope.filter == '' || $scope.filter.length < 2) {
             filteredOrders = $scope.orders;
         } else {
+            var filter = $scope.filter.toLowerCase();
             $scope.orders.forEach(function(order) {
-                var reducedOrder = JSON.parse(JSON.stringify(order));
-                if(reducedOrder.lock) {
-                    delete reducedOrder.lock;
+                var orderFiltered = false;
+
+                if (order.payment && order.payment.vs && order.payment.vs.toString().indexOf(filter) > -1) {
+                    orderFiltered = true;
                 }
-                if(reducedOrder.deliveryCompany) {
-                    delete reducedOrder.deliveryCompany;
+
+                if (!orderFiltered && order.products && order.products.length > 0) {
+                    for (var i = 0; i < order.products.length; i++) {
+                        var product = order.products[i];
+                        if (product.productName.toLowerCase().indexOf(filter) > -1) {
+                            orderFiltered = true;
+                            break;
+                        }
+                    }
                 }
-                if(reducedOrder.note) {
-                    delete reducedOrder.note;
+
+                if (!orderFiltered && order.address) {
+                    var address = order.address;
+                    if (address.firstName && address.firstName.toLowerCase().indexOf(filter) > -1) {
+                        orderFiltered = true;
+                    }
+                    if (!orderFiltered && address.lastName && address.lastName.toLowerCase().indexOf(filter) > -1) {
+                        orderFiltered = true;
+                    }
+                    if (!orderFiltered && address.street && address.street.toLowerCase().indexOf(filter) > -1) {
+                        orderFiltered = true;
+                    }
+                    if (!orderFiltered && address.company && address.company.toLowerCase().indexOf(filter) > -1) {
+                        orderFiltered = true;
+                    }
+                    if (!orderFiltered && address.city && address.city.toLowerCase().indexOf(filter) > -1) {
+                        orderFiltered = true;
+                    }
+                    if (!orderFiltered && address.psc && address.psc.toLowerCase().indexOf(filter) > -1) {
+                        orderFiltered = true;
+                    }
+                    if (!orderFiltered && address.phone && address.phone.toLowerCase().indexOf(filter) > -1) {
+                        orderFiltered = true;
+                    }
                 }
-                var orderToString = JSON.stringify(reducedOrder).toLowerCase();
-                if(orderToString.indexOf($scope.filter.toLowerCase()) > 0) {
+
+                if (orderFiltered) {
                     filteredOrders.push(order);
                 }
             })
         }
+
         return filteredOrders;
     }
 
