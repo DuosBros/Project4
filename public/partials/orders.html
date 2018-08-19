@@ -247,7 +247,7 @@
         <button type="button" class="btn btn-default btn-sm" ng-click="loadMore()"
             ng-hide="orders.length == 0" ng-disabled="loading || newOrdersCount == 0 || filter.length > 1">
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <span ng-if="!loading && newOrdersCount != 0 && filter.length < 2"><strong>Show more..</strong></span>
+                <span ng-if="!loading && newOrdersCount != 0 && (!filter ||filter.length < 2)"><strong>Show more..</strong></span>
                 <span ng-if="loading"><strong>Loading..</strong></span>
                 <span ng-if="newOrdersCount == 0 || filter.length > 1"><strong>No more orders</strong></span>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
