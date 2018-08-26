@@ -3,8 +3,8 @@
 
 var myApp = angular.module('medPharmaController');
 
-myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCharts', 'medPharmaSummaries',
-	function($scope, medPharmaOthers, medPharmaCharts, medPharmaSummaries) {
+myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCharts', 'medPharmaSummaries', '$modal',
+	function($scope, medPharmaOthers, medPharmaCharts, medPharmaSummaries, $modal) {
 	
 		if(!medPharmaOthers.getLoggedInUser()) {
 			medPharmaOthers.redirectToLoginPage();
@@ -88,14 +88,87 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 			});
 		}
 
+		$scope.clearChart = function() {
+			$scope.productCountChart.data.labels = [];
+			$scope.productCountChart.data.datasets[0].data = [];
+			$scope.productCountChart.update();
+
+			$scope.addedProducts = [];
+			$scope.notAddedProducts = Object.keys($scope.allProductSalesChartData)
+		}
+
+		$scope.addAll = function() {
+			$scope.productCountChart.data.labels = Object.keys($scope.allProductSalesChartData);
+			$scope.productCountChart.data.datasets[0].data = $scope.productCountDataArray;
+			$scope.productCountChart.update();
+
+			$scope.addedProducts = Object.keys($scope.allProductSalesChartData);
+			$scope.notAddedProducts = [];
+		}
+
+		$scope.openAddProductModal = function() {
+			var $modalScope = $scope.$new(true);
+
+			$modalScope.addedProducts = jQuery.extend([], $scope.addedProducts);
+            $modalScope.notAddedProducts = jQuery.extend([], $scope.notAddedProducts);
+
+			var modal = $modal({
+							scope: $modalScope,
+							templateUrl: 'partials/modals/addProductToChart.html',
+							show: false
+							});
+			modal.$promise.then(modal.show);
+
+			$modalScope.add = function(product) {
+				$modalScope.addedProducts.push(product);
+				for (var i = 0; i < $modalScope.notAddedProducts.length; i++) {
+                    if ($modalScope.notAddedProducts[i] == product) {
+                        $modalScope.notAddedProducts.splice(i, 1);
+                        break;
+                    }
+                }
+			}
+
+			$modalScope.save = function() {
+				$scope.productCountChart.data.datasets[0].data = [];
+				this.close();
+				$scope.addedProducts = $modalScope.addedProducts;
+				$scope.notAddedProducts = $modalScope.notAddedProducts;
+
+				$scope.productCountChart.data.labels = $scope.addedProducts;
+				for (var i = 0; i < $scope.addedProducts.length; i++) {
+					var prod = $scope.addedProducts[i];
+					$scope.productCountChart.data.datasets[0].data.push($scope.allProductSalesChartData[prod].count);
+				}
+				$scope.productCountChart.update();
+			}
+
+			$modalScope.remove = function(product) {
+				$modalScope.notAddedProducts.push(product);
+				for (var i = 0; i < $modalScope.addedProducts.length; i++) {
+                    if ($modalScope.addedProducts[i] == product) {
+                        $modalScope.addedProducts.splice(i, 1);
+                        break;
+                    }
+                }
+			}
+
+			$modalScope.close = function() {
+				this.$hide();
+				modal.$promise.then(modal.hide);
+			}
+		}
+
 		$scope.generateProductCountsChart = function(aggregatedChartData) {
 			var data = {};
 
-			var dataArray = [];
+			$scope.productCountDataArray = [];
 			data.labels = Object.keys($scope.allProductSalesChartData);
+			$scope.addedProducts = Object.keys($scope.allProductSalesChartData);
+			$scope.notAddedProducts = [];
 
 			data.labels.forEach(function(label) {
-				dataArray.push(aggregatedChartData[label].count);
+				$scope.productCountDataArray.push(aggregatedChartData[label].count);
 			});
 
 			data.datasets = [];
@@ -104,11 +177,11 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 			data.datasets[0].backgroundColor = 'rgba(255, 99, 132, 0.2)';
 			data.datasets[0].borderColor = 'rgba(255,99,132,1)';
 			data.datasets[0].borderWidth = 1;
-			data.datasets[0].data = dataArray;
+			data.datasets[0].data = $scope.productCountDataArray;
 
 			var ctx = document.getElementById("productCountChart").getContext("2d");
 
-			var myBarChart = new Chart(ctx, {
+			$scope.productCountChart = new Chart(ctx, {
 				type: 'bar',
 				data: data,
 				options: {
