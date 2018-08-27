@@ -191,7 +191,7 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 								[
 									{ text: [
 										{ text: '\nDodavatel:\n\n',  style: 'smallHeader'},
-										{ text: 'TranMedGroup s.r.o\nZámostní 1155/27\n71000 Slezská Ostrava\nIČ: 05495172 DIČ: CZ05495172\nTel.: +420773115262',
+										{ text: 'TranMedGroup s.r.o\nB. Četyny 932/6\n70030 Ostrava\nIČ: 05495172 DIČ: CZ05495172\nTel.: +420773115262',
 											style: 'dodavatelOdberatel'
 										} ]
 									},
