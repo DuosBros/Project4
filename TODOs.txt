@@ -11,8 +11,11 @@
 16/08 - 1h - filtering improvements
 19/08 - 2h - speed
 26/08 - 3h - editable chart
+27/08 - 0.5h - from to for chart
+28/08 - 1h - time for charts
+29/08 - 1.5h - time for charts
 ----------------------------------------------------
-16h
+19h
 
 168USD/year
 

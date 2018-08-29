@@ -7,13 +7,26 @@ medPharmaServices.factory('medPharmaCharts', ['$http', '$q', 'medPharmaUtilities
 
         var medPharmaCharts = {};
 
-        medPharmaCharts.getProductsSales = function() {
+        medPharmaCharts.getProductsSales = function(from, to) {
             var deferred = $q.defer();
+
+            var url = '/rest/charts/products';
+            if (from) {
+                url += '?from=' + from;
+            }
+            if (to) {
+                if (!from) {
+                    url += '?';
+                } else {
+                    url += '&';
+                }
+                url += 'to=' + to;
+            }
 
             var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
             $http({
                 method : 'GET',
-                url : '/rest/charts/products',
+                url : url,
                 headers: requestHeaders,
                 cache : false,
                 })

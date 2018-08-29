@@ -8,10 +8,23 @@ module.exports = function(app) {
 
     app.get('/rest/charts/products', function(req, res) {
         var token = tools.extractToken(req);
+
+        var from = req.query.from;
+        var to = req.query.to;
+
+        var fromDate;
+        var toDate;
+        if (from) {
+            fromDate = new Date(from);
+        }
+        if (to) {
+            toDate = new Date(to);
+        }
+
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.getAllProductsData()
+                return handler.getAllProductsData(fromDate, toDate);
             })
             .then(function(allProducts) {
                 res.json(allProducts);

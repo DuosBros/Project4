@@ -94,15 +94,15 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 			$scope.productCountChart.update();
 
 			$scope.addedProducts = [];
-			$scope.notAddedProducts = Object.keys($scope.allProductSalesChartData)
+			$scope.notAddedProducts = Object.keys($scope.dateTimeProductSalesChartData)
 		}
 
 		$scope.addAll = function() {
-			$scope.productCountChart.data.labels = Object.keys($scope.allProductSalesChartData);
+			$scope.productCountChart.data.labels = Object.keys($scope.dateTimeProductSalesChartData);
 			$scope.productCountChart.data.datasets[0].data = $scope.productCountDataArray;
 			$scope.productCountChart.update();
 
-			$scope.addedProducts = Object.keys($scope.allProductSalesChartData);
+			$scope.addedProducts = Object.keys($scope.dateTimeProductSalesChartData);
 			$scope.notAddedProducts = [];
 		}
 
@@ -138,7 +138,7 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 				$scope.productCountChart.data.labels = $scope.addedProducts;
 				for (var i = 0; i < $scope.addedProducts.length; i++) {
 					var prod = $scope.addedProducts[i];
-					$scope.productCountChart.data.datasets[0].data.push($scope.allProductSalesChartData[prod].count);
+					$scope.productCountChart.data.datasets[0].data.push($scope.dateTimeProductSalesChartData[prod].count);
 				}
 				$scope.productCountChart.update();
 			}
@@ -159,12 +159,25 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 			}
 		}
 
+		$scope.$watch('fromDate', function(newVal, oldVal) {
+			console.log('from: ' + newVal + ' ' + oldVal);
+			getDateTimeProductSalesChartDate(newVal, $scope.untilDate);
+		});
+
+		$scope.$watch('untilDate', function(newVal, oldVal) {
+			console.log('until: ' + newVal + ' ' + oldVal);
+			getDateTimeProductSalesChartDate($scope.fromDate, newVal);
+		});
+
 		$scope.generateProductCountsChart = function(aggregatedChartData) {
+			if ($scope.productCountChart) {
+				$scope.productCountChart.destroy();
+			}
 			var data = {};
 
 			$scope.productCountDataArray = [];
-			data.labels = Object.keys($scope.allProductSalesChartData);
-			$scope.addedProducts = Object.keys($scope.allProductSalesChartData);
+			data.labels = Object.keys(aggregatedChartData);
+			$scope.addedProducts = Object.keys(aggregatedChartData);
 			$scope.notAddedProducts = [];
 
 			data.labels.forEach(function(label) {
@@ -370,6 +383,19 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 			});
 		}
 
+		function getDateTimeProductSalesChartDate(from, to) {
+			medPharmaCharts.getProductsSales(from, to)
+			.then(function(productSales) {
+				$scope.dateTimeProductSales = productSales;
+				return medPharmaOthers.getAllProductsJson()
+			})
+			.then(function(products) {
+				$scope.allProductNames = Object.keys(products);
+				$scope.dateTimeProductSalesChartData = $scope.mapAllProductSales($scope.allProductNames, $scope.dateTimeProductSales);
+				$scope.generateProductCountsChart($scope.dateTimeProductSalesChartData);
+			})
+		}
+
 		medPharmaCharts.getProductsSales()
 		.then(function(productSales) {
 			$scope.allProductSales = productSales;
@@ -379,7 +405,6 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 			$scope.allProductNames = Object.keys(products);
 			$scope.allProductSalesChartData = $scope.mapAllProductSales($scope.allProductNames, $scope.allProductSales);
 			$scope.generateProductSalesChart($scope.allProductSalesChartData);
-			$scope.generateProductCountsChart($scope.allProductSalesChartData);
 		})
 
 		medPharmaSummaries.getAggregatedOrdersAndCosts()
