@@ -115,7 +115,9 @@ Handler.prototype.addProduct = function(product) {
         if (err) {
             deferred.reject(err);
         } else {
-            warehouseHandler.saveProductAmount(product.name, 0, new Date(), 0)
+            var calcDate = new Date();
+            calcDate.setFullYear(2000);
+            warehouseHandler.saveProductAmount(product.name, 0, calcDate, 0)
             .then(function(res) {
                 deferred.resolve(doc);
             })
