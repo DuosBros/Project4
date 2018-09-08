@@ -66,13 +66,15 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
     var vs = '';
 	if(order.payment.vs) {
 		vs = order.payment.vs;
-    }
+	}
+	var orderId = order.id;
+	var zpusobPlatby = vs == '' ? '                          Hotově' : 'Bankovním převodem';
     var dnesniDatum = new Date();
 	var datumSplatnosti = new Date();
 	datumSplatnosti.setTime( datumSplatnosti.getTime() + DATUM_SPLATNOSTI_DAYS * 86400000 );
     var aktualniRok = dnesniDatum.getFullYear();
 
-	var invoiceNumber = '' + vs;
+	var invoiceNumber = '' + orderId + '0';
 
 	var address = order.address;
 	var firstName = '';
@@ -219,7 +221,7 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 										+'\nSWIFT:                                                     FIOBCZPPXXX           Objednávka:                                                           '
 										+ invoiceNumber + '\n' +
 										'IBAN:                            CZ4720100000002401089228          Konstantní symbol:\n' +
-										'Způsob platby:                           Bankovním převodem          Variabilní symbol:                                                  '
+										'Způsob platby:                           ' + zpusobPlatby + '          Variabilní symbol:                                                   '
 										+ vs + '\n' +
 										'Datum vystavení:                                         ' + dateFormat(dnesniDatum, dateformat) + '           Specifický symbol:\n' +
 										'Datum usk. zdaň. plnění:                            ' + dateFormat(dnesniDatum, dateformat) + '           Poznámka:\n' +

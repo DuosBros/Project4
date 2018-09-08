@@ -17,8 +17,9 @@
 01/09 - 0.5h - WH anal
 03/09 - 0.5h - bug investig
 04/09 - 0.5h - calc date of new product will start with year 2000
+08/09 - 1h   - allow print cash orders
 ----------------------------------------------------
-20.5h
+21.5h
 
 
 2452 PDF bug!!!
