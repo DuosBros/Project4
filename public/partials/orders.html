@@ -109,7 +109,7 @@
                     bs-tooltip="order.payment.paid ? 'Mark as Not paid' : 'Mark as Paid'" ng-hide="isOldAndPaid(order)">
                     <span class="glyphicon glyphicon-ok" style="font-size: 1.5em"></span>
                 </button>
-                <button ng-disabled="generatingPdf" class="btn btn-default btn-xs" data-placement="bottom"
+                <button ng-disabled="!order.payment.vs || generatingPdf" class="btn btn-default btn-xs" data-placement="bottom"
                         ng-click="$event.stopPropagation(); createPdf(order.id)" bs-tooltip="'Generate PDF'">
                     <span class="glyphicon glyphicon-list-alt" style="font-size: 1.5em"></span>
                 </button>
@@ -141,7 +141,7 @@
                         ng-hide="isOldAndPaid(order)">
                     <span class="glyphicon glyphicon-ok" style="font-size: 1.5em"></span>
                 </button>
-                <button ng-disabled="generatingPdf" class="btn btn-default btn-xs"
+                <button ng-disabled="!order.payment.vs || generatingPdf" class="btn btn-default btn-xs"
                         ng-click="$event.stopPropagation(); createPdf(order.id)">
                     <span class="glyphicon glyphicon-list-alt" style="font-size: 1.5em"></span>
                 </button>

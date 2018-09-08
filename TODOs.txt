@@ -19,11 +19,10 @@
 04/09 - 0.5h - calc date of new product will start with year 2000
 08/09 - 1h   - allow print cash orders
 09/09 - 1h   - edit notification treshold
+03/10 - 0.5h - reverting commit
 ----------------------------------------------------
-22.5h
+23h
 
-
-2452 PDF bug!!!
 
 168USD/year
 
