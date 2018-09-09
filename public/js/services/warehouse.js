@@ -7,6 +7,18 @@ medPharmaServices.factory('medPharmaWarehouse', ['$http', '$q', 'medPharmaUtilit
 
         var medPharmaWarehouse = {};
 
+        medPharmaWarehouse.getNotificationThreshold = function(productName) {
+
+            var notificationThresholds = {
+                'Colagen': 100,
+                'Vceli materi kasicka': 100,
+                'Zraloci chrupavka': 100,
+                'Glucosamin': 100
+            }
+
+            return notificationThresholds[productName];
+        }
+
         medPharmaWarehouse.editProductAmount = function(productName, newValue, calculationDate, difference, user) {
             var deferred = $q.defer();
 

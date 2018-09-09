@@ -695,8 +695,6 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
     }
 
     $scope.loadWarehouseInfoForNotifications = function() {
-        var notifiedProducts = ['Colagen', 'Vceli materi kasicka', 'Zraloci chrupavka', 'Glucosamin'];
-        var notificationValue = 100;
         var promises = [];
 
         medPharmaOthers.getAllProductsJson()
@@ -719,8 +717,9 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
             $scope.mappedProductsCounts = medPharmaWarehouse.mapProductNamesToAmounts($scope.allProductsNames, databaseProductsData);
             for(var i = 0; i < $scope.allProductsNames.length; i++) {
                 var productName = $scope.allProductsNames[i];
-                if(notifiedProducts.indexOf(productName) >= 0) {
-                    if(($scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid - $scope.productSales[productName].notPaid) < notificationValue) {
+                var notificationThreshold = medPharmaWarehouse.getNotificationThreshold(productName);
+                if(notificationThreshold) {
+                    if(($scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid - $scope.productSales[productName].notPaid) < notificationThreshold) {
                         $scope.showWarehouseNotification = true;
                         break;
                     }

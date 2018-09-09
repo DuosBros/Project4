@@ -6,8 +6,6 @@ var myApp = angular.module('medPharmaController');
 myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharmaWarehouse', '$modal', '$q',
 	function($scope, medPharmaOthers, medPharmaWarehouse, $modal, $q) {
 		$scope.isMobile = medPharmaOthers.isMobile();
-        $scope.watchedProducts = ['Colagen', 'Vceli materi kasicka', 'Zraloci chrupavka', 'Glucosamin'];
-        $scope.notificationValue = 100;
 
         $scope.openEditModal = function(productName) {
 
@@ -188,8 +186,9 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
 
         $scope.showNotification = function(productName) {
             if($scope.mappedProductsCounts && $scope.productSales && $scope.productSales[productName]) {
-                if($scope.watchedProducts.indexOf(productName) >= 0) {
-                    if(($scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid - $scope.productSales[productName].notPaid) < $scope.notificationValue) {
+                var notificationThreshold = medPharmaWarehouse.getNotificationThreshold(productName);
+                if(notificationThreshold) {
+                    if(($scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid - $scope.productSales[productName].notPaid) < notificationThreshold) {
                         return 'bg-danger';
                     }
                 } else {
