@@ -58,7 +58,7 @@ MongoClient.connect(dbUrl, {}, function(err, db) {
     }
     console.log("MongoDB connected at " + dbUrl);
 
-    var path = '/data exports/' + joinedDatesString;
+    var path = '/medpharma/data exports/' + joinedDatesString;
 
     var orders = db.collection('orders');
 

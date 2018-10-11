@@ -20,6 +20,7 @@
 08/09 - 1h   - allow print cash orders
 09/09 - 1h   - edit notification treshold
 03/10 - 0.5h - reverting commit
+11/10 - 0.5h - dropbox path change
 ----------------------------------------------------
 23h
 

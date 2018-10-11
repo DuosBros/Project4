@@ -65,7 +65,7 @@ function moveDumpToDropbox(filename, today) {
                 throw err;
             }
 
-            dbx.filesUpload({path:'/DB backup/' + today + "/" + filename, contents: data, mode: 'overwrite'})
+            dbx.filesUpload({path:'/medpharma/DB backup/' + today + "/" + filename, contents: data, mode: 'overwrite'})
             .then(function() {
                 console.log(filename + ' successfully backedup');
             })
@@ -109,7 +109,7 @@ Handler.prototype.export = function(fromDay, fromMonth, fromYear, toDay, toMonth
     var dateToString = dateTo.getDate() + '.' + (dateTo.getMonth() + 1) + '.' + dateTo.getFullYear();
     var joinedDatesString = dateFromString + '-' + dateToString;
 
-    var path = '/data exports/' + joinedDatesString;
+    var path = '/medpharma/data exports/' + joinedDatesString;
 
     console.log('Exporting orders..');
     console.log('From: ' + dateFrom);
@@ -139,7 +139,7 @@ Handler.prototype.exportNoVs = function(fromDay, fromMonth, fromYear, toDay, toM
     var dateFromString = dateFrom.getDate() + '.' + (dateFrom.getMonth() + 1) + '.' + dateFrom.getFullYear();
     var dateToString = dateTo.getDate() + '.' + (dateTo.getMonth() + 1) + '.' + dateTo.getFullYear();
     var joinedDatesString = 'VSLess_' + dateFromString + '-' + dateToString;
-    var path = '/data exports/' + joinedDatesString;
+    var path = '/medpharma/data exports/' + joinedDatesString;
 
     exportNoVsOrders(dateFrom, dateTo, firstName, lastName, street, city, zip, streetNumber, phone)
     .then(function(formattedOrders) {

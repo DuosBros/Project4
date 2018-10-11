@@ -375,7 +375,7 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 	var filename = filenameWithoutExtension + '.pdf';
 	pdfDoc.end();
 
-	dbx.filesUpload({path: '/faktury/' + filename, contents: pdfDoc, mode: 'overwrite'})
+	dbx.filesUpload({path: '/medpharma/faktury/' + filename, contents: pdfDoc, mode: 'overwrite'})
 	.then(function(response) {
 		console.log('upload to dropbox successful');
 		deferred.resolve(pdfDefinition);
