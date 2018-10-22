@@ -1,29 +1,4 @@
-﻿
-11/07 - 1h - attempt to work with forever
-12/07 - 1h - logs + new task analysis
-13/07 - 2h - expiration
-09/08 - 1h - expiration script part1
-10/08 - 1h - expiration part2
-11/08 - 1h - sorting
-13/08 - 1h - pagination
-14/08 - 1h - pagination
-15/08 - 1h - pagination
-16/08 - 1h - filtering improvements
-19/08 - 2h - speed
-26/08 - 3h - editable chart
-27/08 - 0.5h - from to for chart
-28/08 - 1h - time for charts
-29/08 - 1.5h - time for charts
-01/09 - 0.5h - WH anal
-03/09 - 0.5h - bug investig
-04/09 - 0.5h - calc date of new product will start with year 2000
-08/09 - 1h   - allow print cash orders
-09/09 - 1h   - edit notification treshold
-03/10 - 0.5h - reverting commit
-11/10 - 0.5h - dropbox path change
-----------------------------------------------------
-23h
-
+﻿22/10 - 1h zaslat rates
 
 168USD/year
 
