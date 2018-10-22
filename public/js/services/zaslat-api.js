@@ -51,8 +51,7 @@ medPharmaServices.factory('medPharmaZaslat', ['$http', '$q', 'medPharmaUtilities
                     width: 20,
                     height: 20,
                     length: 20
-                }],
-                delivery_branch: "1"
+                }]
             }
 
             var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
