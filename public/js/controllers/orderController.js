@@ -181,12 +181,7 @@ medPharmaController.controller('orderController',
             weight += 600;
         }
 
-        //TODO WEIGHT CHECK!!!
-        if (weight > 5000) {
-            return 5000;
-        } else {
-            return weight;
-        }
+        return weight;
     }
 
     $scope.calculateTotalPrice = function() {
