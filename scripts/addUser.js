@@ -1,11 +1,11 @@
 var passwordHash = require('password-hash');
 var owasp = require('owasp-password-strength-test');
 var MongoClient = require('mongodb').MongoClient;
-var dbUrl = 'mongodb://localhost:27017/medpharma';
+var dbUrl = 'mongodb://medpharma:TranMedGroup!234@ds153890.mlab.com:53890/heroku_gvlqrgxg';
 
 
-var username = 'nvxd212';
-var password = '12345a.dd67B';
+var username = 'nvxd';
+var password = '1aaaaaaaaaaaaaaaaa';
 var passwordTestResult = owasp.test(password);
 if(passwordTestResult.errors && passwordTestResult.errors.length > 0) {
     console.log(passwordTestResult.errors);
