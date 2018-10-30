@@ -1,17 +1,8 @@
 ﻿22/10 - 1h zaslat rates
 
+
+
 168USD/year
-
-1. cerneni                                                                      -done
-2. sort products                                                                -done
-3. slow - limit to 100 - try preload all and filter as before                   -done
-4. filter products in charts                                                    -done
-5. signature
-6. DP too small
-7. editace notification tresholdu u produktu                                    -done
-8. new chart tran msgs                                                          -done
-9. investigate 2452 pdfgen bug
-
 
 
 pozor: nove se nepocitaji ty ordery, ktere jsou abandoned - cerne

@@ -6,7 +6,8 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var morgan = require('morgan');
 var app = express();
-app.use(enforce.HTTPS({ trustProtoHeader: true }));
+var env = app.get('env');
+
 app.use(helmet());
 
 app.set('views', __dirname + '/public/views');
@@ -15,8 +16,7 @@ app.engine('html', require('ejs').renderFile);
 app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(express.static(__dirname + "/public"));
-//app.set('mongodb.url', 'mongodb://localhost:27017/medpharma');
-app.set('mongodb.url', 'mongodb://medpharma:TranMedGroup!234@ds153890.mlab.com:53890/heroku_gvlqrgxg')
+app.set('mongodb.url', 'mongodb://localhost:27017/medpharma');
 //app.set('mongodb.url', 'mongodb://localhost:27017/tranmedgroup');
 app.set('salt', 'superSecr123.bullsh18t');
 app.set('tokenExpiracy', 60 * 30 * 2 * 2 * 12);
@@ -38,6 +38,10 @@ app.set('bank-base-uri', 'https://www.fio.cz/ib_api/rest/periods/o3mjc3g69SqnDBa
 app.set('zaslat-token', 'CLqoi4we0JEaJTCLY25uk7QXdSzgNt5qevOxAlLA');
 app.set('dropbox-token', 'iNhg1bcaxL8AAAAAAAA_dvTV7NT4-RpKmAXlm9ef1YnBCl7mX548dzjk2aHIi9Hp');
 
+if (env != 'development') {
+    app.use(enforce.HTTPS({ trustProtoHeader: true }));
+    app.set('mongodb.url', 'mongodb://medpharma:TranMedGroup!234@ds153890.mlab.com:53890/heroku_gvlqrgxg');
+}
 
 morgan.token('remote-user', function getRemoveUser (req) {
     return req.headers.authorization;
