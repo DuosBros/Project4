@@ -1,11 +1,12 @@
 var express = require('express');
+var enforce = require('express-sslify');
 var helmet = require('helmet')
 var io;
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var morgan = require('morgan');
 var app = express();
-
+app.use(enforce.HTTPS({ trustProtoHeader: true }));
 app.use(helmet());
 
 app.set('views', __dirname + '/public/views');

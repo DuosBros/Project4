@@ -22,6 +22,7 @@
     "es6-promise": "^4.2.4",
     "express": "^4.13.4",
     "express-brute": "^1.0.1",
+    "express-sslify": "^1.2.0",
     "forever": "^0.15.2",
     "fs": "0.0.2",
     "helmet": "^2.3.0",
