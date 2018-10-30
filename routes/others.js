@@ -12,8 +12,8 @@ module.exports = function(app) {
     var bruteforce = new ExpressBrute(store);
 
     app.post('/rest/authenticate', bruteforce.prevent, function(req, res) {
-        var username = req.query.username;
-        var password = req.query.password;
+        var username = req.body.username;
+        var password = req.body.password;
         handler.authenticate(username, password)
         .then(function(token) {
             res.json(token);

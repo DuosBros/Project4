@@ -1,5 +1,6 @@
 ﻿22/10 - 1h zaslat rates
-
+30/10 - 0.5h force https + config improvements for dev
+30/10 - 0.5h auth query params to payload
 
 
 168USD/year

@@ -100,10 +100,16 @@ medPharmaServices.factory('medPharmaOthers', ['$http', '$q', '$cookies', '$locat
     medPharmaOthers.authenticate = function(username, password) {
         var deferred = $q.defer();
 
+        var data = {
+            username: username,
+            password: password
+        }
+
         $http({
             method : 'POST',
-            url : '/rest/authenticate?username=' + username + '&password=' + password,
+            url : '/rest/authenticate',
             cache : false,
+            data: data
         })
         .then(function(loginData) {
             deferred.resolve(loginData.data);
