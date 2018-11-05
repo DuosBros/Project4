@@ -15,11 +15,12 @@ module.exports = function(app) {
         var calculationDate = req.body.calculationDate;
         var difference = req.body.difference;
         var user = req.body.user;
+        var notificationThreshold = req.body.notificationThreshold;
 
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.saveProductAmount(productName, amount, calculationDate, difference, user);
+                return handler.saveProductAmount(productName, amount, calculationDate, difference, user, notificationThreshold);
             })
             .then(function() {
                 res.json();

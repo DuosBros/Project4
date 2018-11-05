@@ -717,7 +717,7 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
             $scope.mappedProductsCounts = medPharmaWarehouse.mapProductNamesToAmounts($scope.allProductsNames, databaseProductsData);
             for(var i = 0; i < $scope.allProductsNames.length; i++) {
                 var productName = $scope.allProductsNames[i];
-                var notificationThreshold = medPharmaWarehouse.getNotificationThreshold(productName);
+                var notificationThreshold = $scope.mappedProductsCounts[productName].notificationThreshold;
                 if(notificationThreshold) {
                     if(($scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid - $scope.productSales[productName].notPaid) < notificationThreshold) {
                         $scope.showWarehouseNotification = true;

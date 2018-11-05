@@ -7,19 +7,7 @@ medPharmaServices.factory('medPharmaWarehouse', ['$http', '$q', 'medPharmaUtilit
 
         var medPharmaWarehouse = {};
 
-        medPharmaWarehouse.getNotificationThreshold = function(productName) {
-
-            var notificationThresholds = {
-                'Colagen': 100,
-                'Vceli materi kasicka': 100,
-                'Zraloci chrupavka': 100,
-                'Glucosamin': 100
-            }
-
-            return notificationThresholds[productName];
-        }
-
-        medPharmaWarehouse.editProductAmount = function(productName, newValue, calculationDate, difference, user) {
+        medPharmaWarehouse.editProductAmount = function(productName, newValue, calculationDate, difference, user, notificationThreshold) {
             var deferred = $q.defer();
 
             var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
@@ -28,7 +16,8 @@ medPharmaServices.factory('medPharmaWarehouse', ['$http', '$q', 'medPharmaUtilit
                 url : '/rest/warehouse/products/' + productName,
                 headers: requestHeaders,
                 cache : false,
-                data : {newValue: newValue, calculationDate: calculationDate, difference: difference, user: user}
+                data : {newValue: newValue, calculationDate: calculationDate,
+                    difference: difference, user: user, notificationThreshold: notificationThreshold}
                 })
                 .then(function() {
                     deferred.resolve();
@@ -36,6 +25,7 @@ medPharmaServices.factory('medPharmaWarehouse', ['$http', '$q', 'medPharmaUtilit
                 function(err) {
                     deferred.reject(err);
                 });
+
             return deferred.promise;
         };
 
@@ -159,7 +149,11 @@ medPharmaServices.factory('medPharmaWarehouse', ['$http', '$q', 'medPharmaUtilit
         medPharmaWarehouse.mapProductNamesToAmounts = function(productNames, databaseData) {
             var mappedDatabaseObject = {};
             databaseData.forEach(function(product) {
-                mappedDatabaseObject[product.productName] = {total: product.amount, calculationDate: new Date(product.calculationDate)};
+                mappedDatabaseObject[product.productName] = {
+                    total: product.amount,
+                    calculationDate: new Date(product.calculationDate),
+                    notificationThreshold: product.notificationThreshold
+                };
             })
 
             var mappedDefaultProductsCounts = {};

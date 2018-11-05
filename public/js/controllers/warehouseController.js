@@ -14,7 +14,8 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
             $modalScope.productInfo = {
                 oldValue: $scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid,
                 newValue: $scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid,
-                calculationDate: new Date($scope.mappedProductsCounts[productName].calculationDate)
+                calculationDate: new Date($scope.mappedProductsCounts[productName].calculationDate),
+                notificationThreshold: $scope.mappedProductsCounts[productName].notificationThreshold
             };
             var modal = $modal({
                             scope: $modalScope,
@@ -27,7 +28,9 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
                 medPharmaWarehouse.editProductAmount(productName,
                     $modalScope.productInfo.newValue + $scope.productSales[productName].paid,
                     $modalScope.productInfo.calculationDate,
-                    $scope.loggedUser
+                    $modalScope.productInfo.newValue - $modalScope.productInfo.oldValue,
+                    $scope.loggedUser,
+                    $modalScope.productInfo.notificationThreshold
                 )
                 .then(function() {
                     reloadAllProductAmounts();
@@ -186,7 +189,7 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
 
         $scope.showNotification = function(productName) {
             if($scope.mappedProductsCounts && $scope.productSales && $scope.productSales[productName]) {
-                var notificationThreshold = medPharmaWarehouse.getNotificationThreshold(productName);
+                var notificationThreshold = $scope.mappedProductsCounts[productName].notificationThreshold;
                 if(notificationThreshold) {
                     if(($scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid - $scope.productSales[productName].notPaid) < notificationThreshold) {
                         return 'bg-danger';
@@ -235,7 +238,7 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
                         var item = {
                             name: key,
                             total: $scope.mappedProductsCounts[key].total,
-                            calculationDate: $scope.mappedProductsCounts[key].calculationDate
+                            calculationDate: $scope.mappedProductsCounts[key].calculationDate,
                         }
                         $scope.productsCountArray.push(item);
                     }
