@@ -61,7 +61,7 @@
 					<div class="col-sm-2" style="text-align: center">
 						<button type="button" ng-click="openAddModal(product.name)" class="btn btn-default btn-xs">Add</button>
 						<button type="button" ng-click="openEditModal(product.name)" class="btn btn-default btn-xs"
-							ng-show="loggedUser == 'admin'">
+							ng-show="loggedUser == 'admin' || loggedUser == 'nvxd'">
 							Edit
 						</button>
 						<button type="button" ng-click="openHistoryModal(product.name)" class="btn btn-default btn-xs">History</button>
