@@ -628,46 +628,4 @@ myApp.controller('Orders2017Ctrl', ['$scope', '$modal', 'medPharmaOrders', 'medP
     $scope.updateData = function() {
         $scope.reoder();
     }
-
-    $scope.loadWarehouseInfoForNotifications = function() {
-        var notifiedProducts = ['Colagen', 'Vceli materi kasicka', 'Zraloci chrupavka', 'Glucosamin'];
-        var notificationValue = 100;
-        var promises = [];
-
-        medPharmaOthers.getAllProductsJson()
-        .then(function(products) {
-            $scope.allProductsNames = Object.keys(products);
-            $scope.allProductsNames.forEach(function(productName) {
-                promises.push(medPharmaWarehouse.calculateProductsSales(productName));
-            })
-            return $q.all(promises);
-        })
-        .then(function(promiseResults) {
-            $scope.productSales = promiseResults.reduce(function(mappedData, obj) {
-                var objKeys = Object.keys(obj);
-                mappedData[objKeys[0]] = obj[objKeys[0]];
-				return mappedData;
-			}, {});
-            return medPharmaWarehouse.getProductsDataFromDB();
-        })
-        .then(function(databaseProductsData) {
-            $scope.mappedProductsCounts = medPharmaWarehouse.mapProductNamesToAmounts($scope.allProductsNames, databaseProductsData);
-            for(var i = 0; i < $scope.allProductsNames.length; i++) {
-                var productName = $scope.allProductsNames[i];
-                if(notifiedProducts.indexOf(productName) >= 0) {
-                    if(($scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid - $scope.productSales[productName].notPaid) < notificationValue) {
-                        $scope.showWarehouseNotification = true;
-                        break;
-                    }
-                } else {
-                    if(($scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid - $scope.productSales[productName].notPaid) < 0) {
-                        $scope.showWarehouseNotification = true;
-                        break;
-                    }
-                }
-            }
-        })
-    }
-    $scope.loadWarehouseInfoForNotifications();
-
 }]);

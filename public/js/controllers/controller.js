@@ -3,8 +3,10 @@
 
 var myApp = angular.module('medPharmaController', []);
 
-myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOthers', '$location', 'medPharmaWarehouse', '$q', 'medPharmaZaslat',
-    function($scope, $modal, medPharmaOrders, medPharmaOthers, $location, medPharmaWarehouse, $q, medPharmaZaslat) {
+myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOthers', '$location',
+                                'medPharmaWarehouse', '$q', 'medPharmaZaslat', 'medPharmaNotifications',
+    function($scope, $modal, medPharmaOrders, medPharmaOthers, $location,
+        medPharmaWarehouse, $q, medPharmaZaslat, medPharmaNotifications) {
 
     var socket = io.connect();
     socket.on('orders', function(data) {
@@ -695,42 +697,12 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
     }
 
     $scope.loadWarehouseInfoForNotifications = function() {
-        var promises = [];
-
-        medPharmaOthers.getAllProductsJson()
-        .then(function(products) {
-            $scope.allProductsNames = Object.keys(products);
-            $scope.allProductsNames.forEach(function(productName) {
-                promises.push(medPharmaWarehouse.calculateProductsSales(productName));
-            })
-            return $q.all(promises);
-        })
-        .then(function(promiseResults) {
-            $scope.productSales = promiseResults.reduce(function(mappedData, obj) {
-                var objKeys = Object.keys(obj);
-                mappedData[objKeys[0]] = obj[objKeys[0]];
-				return mappedData;
-			}, {});
-            return medPharmaWarehouse.getProductsDataFromDB();
-        })
-        .then(function(databaseProductsData) {
-            $scope.mappedProductsCounts = medPharmaWarehouse.mapProductNamesToAmounts($scope.allProductsNames, databaseProductsData);
-            for(var i = 0; i < $scope.allProductsNames.length; i++) {
-                var productName = $scope.allProductsNames[i];
-                var notificationThreshold = $scope.mappedProductsCounts[productName].notificationThreshold;
-                if(notificationThreshold) {
-                    if(($scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid - $scope.productSales[productName].notPaid) < notificationThreshold) {
-                        $scope.showWarehouseNotification = true;
-                        break;
-                    }
-                } else {
-                    if(($scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid - $scope.productSales[productName].notPaid) < 0) {
-                        $scope.showWarehouseNotification = true;
-                        break;
-                    }
-                }
+        medPharmaNotifications.getWarehouseNotifications()
+        .then(function(notifications) {
+            if (notifications.length > 0) {
+                $scope.showWarehouseNotification = true;
             }
-        })
+        });
     }
 
     $scope.loadZaslatDataForNotifications = function() {

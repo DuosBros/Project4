@@ -1,6 +1,9 @@
 ﻿22/10 - 1h zaslat rates
 30/10 - 0.5h force https + config improvements for dev
 30/10 - 0.5h auth query params to payload
+05/11 - 1.5h api for product notification threshold + notification endpoints preparations
+06/11 - 1h work on warehouse notifications and endpoints refactored
+07/11 - 1h work on WH notifications - endpoint DONE
 
 
 168USD/year

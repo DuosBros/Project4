@@ -146,24 +146,26 @@ medPharmaServices.factory('medPharmaWarehouse', ['$http', '$q', 'medPharmaUtilit
             return deferred.promise;
         };
 
-        medPharmaWarehouse.mapProductNamesToAmounts = function(productNames, databaseData) {
-            var mappedDatabaseObject = {};
-            databaseData.forEach(function(product) {
-                mappedDatabaseObject[product.productName] = {
-                    total: product.amount,
-                    calculationDate: new Date(product.calculationDate),
-                    notificationThreshold: product.notificationThreshold
-                };
-            })
+        medPharmaWarehouse.mapProductNamesToAmountsPromise = function(productNames, productData) {
+            var deferred = $q.defer();
 
-            var mappedDefaultProductsCounts = {};
+            var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
+            $http({
+                method : 'POST',
+                url : '/rest/mapProductNamesToAmounts',
+                data : { productNames: productNames, productData: productData },
+                headers: requestHeaders,
+                cache : false
+                })
+                .then(function(result) {
+                    deferred.resolve(result.data);
+                },
+                function(err) {
+                    deferred.reject(err);
+                });
 
-            productNames.forEach(function(productName) {
-                mappedDefaultProductsCounts[productName] = {total: 0, booked: 0, calculationDate: new Date()};
-            })
-
-            return Object.assign({}, mappedDefaultProductsCounts, mappedDatabaseObject);
-        };
+            return deferred.promise;
+        }
 
 
         return medPharmaWarehouse;

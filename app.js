@@ -77,6 +77,7 @@ MongoClient.connect(dbUrl, {}, function(err, db) {
     require('./routes/warehouse.js')(app);
     require('./routes/zaslat-api.js')(app);
     require('./routes/bank.js')(app);
+    require('./routes/notifications.js')(app);
     require('./routes/scripts.js')(app);
     require('./routes/default')(app);
 

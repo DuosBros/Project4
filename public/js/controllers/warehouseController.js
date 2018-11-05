@@ -3,8 +3,8 @@
 
 var myApp = angular.module('medPharmaController');
 
-myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharmaWarehouse', '$modal', '$q',
-	function($scope, medPharmaOthers, medPharmaWarehouse, $modal, $q) {
+myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharmaWarehouse', '$modal', '$q', 'medPharmaNotifications',
+	function($scope, medPharmaOthers, medPharmaWarehouse, $modal, $q, medPharmaNotifications) {
 		$scope.isMobile = medPharmaOthers.isMobile();
 
         $scope.openEditModal = function(productName) {
@@ -188,19 +188,21 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
         }
 
         $scope.showNotification = function(productName) {
-            if($scope.mappedProductsCounts && $scope.productSales && $scope.productSales[productName]) {
-                var notificationThreshold = $scope.mappedProductsCounts[productName].notificationThreshold;
-                if(notificationThreshold) {
-                    if(($scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid - $scope.productSales[productName].notPaid) < notificationThreshold) {
-                        return 'bg-danger';
-                    }
-                } else {
-                    if(($scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid - $scope.productSales[productName].notPaid) < 0) {
-                        return 'bg-danger';
-                    }
+            for (var i = 0; i < $scope.notifications.length; i++) {
+                var notification = $scope.notifications[i];
+                if (notification.product == productName) {
+                    return 'bg-danger';
                 }
             }
+
             return '';
+        }
+
+        function loadNotifications() {
+            medPharmaNotifications.getWarehouseNotifications()
+            .then(function(notifications) {
+                $scope.notifications = notifications;
+            })
         }
 
         function loadAllProducts() {
@@ -230,7 +232,14 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
                 return medPharmaWarehouse.getProductsDataFromDB();
             })
             .then(function(databaseProductsData) {
-                $scope.mappedProductsCounts = medPharmaWarehouse.mapProductNamesToAmounts($scope.allProductNames, databaseProductsData);
+                return medPharmaWarehouse.mapProductNamesToAmountsPromise($scope.allProductNames, databaseProductsData);
+            })
+            .then(function(mappedProductsCountsFromPromise) {
+                Object.keys(mappedProductsCountsFromPromise).forEach(function(product) {
+                    mappedProductsCountsFromPromise[product].calculationDate = new Date(mappedProductsCountsFromPromise[product].calculationDate);
+                });
+                $scope.mappedProductsCounts = mappedProductsCountsFromPromise;
+
                 $scope.productsCountArray = [];
 
                 for (var key in $scope.mappedProductsCounts) {
@@ -243,7 +252,7 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
                         $scope.productsCountArray.push(item);
                     }
                 }
-            })
+            });
         }
 
         if(!medPharmaOthers.getLoggedInUser()) {
@@ -252,5 +261,6 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
             $scope.loggedUser = medPharmaOthers.getLoggedInUser();
             loadAllProducts();
             reloadAllProductAmounts();
+            loadNotifications();
         }
 }]);
