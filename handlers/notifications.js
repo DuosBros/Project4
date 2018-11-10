@@ -9,19 +9,52 @@ var othersHandler;
 var WarehouseHandler = require('../handlers/warehouse.js').Handler;
 var warehouseHandler;
 
+var ZaslatHandler = require('../handlers/zaslat-api.js').Handler;
+var zaslatHandler;
+
 Handler = function(app) {
     handler = this;
 
     othersHandler = new OthersHandler(app);
     warehouseHandler = new WarehouseHandler(app);
+    zaslatHandler = new ZaslatHandler(app);
 };
 
 Handler.prototype.getNotPaidNotifications = function() {
 
     var deferred = Q.defer();
 
+    var checkedDate = new Date();
+    checkedDate.setDate(checkedDate.getDate() - 14);
 
-    deferred.resolve("kund")
+    var result = [];
+
+    var shipments;
+
+    zaslatHandler.getAllShipments()
+    .then(function(shipments) {
+        shipments = shipments;
+
+        return handler.getAllZaslatOrders();
+    })
+    .then(function(zaslatOrders) {
+        for (var i = 0; i < zaslatOrders.length; i++) {
+            var zaslatOrder = zaslatOrders[i];
+            if (!zaslatOrder.payment.paymentDate) {
+                if (shipments[zaslatOrder.zaslatShipmentId]) {
+                    var deliveryDate = new Date(shipments[zaslatOrder.zaslatShipmentId].delivery_date);
+                    if (deliveryDate < checkedDate) {
+                        var notificationItem = {
+                            vs: zaslatOrder.payment.vs,
+                            deliveryDate: deliveryDate,
+                            threshold: checkedDate
+                        }
+                        result.push(notificationItem);
+                    }
+                }
+            }
+        }
+    });
 
     return deferred.promise;
     // {

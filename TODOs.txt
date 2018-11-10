@@ -4,6 +4,8 @@
 05/11 - 1.5h api for product notification threshold + notification endpoints preparations
 06/11 - 1h work on warehouse notifications and endpoints refactored
 07/11 - 1h work on WH notifications - endpoint DONE
+09/11 - 1.5h WH notifications done
+10/11 - 0.5h zaslat notifs endpoint
 
 
 168USD/year
