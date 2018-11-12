@@ -25,13 +25,9 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
     $scope.sortValue = "Order Date";
     $scope.labelsToPrint = [];
 
-    if($scope.user) {
+    if ($scope.user) {
         getAllOrders();
         getAllOrdersEagerly();
-        medPharmaZaslat.getAllShipments()
-        .then(function(shipments) {
-            $scope.zaslatShipments = shipments;
-        });
     } else {
         medPharmaOthers.redirectToLoginPage();
     }

@@ -26,15 +26,20 @@ Handler.prototype.getNotPaidNotifications = function() {
 
     var checkedDate = new Date();
     checkedDate.setDate(checkedDate.getDate() - 14);
-    console.log(checkedDate);
 
     var result = [];
 
-    var allShipments;
+    var allShipments = {};
+
+    var getShipmentsPromises = [];
+    getShipmentsPromises.push(zaslatHandler.getAllShipments());
+    getShipmentsPromises.push(zaslatHandler.getAllShipments(100));
+    getShipmentsPromises.push(zaslatHandler.getAllShipments(200));
 
     zaslatHandler.getAllShipments()
+    Q.all(getShipmentsPromises)
     .then(function(shipments) {
-        allShipments = shipments;
+        allShipments = Object.assign(allShipments, shipments[0], shipments[1], shipments[2]);
 
         return zaslatHandler.getAllZaslatOrders();
     })
@@ -60,24 +65,12 @@ Handler.prototype.getNotPaidNotifications = function() {
     });
 
     return deferred.promise;
-    // {
-    //     product: xxx,
-    //     current: 123,
-    //     threshold: 100
-    // },
-    // {
-    //     VS: 123,
-    //     orderDate: 10.10.2018,
-    //     threshold: 1.10.2018,
-    // }
 }
 
 Handler.prototype.mapProductNamesToAmountsPromise = function(productNames, productsData) {
     var deferred = Q.defer();
 
-    console.log('piiizda')
     var mappedProductNamesToAmounts = mapProductNamesToAmounts(productNames, productsData);
-    console.log('will resolve')
     deferred.resolve(mappedProductNamesToAmounts);
 
     return deferred.promise;
@@ -157,16 +150,6 @@ Handler.prototype.getWarehouseNotifications = function() {
     })
 
     return deferred.promise;
-    // {
-    //     product: xxx,
-    //     current: 123,
-    //     threshold: 100
-    // },
-    // {
-    //     VS: 123,
-    //     orderDate: 10.10.2018,
-    //     threshold: 1.10.2018,
-    // }
 }
 
 

@@ -96,11 +96,16 @@ Handler.prototype.getAllPickups = function() {
     return deferred.promise;
 }
 
-Handler.prototype.getAllShipments = function() {
+Handler.prototype.getAllShipments = function(offset) {
     var deferred = Q.defer();
 
+    var uri = zaslatApiBaseUri + zaslatApiGetAllShipmentsUri;
+    if (offset) {
+        uri += '?offset=' + offset;
+    }
+
     var options = {
-        uri: zaslatApiBaseUri + zaslatApiGetAllShipmentsUri,
+        uri: uri,
         headers: zaslatHeaders,
         json: true
     };
