@@ -35,7 +35,7 @@ Handler.prototype.getNotPaidNotifications = function() {
     .then(function(shipments) {
         shipments = shipments;
 
-        return handler.getAllZaslatOrders();
+        return zaslatHandler.getAllZaslatOrders();
     })
     .then(function(zaslatOrders) {
         for (var i = 0; i < zaslatOrders.length; i++) {
