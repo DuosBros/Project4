@@ -26,6 +26,7 @@ Handler.prototype.getNotPaidNotifications = function() {
 
     var checkedDate = new Date();
     checkedDate.setDate(checkedDate.getDate() - 14);
+    console.log(checkedDate);
 
     var result = [];
 
@@ -55,7 +56,6 @@ Handler.prototype.getNotPaidNotifications = function() {
             }
         }
 
-        console.log('pica7');
         deferred.resolve(result);
     });
 
