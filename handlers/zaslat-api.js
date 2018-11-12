@@ -269,7 +269,7 @@ Handler.prototype.getAllZaslatOrders = function() {
                         'zaslatDate': -1
                     }
                 };
-    var limit = {$limit: 150};
+    var limit = {$limit: 300};
     orders.aggregate([filter, sort, limit])
     .toArray(function(err, orders) {
         if(err) {
