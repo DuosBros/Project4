@@ -29,13 +29,13 @@ Handler.prototype.getNotPaidNotifications = function() {
 
     var result = [];
 
-    var shipments;
+    var allShipments;
 
     console.log('pica3');
     zaslatHandler.getAllShipments()
     .then(function(shipments) {
         console.log('pica4');
-        shipments = shipments;
+        allShipments = shipments;
 
         return zaslatHandler.getAllZaslatOrders();
     })
@@ -44,15 +44,15 @@ Handler.prototype.getNotPaidNotifications = function() {
         for (var i = 0; i < zaslatOrders.length; i++) {
             var zaslatOrder = zaslatOrders[i];
             if (!zaslatOrder.payment.paymentDate) {
-                if (shipments[zaslatOrder.zaslatShipmentId]) {
-                    var deliveryDate = new Date(shipments[zaslatOrder.zaslatShipmentId].delivery_date);
+                if (allShipments[zaslatOrder.zaslatShipmentId]) {
+                    var deliveryDate = new Date(allShipments[zaslatOrder.zaslatShipmentId].delivery_date);
                     if (deliveryDate < checkedDate) {
                         var notificationItem = {
                             vs: zaslatOrder.payment.vs,
                             deliveryDate: deliveryDate,
                             threshold: checkedDate
                         }
-                        console.log('pica46');
+                        console.log('pica6');
                         result.push(notificationItem);
                     }
                 }
