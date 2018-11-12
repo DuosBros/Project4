@@ -31,8 +31,7 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
         medPharmaZaslat.getAllShipments()
         .then(function(shipments) {
             $scope.zaslatShipments = shipments;
-            $scope.loadZaslatDataForNotifications();
-        })
+        });
     } else {
         medPharmaOthers.redirectToLoginPage();
     }
@@ -706,29 +705,16 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
     }
 
     $scope.loadZaslatDataForNotifications = function() {
-        if (!$scope.zaslatShipments) {
-            return;
-        }
-        var checkedDate = new Date();
-        checkedDate.setDate(checkedDate.getDate() - 14);
-
-        medPharmaZaslat.getAllZaslatOrders()
-        .then(function(zaslatOrders) {
+        medPharmaNotifications.getNotPaidNotifications()
+        .then(function(notifications) {
             $scope.notPaidDeliveredOrders = [];
-            for (var i = 0; i < zaslatOrders.length; i++) {
-                var zaslatOrder = zaslatOrders[i];
-                if (!zaslatOrder.payment.paymentDate) {
-                    if ($scope.zaslatShipments[zaslatOrder.zaslatShipmentId]) {
-                        var deliveryDate = new Date($scope.zaslatShipments[zaslatOrder.zaslatShipmentId].delivery_date);
-                        if (deliveryDate < checkedDate) {
-                            $scope.notPaidDeliveredOrders.push(zaslatOrder.payment.vs);
-                        }
-                    }
-                }
-            }
-        })
+            notifications.forEach(function(notification) {
+                $scope.notPaidDeliveredOrders.push(notification.vs);
+            });
+        });
     }
 
     $scope.loadWarehouseInfoForNotifications();
+    $scope.loadZaslatDataForNotifications();
 
 }]);

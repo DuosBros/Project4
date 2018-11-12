@@ -55,33 +55,21 @@ module.exports = function(app) {
     app.get('/rest/notPaidNotifications', function(req, res) {
         var token = tools.extractToken(req);
 
-        // if (token) {
-        //     authenticationHandler.validateToken(token)
-        //     .then(function() {
-        //         return handler.getNotPaidNotifications()
-        //     })
-        //     .then(function(notifications) {
-        //         res.json(notifications);
-        //         res.end();
-        //     })
-        //     .fail(function(err) {
-        //         tools.replyError(err, res);
-        //     })
-        //     .done();
-        // } else {
-        //     res.status(403).send({message: 'No authentication token!'});
-        // }
-
-
-        handler.getNotPaidNotifications()
-        .then(function(notifications) {
-            res.json(notifications);
-            res.end();
-        })
-        .fail(function(err) {
-            tools.replyError(err, res);
-        })
-        .done();
-
+        if (token) {
+            authenticationHandler.validateToken(token)
+            .then(function() {
+                return handler.getNotPaidNotifications()
+            })
+            .then(function(notifications) {
+                res.json(notifications);
+                res.end();
+            })
+            .fail(function(err) {
+                tools.replyError(err, res);
+            })
+            .done();
+        } else {
+            res.status(403).send({message: 'No authentication token!'});
+        }
     });
 }
