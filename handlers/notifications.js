@@ -54,6 +54,8 @@ Handler.prototype.getNotPaidNotifications = function() {
                 }
             }
         }
+
+        deferred.resolve(result);
     });
 
     return deferred.promise;
