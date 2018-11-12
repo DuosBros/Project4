@@ -31,16 +31,13 @@ Handler.prototype.getNotPaidNotifications = function() {
 
     var allShipments;
 
-    console.log('pica3');
     zaslatHandler.getAllShipments()
     .then(function(shipments) {
-        console.log('pica4');
         allShipments = shipments;
 
         return zaslatHandler.getAllZaslatOrders();
     })
     .then(function(zaslatOrders) {
-        console.log('pica5');
         for (var i = 0; i < zaslatOrders.length; i++) {
             var zaslatOrder = zaslatOrders[i];
             if (!zaslatOrder.payment.paymentDate) {
@@ -52,7 +49,6 @@ Handler.prototype.getNotPaidNotifications = function() {
                             deliveryDate: deliveryDate,
                             threshold: checkedDate
                         }
-                        console.log('pica6');
                         result.push(notificationItem);
                     }
                 }

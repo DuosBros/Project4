@@ -55,12 +55,9 @@ module.exports = function(app) {
     app.get('/rest/notPaidNotifications', function(req, res) {
         var token = tools.extractToken(req);
 
-        console.log('pica1');
-
         if (token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                console.log('pica2');
                 return handler.getNotPaidNotifications()
             })
             .then(function(notifications) {
