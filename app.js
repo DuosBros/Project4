@@ -18,7 +18,7 @@ app.use(methodOverride());
 app.use(express.static(__dirname + "/public"));
 app.set('mongodb.url', 'mongodb://localhost:27017/medpharma');
 //app.set('mongodb.url', 'mongodb://localhost:27017/tranmedgroup');
-app.set('salt', 'superSecr123.bullsh18t');
+app.set('salt', 'superSer123.bullsh18t');
 app.set('tokenExpiracy', 60 * 30 * 2 * 2 * 12);
 app.set('DELETED_ORDERS_STATE', 'abandoned');
 app.set('ACTIVE_ORDERS_STATE', 'active');
@@ -40,7 +40,7 @@ app.set('dropbox-token', 'iNhg1bcaxL8AAAAAAAA_dvTV7NT4-RpKmAXlm9ef1YnBCl7mX548dz
 
 if (env != 'development') {
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
-    app.set('mongodb.url', 'mongodb://medpharma:TranMedGroup!234@ds153890.mlab.com:53890/heroku_gvlqrgxg');
+    app.set('mongodb.url', 'mongodb://medpharma2:TranMedGroup12e@ds153890.mlab.com:53890/heroku_gvlqrgxg');
 }
 
 morgan.token('remote-user', function getRemoveUser (req) {

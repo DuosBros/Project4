@@ -11,6 +11,9 @@
 
 168USD/year
 
+new todo list:
+1. routa na unlock ordery
+
 
 pozor: nove se nepocitaji ty ordery, ktere jsou abandoned - cerne
 Booked: produkty na aktivnich orderach po calculation date, ktere nejsou zaplacene
