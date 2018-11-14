@@ -1,10 +1,10 @@
 
-mongoexport --host ds153890.mlab.com:53890 -u medpharma -p 'TranMedGroup!234' -d heroku_gvlqrgxg  --collection orders --out temp/orders.json
-mongoexport --host ds153890.mlab.com:53890 -u medpharma -p 'TranMedGroup!234' -d heroku_gvlqrgxg  --collection costs --out temp/costs.json
-mongoexport --host ds153890.mlab.com:53890 -u medpharma -p 'TranMedGroup!234' -d heroku_gvlqrgxg  --collection senders --out temp/senders.json
-mongoexport --host ds153890.mlab.com:53890 -u medpharma -p 'TranMedGroup!234' -d heroku_gvlqrgxg  --collection warehouse --out temp/warehouse.json
-mongoexport --host ds153890.mlab.com:53890 -u medpharma -p 'TranMedGroup!234' -d heroku_gvlqrgxg  --collection products --out temp/products.json
-mongoexport --host ds153890.mlab.com:53890 -u medpharma -p 'TranMedGroup!234' -d heroku_gvlqrgxg  --collection users --out temp/users.json
+mongoexport --host ds153890.mlab.com:53890 -u medpharma2 -p TranMedGroup12e -d heroku_gvlqrgxg --collection orders --out temp/orders.json
+mongoexport --host ds153890.mlab.com:53890 -u medpharma2 -p TranMedGroup12e -d heroku_gvlqrgxg --collection costs --out temp/costs.json
+mongoexport --host ds153890.mlab.com:53890 -u medpharma2 -p TranMedGroup12e -d heroku_gvlqrgxg --collection senders --out temp/senders.json
+mongoexport --host ds153890.mlab.com:53890 -u medpharma2 -p TranMedGroup12e -d heroku_gvlqrgxg --collection warehouse --out temp/warehouse.json
+mongoexport --host ds153890.mlab.com:53890 -u medpharma2 -p TranMedGroup12e -d heroku_gvlqrgxg --collection products --out temp/products.json
+mongoexport --host ds153890.mlab.com:53890 -u medpharma2 -p TranMedGroup12e -d heroku_gvlqrgxg --collection users --out temp/users.json
 
 
 mongoimport --drop --db medpharma --collection orders --file temp/orders.json
