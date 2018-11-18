@@ -36,7 +36,7 @@ app.set('zaslat-label', 'shipments/label');
 app.set('bank-base-uri', 'https://www.fio.cz/ib_api/rest/periods/o3mjc3g69SqnDBaE7Ul7AvafQldh3MUDanF9A837CfmRMsG0idVjPIh0TAb7WVE4/');
 
 app.set('zaslat-token', 'CLqoi4we0JEaJTCLY25uk7QXdSzgNt5qevOxAlLA');
-app.set('dropbox-token', 'iNhg1bcaxL8AAAAAAAA_dvTV7NT4-RpKmAXlm9ef1YnBCl7mX548dzjk2aHIi9Hp');
+app.set('dropbox-token', 'iNhg1bcaxL8AAAAAAABAS-Nu_J1oDWWOrMvcFXGvmwnHc8iDr2sKNIMaYdafoWN-');
 
 if (env != 'development') {
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
