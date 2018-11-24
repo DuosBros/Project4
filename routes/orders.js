@@ -307,6 +307,29 @@ module.exports = function(app) {
         }
     });
 
+    app.put('/rest/orders/:orderId/unlock', function(req, res) {
+        var token = tools.extractToken(req);
+        var orderId = req.params.orderId;
+        var username = req.query.username;
+
+        if (token) {
+            authenticationHandler.validateToken(token)
+            .then(function() {
+                return handler.setOrderLock(orderId, username, -1000)
+            })
+            .then(function(editedOrder) {
+                res.json(editedOrder);
+                res.end();
+            })
+            .fail(function(err) {
+                tools.replyError(err, res);
+            })
+            .done();
+        } else {
+            res.status(403).send({message: 'No authentication token!'});
+        }
+    });
+
 
     app.delete('/rest/orders/:orderId', function(req, res) {
         var token = tools.extractToken(req);

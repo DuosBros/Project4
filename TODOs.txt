@@ -7,13 +7,15 @@
 09/11 - 1.5h WH notifications done
 10/11 - 0.5h zaslat notifs endpoint
 12/11 - 1.5h more zaslat notifs
+24/11 - 0.5h unlock ordery
 
 
 168USD/year
 
 new todo list:
-1. routa na unlock ordery
-
+2. groupy produktu
+3. kategorizovat costs
+4. gmail integraci
 
 pozor: nove se nepocitaji ty ordery, ktere jsou abandoned - cerne
 Booked: produkty na aktivnich orderach po calculation date, ktere nejsou zaplacene

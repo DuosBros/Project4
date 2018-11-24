@@ -379,11 +379,11 @@ Handler.prototype.verifyLock = function(orderId, username) {
 
     orders.findOne({id: id}, {},
             function(err, order) {
-                if(err) {
+                if (err) {
                     console.log('ERROR while getting order with ID: ' + orderId + '> ' + err);
                     deferred.reject(err);
                 } else {
-                    if(new Date() > order.lock.timestamp || username == order.lock.username) {
+                    if (new Date() > order.lock.timestamp || username == order.lock.username) {
                         deferred.resolve(false);
                     } else {
                         deferred.reject({lockedBy: order.lock.username});
