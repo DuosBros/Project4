@@ -6,6 +6,10 @@ module.exports = function(app) {
     var AuthenticationHandler = require('../handlers/others.js').Handler;
     var authenticationHandler = new AuthenticationHandler(app);
 
+    app.get('/rest/gmail/auth', function(req, res) {
+        console.log('PIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII');
+    });
+
     app.get('/rest/gmail/emails', function(req, res) {
         var token = tools.extractToken(req);
 

@@ -7,7 +7,7 @@
 09/11 - 1.5h WH notifications done
 10/11 - 0.5h zaslat notifs endpoint
 12/11 - 1.5h more zaslat notifs
-24/11 - 2h unlock ordery + costs category + gmail + products cat
+24/11 - 2.5h unlock ordery + costs category + gmail + products cat
 
 
 168USD/year
@@ -20,6 +20,9 @@ Booked: produkty na aktivnich orderach po calculation date, ktere nejsou zaplace
 Available for booking: hodnota ve warehouse kolekci v DB
     - pocty produktu na vsech objednavkach (aktivnich, po calculation date - paid i not paid)
 In store: hodnota ve warehouse kolekci v DB - produkty na zaplacenych aktivnich orderach od calc date
+
+
+https://accounts.google.com/o/oauth2/v2/auth?client_id=40328072649-u39hp3l0t475abmlgtsu8rvphdn81kf5.apps.googleusercontent.com&response_type=code&scope=https://mail.google.com/&redirect_uri=http://localhost:3000/rest/gmail/auth
 
 
 zralok - 86g
