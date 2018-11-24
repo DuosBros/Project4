@@ -38,6 +38,13 @@ app.set('bank-base-uri', 'https://www.fio.cz/ib_api/rest/periods/o3mjc3g69SqnDBa
 app.set('zaslat-token', 'CLqoi4we0JEaJTCLY25uk7QXdSzgNt5qevOxAlLA');
 app.set('dropbox-token', 'iNhg1bcaxL8AAAAAAABAS-Nu_J1oDWWOrMvcFXGvmwnHc8iDr2sKNIMaYdafoWN-');
 
+app.set('gmail-address', 'tnmephagroup@gmail.com');
+app.set('gmail-client-id', '40328072649-u39hp3l0t475abmlgtsu8rvphdn81kf5.apps.googleusercontent.com');
+app.set('gmail-secret', 'Dks4eAawdsC7vyANS-91VfJd');
+app.set('gmail-api', 'https://www.googleapis.com/gmail/v1/users/');
+app.set('gmail-messages', '/messages');
+app.set('gmail-apikey', '//AIzaSyD--yKUhOq9DEkT9g_-AVEnrfpa4EtWFvQ');
+
 if (env != 'development') {
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
     app.set('mongodb.url', 'mongodb://medpharma2:TranMedGroup12e@ds153890.mlab.com:53890/heroku_gvlqrgxg');
@@ -78,6 +85,7 @@ MongoClient.connect(dbUrl, {}, function(err, db) {
     require('./routes/zaslat-api.js')(app);
     require('./routes/bank.js')(app);
     require('./routes/notifications.js')(app);
+    require('./routes/gmail.js')(app);
     require('./routes/scripts.js')(app);
     require('./routes/default')(app);
 

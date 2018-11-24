@@ -91,7 +91,8 @@ Handler.prototype.getAllProductsJson = function() {
             productsObject[product.name] = {
                 price: product.price,
                 weight: product.weight,
-                tax: product.tax
+                tax: product.tax,
+                category: product.category
             }
         });
 
@@ -156,7 +157,14 @@ Handler.prototype.updateProductsCollections = function(oldProductName, newProduc
 
     var products = mongo.collection('products');
 
-    products.update({'name': oldProductName}, {$set: {name: newProduct.name, price: newProduct.price, weight: newProduct.weight, tax: newProduct.tax}},
+    products.update({'name': oldProductName},
+        {$set: {
+            name: newProduct.name,
+            price: newProduct.price,
+            weight: newProduct.weight,
+            tax: newProduct.tax,
+            category: newProduct.category
+        }},
         function(err, result) {
             if(result.result.n == 1) {
                 deferred.resolve(result);
