@@ -1,8 +1,11 @@
 
 
 var Q = require('q');
-var passport = require('passport');
+var {google} = require('googleapis');
+
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var gmail = google.gmail('v1');
+var readline = require('readline');
 
 var gmailAddress;
 var gmailUserId;
@@ -12,6 +15,8 @@ var gmailApi;
 var gmailMessages;
 
 var rp = require('request-promise');
+
+const SCOPES = ['https://mail.google.com/'];
 
 Handler = function(app) {
     gmailAddress = app.get('gmail-address');
@@ -24,27 +29,7 @@ Handler = function(app) {
 Handler.prototype.auth = function() {
     var deferred = Q.defer();
 
-    passport.use(new GoogleStrategy({
-            clientID: gmailClientId
-            , clientSecret: gmailSecret
-            , userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo'
-            , callbackURL: 'https://localhost:3000/rest/gmail/auth'
-        }
-        , function(accessToken, refreshToken, profile, done) {
-            console.log('DEVKA');
-            console.log(accessToken);
-        }
-    ));
-
-    rp(options)
-    .then(function(resp) {
-        console.log(resp);
-        deferred.resolve(resp);
-    })
-    .catch(function(err) {
-        console.log(err);
-        deferred.reject(err);
-    });
+    
 
     return deferred.promise;
 }
@@ -52,31 +37,29 @@ Handler.prototype.auth = function() {
 Handler.prototype.getEmails = function() {
     var deferred = Q.defer();
 
-    console.log('emailzzz');
+    var OAuth2 = google.auth.OAuth2;
 
-    this.auth()
-    .then(function(auth) {
-        var uri = gmailApi + gmailAddress + gmailMessages;
-        console.log(uri);
+    //var oauth2Client = new OAuth2(gmailClientId, gmailSecret, 'http://localhost:3000/rest/gmail/auth');
+    var oauth2Client = new OAuth2(gmailClientId, gmailSecret, 'https://medpharmavn.herokuapp.com/rest/gmail/auth');
 
-        var options = {
-            method: 'GET',
-            uri: uri
-        };
+    var authUrl = oauth2Client.generateAuthUrl({access_type: 'offline', scope: SCOPES});
+    console.log('Authorize this app by visiting this url: ', authUrl);
+    var rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
 
-        rp(options)
-        .then(function(response) {
-            console.log('fk')
-            console.log(response);
-            deferred.resolve(response.data);
-        })
-        .catch(function(err) {
-            console.log('error fetching emails > ' + err);
-            deferred.reject(err.message);
+    rl.question('Enter the code from that page here: ', function(code) {
+        rl.close();
+        oauth2Client.getToken(code, function(err, token) {
+          if (err) {
+            console.log('Error while trying to retrieve access token', err);
+            return;
+          }
+          oauth2Client.credentials = token;
+          storeToken(token);
+          callback(oauth2Client);
         });
-
-        deferred.resolve();
-
     });
 
     return deferred.promise;
