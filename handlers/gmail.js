@@ -3,18 +3,15 @@
 var Q = require('q');
 var {google} = require('googleapis');
 
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var gmail = google.gmail('v1');
 var readline = require('readline');
 
 var gmailAddress;
 var gmailUserId;
 var gmailSecret;
+var gmailRedirect;
 
-var gmailApi;
-var gmailMessages;
-
-var rp = require('request-promise');
+var handler;
 
 const SCOPES = ['https://mail.google.com/'];
 
@@ -24,23 +21,16 @@ Handler = function(app) {
     gmailSecret = app.get('gmail-secret');
     gmailApi = app.get('gmail-api');
     gmailMessages = app.get('gmail-messages');
+    gmailRedirect = app.get('gmail-redirect-uri');
+
+    handler = this;
 };
-
-Handler.prototype.auth = function() {
-    var deferred = Q.defer();
-
-    
-
-    return deferred.promise;
-}
 
 Handler.prototype.getEmails = function() {
     var deferred = Q.defer();
 
     var OAuth2 = google.auth.OAuth2;
-
-    //var oauth2Client = new OAuth2(gmailClientId, gmailSecret, 'http://localhost:3000/rest/gmail/auth');
-    var oauth2Client = new OAuth2(gmailClientId, gmailSecret, 'https://medpharmavn.herokuapp.com/rest/gmail/auth');
+    var oauth2Client = new OAuth2(gmailClientId, gmailSecret, gmailRedirect);
 
     var authUrl = oauth2Client.generateAuthUrl({access_type: 'offline', scope: SCOPES});
     console.log('Authorize this app by visiting this url: ', authUrl);
@@ -57,9 +47,44 @@ Handler.prototype.getEmails = function() {
             return;
           }
           oauth2Client.credentials = token;
-          storeToken(token);
-          callback(oauth2Client);
+
+          gmail.users.messages.list({auth: oauth2Client, userId: 'me'}, function(err, response) {
+            if (err) {
+              console.log('The API returned an error: ' + err);
+              return;
+            }
+            var messages = response.data.messages;
+            var mId = messages[0].id;
+
+            handler.getEmail(mId, oauth2Client)
+            .then(function(email) {
+                console.log(email);
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+
+            // for (var i = 0; i < messages.length; i++) {
+            //     var message = messages[i].id;
+            //     console.log('%s', JSON.stringify(message));
+            // }
+          });
         });
+    });
+
+    return deferred.promise;
+}
+
+Handler.prototype.getEmail = function(id, oauth2Client) {
+    var deferred = Q.defer();
+
+    gmail.users.messages.get({auth: oauth2Client, userId: 'me', id}, function(err, response) {
+        if (err) {
+          console.log('The API returned an error: ' + err);
+          return;
+        }
+        var email = response.data;
+        console.log(JSON.stringify(email));
     });
 
     return deferred.promise;

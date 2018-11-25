@@ -7,8 +7,6 @@ module.exports = function(app) {
     var authenticationHandler = new AuthenticationHandler(app);
 
     app.get('/rest/gmail/auth', function(req, res) {
-        console.log(req);
-        console.log('PIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII');
         var a = {a: 1};
         res.json(a);
         res.end();
