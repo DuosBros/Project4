@@ -36,7 +36,6 @@ Handler.prototype.getNotPaidNotifications = function() {
     getShipmentsPromises.push(zaslatHandler.getAllShipments(100));
     getShipmentsPromises.push(zaslatHandler.getAllShipments(200));
 
-    zaslatHandler.getAllShipments()
     Q.all(getShipmentsPromises)
     .then(function(shipments) {
         allShipments = Object.assign(allShipments, shipments[0], shipments[1], shipments[2]);
