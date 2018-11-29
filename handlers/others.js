@@ -92,7 +92,10 @@ Handler.prototype.getAllProductsJson = function() {
                 price: product.price,
                 weight: product.weight,
                 tax: product.tax,
-                category: product.category
+                category: product.category,
+                invoiceDisplayName: product.invoiceDisplayName,
+                displayName: product.displayName,
+                id: product.id
             }
         });
 
@@ -163,7 +166,10 @@ Handler.prototype.updateProductsCollections = function(oldProductName, newProduc
             price: newProduct.price,
             weight: newProduct.weight,
             tax: newProduct.tax,
-            category: newProduct.category
+            category: newProduct.category,
+            invoiceDisplayName: newProduct.invoiceDisplayName,
+            displayName: newProduct.displayName,
+            id: newProduct.id
         }},
         function(err, result) {
             if(result.result.n == 1) {

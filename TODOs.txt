@@ -9,12 +9,15 @@
 12/11 - 1.5h more zaslat notifs
 24/11 - 2.5h unlock ordery + costs category + gmail + products cat
 25/11 - 2h gmail shit
+29/11 - 0.5h new product attributes
 
 
 168USD/year
 
 new todo list:
 4. gmail integraci
+
+5. orderdrafts - uplne novy stav ordery pro drafty neafektujici vubec sklad
 
 pozor: nove se nepocitaji ty ordery, ktere jsou abandoned - cerne
 Booked: produkty na aktivnich orderach po calculation date, ktere nejsou zaplacene
