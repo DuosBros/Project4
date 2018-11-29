@@ -9,6 +9,7 @@ var mongo;
 var DELETED_ORDERS_STATE;
 var ACTIVE_ORDERS_STATE;
 var EXPIRED_ORDERS_STATE;
+var DRAFT_ORDERS_STATE;
 var socketIoListener;
 var ordersHandler;
 
@@ -19,6 +20,7 @@ Handler = function(app) {
     ACTIVE_ORDERS_STATE = app.get('ACTIVE_ORDERS_STATE');
     ARCHIVED_ORDERS_STATE = app.get('ARCHIVED_ORDERS_STATE');
     EXPIRED_ORDERS_STATE = app.get('EXPIRED_ORDERS_STATE');
+    DRAFT_ORDERS_STATE = app.get('DRAFT_ORDERS_STATE');
     socketIoListener = app.get('socket.io.listener');
     ordersHandler = this;
 
@@ -132,7 +134,7 @@ Handler.prototype.getAllOrders = function(from, to, limit, sinceId) {
     } else {
         query = {};
     }
-    query.state = {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE]};
+    query.state = {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE, DRAFT_ORDERS_STATE]};
 
     if (sinceId) {
         query.id = {'$lt': sinceId};
@@ -201,7 +203,8 @@ Handler.prototype.getNextHighestVS = function() {
         "sort": ["payment.vs", 'ascending']
     };
 
-    orders.find({'state': ACTIVE_ORDERS_STATE}, options).toArray(function(err, order) {
+    orders.find({state: {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE, DRAFT_ORDERS_STATE]}}, options)
+        .toArray(function(err, order) {
         if(err) {
             console.log('ERROR while getting next VS> ' + err);
             deferred.reject(err);
@@ -222,7 +225,7 @@ Handler.prototype.isValidVS = function(vs, orderId) {
     var deferred= Q.defer();
     var orders = mongo.collection('orders');
 
-    var match = {'payment.vs': vs, state: ACTIVE_ORDERS_STATE};
+    var match = {'payment.vs': vs, state: {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE, DRAFT_ORDERS_STATE]}};
     if(orderId || orderId == 0) {
         match.id = {$ne: orderId};
     }
@@ -309,39 +312,13 @@ Handler.prototype.getAllOrderedOrdersMonthly = function() {
     return deferred.promise;
 }
 
-Handler.prototype.getAllOrdersDaily = function() {
-    var deferred = Q.defer();
-    var orders = mongo.collection('orders');
-    var filter = {$match: {'payment.paymentDate': {$exists: true}, 'state': ACTIVE_ORDERS_STATE}};
-
-    var group = { $group: {_id:
-                            { month: { $month: "$payment.paymentDate" },
-                              day: { $dayOfMonth: "$payment.paymentDate" },
-                              year: { $year: "$payment.paymentDate" } },
-                              total : {$sum: '$totalPrice'}
-                          },
-                };
-
-    orders.aggregate([group])
-    .toArray(function(err, orders) {
-        if(err) {
-            console.log('ERROR while getting all orders grouped by day> ' + err);
-            deferred.reject(err);
-        } else {
-            deferred.resolve(orders);
-        }
-    });
-
-    return deferred.promise;
-}
-
 Handler.prototype.getOrder = function(orderId) {
     var deferred = Q.defer();
 
     var orders = mongo.collection('orders');
     var id = parseInt(orderId);
 
-    orders.findOne({id: id, state: {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE]}}, {},
+    orders.findOne({id: id, state: {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE, DRAFT_ORDERS_STATE]}}, {},
             function(err, order) {
                 if(err) {
                     console.log('ERROR while getting order with ID: ' + orderId + '> ' + err);
@@ -359,7 +336,7 @@ Handler.prototype.getOrderByVS = function(vs) {
     var orders = mongo.collection('orders');
     var vs = parseInt(vs);
 
-    orders.findOne({'payment.vs': vs, state: ACTIVE_ORDERS_STATE}, {},
+    orders.findOne({'payment.vs': vs, state: {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE, DRAFT_ORDERS_STATE]}}, {},
             function(err, order) {
                 if(err) {
                     console.log('ERROR while getting order with VS: ' + VS + '> ' + err);
@@ -456,7 +433,7 @@ Handler.prototype.setZaslatData = function(orderId, shipmentId, shipmentType, no
     return deferred.promise;
 }
 
-Handler.prototype.saveOrder = function(orderId, order, username) {
+Handler.prototype.saveOrder = function(orderId, order, username, isCommit) {
     var deferred = Q.defer();
     var orders = mongo.collection('orders');
 
@@ -472,6 +449,10 @@ Handler.prototype.saveOrder = function(orderId, order, username) {
     parsedOrder.lock.username = username;
     parsedOrder.lock.timestamp = new Date();
 
+    if (isCommit) {
+        parsedOrder.state = ACTIVE_ORDERS_STATE;
+    }
+
     orders.replaceOne({'id' : id}, parsedOrder, function(err, res) {
         if(err) {
             console.log('ERROR while updating order with ID: ' + orderId + '> ' + err);
@@ -484,7 +465,7 @@ Handler.prototype.saveOrder = function(orderId, order, username) {
     return deferred.promise;
 }
 
-Handler.prototype.addOrder = function(order, username) {
+Handler.prototype.addOrder = function(order, username, isDraft) {
     var deferred = Q.defer();
     var orders = mongo.collection('orders');
     var id;
@@ -496,6 +477,10 @@ Handler.prototype.addOrder = function(order, username) {
     parsedOrder.lock = {};
     parsedOrder.lock.username = username;
     parsedOrder.lock.timestamp = new Date();
+
+    if (isDraft) {
+        parsedOrder.state = DRAFT_ORDERS_STATE;
+    }
 
     orders.findOne(
         {},

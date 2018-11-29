@@ -149,26 +149,6 @@ module.exports = function(app) {
         }
     });
 
-    app.get('/rest/orders/filter/day', function(req, res) {
-        var token = tools.extractToken(req);
-        if(token) {
-            authenticationHandler.validateToken(token)
-            .then(function() {
-                return handler.getAllOrdersDaily()
-            })
-            .then(function(orders) {
-                res.json(orders);
-                res.end();
-            })
-            .fail(function(err) {
-                tools.replyError(err, res);
-            })
-            .done();
-        } else {
-            res.status(403).send({message: 'No authentication token!'});
-        }
-    });
-
     app.get('/rest/orders/:orderId', function(req, res) {
         var token = tools.extractToken(req);
         var orderId = req.params.orderId;
@@ -240,11 +220,14 @@ module.exports = function(app) {
         var token = tools.extractToken(req);
         var order = req.body;
         var username = req.query.username;
+        var draft = req.query.draft;
+
+        var isDraft = draft == 'true' ? true : false;
 
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.addOrder(order, username)
+                return handler.addOrder(order, username, isDraft)
             })
             .then(function(insertedOrder) {
                 res.json(insertedOrder);
@@ -264,11 +247,14 @@ module.exports = function(app) {
         var order = req.body;
         var orderId = req.params.orderId;
         var username = req.query.username;
+        var commit = req.query.commit;
+
+        var isCommit = commit == 'true' ? true : false;
 
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.saveOrder(orderId, order, username)
+                return handler.saveOrder(orderId, order, username, isCommit)
             })
             .then(function(editedOrder) {
                 res.json(editedOrder);
@@ -329,7 +315,6 @@ module.exports = function(app) {
             res.status(403).send({message: 'No authentication token!'});
         }
     });
-
 
     app.delete('/rest/orders/:orderId', function(req, res) {
         var token = tools.extractToken(req);

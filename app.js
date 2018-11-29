@@ -22,6 +22,7 @@ app.set('salt', 'superSer123.bullsh18t');
 app.set('tokenExpiracy', 60 * 30 * 2 * 2 * 12);
 app.set('DELETED_ORDERS_STATE', 'abandoned');
 app.set('ACTIVE_ORDERS_STATE', 'active');
+app.set('DRAFT_ORDERS_STATE', 'draft');
 app.set('ARCHIVED_ORDERS_STATE', 'archived');
 app.set('EXPIRED_ORDERS_STATE', 'expired');
 app.set('zaslat-base-uri', 'https://www.zaslat.cz/api/v1/');
