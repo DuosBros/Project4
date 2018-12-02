@@ -47,7 +47,7 @@ Handler = function(app, shit2) {
 		})
 	} else {
 		console.log('script');
-		dbx = new Dropbox({ accessToken: 'iNhg1bcaxL8AAAAAAAA_dvTV7NT4-RpKmAXlm9ef1YnBCl7mX548dzjk2aHIi9Hp' });
+		dbx = new Dropbox({ accessToken: 'iNhg1bcaxL8AAAAAAABAS-Nu_J1oDWWOrMvcFXGvmwnHc8iDr2sKNIMaYdafoWN-' });
 	}
 };
 
