@@ -167,6 +167,8 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 		mappedProducts[i].push({text: appendCurrencyBehindAmount(appendDecimalPointAndZerosBehindAmount(products[i].totalPricePerProduct)), style:'tableContentTotal'});
 	}
 
+	console.log(totalTax);
+
 	var postovneTab = [];
 	postovneTab[0] = [];
 	postovneTab[0].push({text: 'Poštovné', style:'tableProductName'});
@@ -404,17 +406,17 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 	var filename = filenameWithoutExtension + '.pdf';
 	pdfDoc.end();
 
-	deferred.resolve(pdfDefinition);
+	// deferred.resolve(pdfDefinition);
 
-	// dbx.filesUpload({path: '/medpharma/faktury/' + filename, contents: pdfDoc, mode: 'overwrite'})
-	// .then(function(response) {
-	// 	console.log('upload to dropbox successful');
-	// 	deferred.resolve(pdfDefinition);
-	// })
-	// .catch(function(error) {
-	// 	console.log('error while uploading document to dropbox: ' + error);
-	// 	deferred.reject(error);
-	// });
+	dbx.filesUpload({path: '/medpharma/faktury/' + filename, contents: pdfDoc, mode: 'overwrite'})
+	.then(function(response) {
+		console.log('upload to dropbox successful');
+		deferred.resolve(pdfDefinition);
+	})
+	.catch(function(error) {
+		console.log('error while uploading document to dropbox: ' + error);
+		deferred.reject(error);
+	});
 
     return deferred.promise;
 }
