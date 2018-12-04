@@ -112,7 +112,8 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 
 	var totalPriceNormalTax = 0;
 	var totalPriceLowerTax = 0;
-	var slevy = 0;
+	var totalSlevy = 0;
+	var totalTax = 0;
 
 	var productsTableHead = [];
 	productsTableHead[0] = [];
@@ -136,7 +137,7 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 			mappedProducts[i].push({text: '-', style:'tableContent'});
 			mappedProducts[i].push({text: '-', style:'tableContent'});
 			if (products[i].productName == 'Sleva') {
-				slevy += products[i].totalPricePerProduct;
+				totalSlevy += products[i].totalPricePerProduct;
 			}
 		} else {
 			var tax = allProductsData[products[i].productName].tax ? allProductsData[products[i].productName].tax + '%' : '15%'
@@ -150,6 +151,7 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 				taxPerItem = calculateNormalTax(products[i].pricePerOne);
 				taxPerProduct = calculateNormalTax(products[i].totalPricePerProduct);
 			}
+			totalTax += parseFloat(taxPerProduct);
 
 			mappedProducts[i].push({text: tax, style:'tableContent'});
 			mappedProducts[i].push({text: taxPerItem + '', style:'tableContent'});
@@ -164,8 +166,6 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 
 		mappedProducts[i].push({text: appendCurrencyBehindAmount(appendDecimalPointAndZerosBehindAmount(products[i].totalPricePerProduct)), style:'tableContentTotal'});
 	}
-
-	console.log(slevy)
 
 	var postovneTab = [];
 	postovneTab[0] = [];
@@ -277,7 +277,7 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 								widths: [130, 90],
 								body: [
 										[{ text: 'Částka (bez DPH)', style: 'tableHeader', alignment: 'left'},
-										{ text: appendCurrencyBehindAmount(calculatePriceWithoutDPH(totalPriceLowerTax, totalPriceNormalTax).toString().replace('.', ',')),
+										{ text: appendCurrencyBehindAmount(calculatePriceWithoutDPH(totalTax, postovneCena, totalSlevy, totalPrice).toFixed(2).replace('.', ',')),
 											style: 'tableHeader',alignment: 'right' }],
 
 										[{ text: 'Poštovné (refakturace)', style: 'tableHeader', alignment: 'left'}, { text: appendCurrencyBehindAmount(appendDecimalPointAndZerosBehindAmount(postovneCena)).toString().replace('.', ','), style: 'tableHeader',alignment: 'right' }],
@@ -287,18 +287,21 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 												text: 'Celková částka (bez DPH)', style: 'tableHeader', alignment: 'left'
 											},
 											{
-												text: appendCurrencyBehindAmount(((calculatePriceWithoutDPH(totalPriceLowerTax, totalPriceNormalTax) * 1 + postovneCena) * 1).toFixed(2).toString().replace('.', ',')),
+												text: appendCurrencyBehindAmount(calculatePriceWithShippingWithoutDPH(totalTax, totalSlevy, totalPrice)).replace('.', ','),
 												style: 'tableHeader',
 												alignment: 'right'
 											}
 										],
 
-										[{ text: 'DPH (1. snížená)', style: 'tableHeader', alignment: 'left'}, { text: appendCurrencyBehindAmount(
-											((totalPrice - postovneCena) - (calculatePriceWithoutDPH(totalPriceLowerTax, totalPriceNormalTax))).toFixed(2)
-											.toString().replace('.', ',')),
+										[{ text: 'DPH (1. snížená)', style: 'tableHeader', alignment: 'left'}, { text: appendCurrencyBehindAmount(totalTax.toFixed(2).replace('.', ',')),
 											style: 'tableHeader',alignment: 'right' }],
 
-										[{ text: 'Celková částka (vč. DPH)', style: 'tableHeader', alignment: 'left'}, { text: appendCurrencyBehindAmount(totalPriceStr), style: 'tableHeader',alignment: 'right' }],
+										[{ text: 'Celková částka (vč. DPH)', style: 'tableHeader', alignment: 'left'}, { text:
+											appendCurrencyBehindAmount(calculateTotalPriceWithoutDiscount(totalPrice, totalSlevy).replace('.', ',')), style: 'tableHeader',alignment: 'right' }],
+
+										[{ text: (totalSlevy < 0 ? 'Sleva' : ''), style: 'tableHeader', alignment: 'left'},
+										{ text: (totalSlevy < 0 ? appendCurrencyBehindAmount(totalSlevy) : ''), style: 'tableHeader',alignment: 'right' }],
+
 										[ { text: 'Zbývá uhradit', style: 'tableHeader', style: 'tableHeaderBig', alignment: 'left'}, { text: appendCurrencyBehindAmount(totalPriceStr), style: 'tableHeaderBig',alignment: 'right' }],
 								]
 						},
@@ -424,13 +427,16 @@ function calculateNormalTax(amount) {
 	return (amount * 0.1736).toFixed(2);
 }
 
-function calculatePriceWithoutDPH(lowerTaxSum, normalTaxSum) {
-	console.log('lower tax sum: ' + lowerTaxSum);
-	console.log('result: ' + (lowerTaxSum * 0.8696))
-	console.log('normal tax sum: ' + normalTaxSum);
-	console.log('result: ' + (normalTaxSum * 0.8264))
-	console.log('mass result: ' + (+((lowerTaxSum * 0.8696)) + +((normalTaxSum * 0.8264))).toFixed(2))
-	return (+((lowerTaxSum * 0.8696)) + +((normalTaxSum * 0.8264))).toFixed(2);
+function calculatePriceWithoutDPH(totalTax, postovneCena, totalSlevy, totalPrice) {
+	return totalPrice - totalTax - postovneCena - totalSlevy;
+}
+
+function calculatePriceWithShippingWithoutDPH(totalTax, discounts, totalPrice) {
+	return (totalPrice - totalTax - discounts).toFixed(2);
+}
+
+function calculateTotalPriceWithoutDiscount(totalPrice, totalSlevy) {
+	return (totalPrice - totalSlevy).toFixed(2);
 }
 
 function appendDecimalPointAndZerosBehindAmount(amount) {

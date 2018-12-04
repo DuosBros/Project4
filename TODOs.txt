@@ -10,11 +10,15 @@
 24/11 - 2.5h unlock ordery + costs category + gmail + products cat
 25/11 - 2h gmail shit
 29/11 - 2.5h new product attributes + order drafts
+04/12 - 2h tax handling
 
 
 168USD/year
 
 new todo list:
+1. zvysit delay na dropbox
+
+
 4. gmail integraci
 
 pozor: nove se nepocitaji ty ordery, ktere jsou abandoned - cerne
