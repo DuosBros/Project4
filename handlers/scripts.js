@@ -13,6 +13,9 @@ var archive = archiver('zip', {
     zlib: { level: 9 } // Sets the compression level.
   });
 
+var OthersHandler = require('../handlers/others.js').Handler;
+var othersHandler;
+
 var handler;
 var mongo;
 
@@ -31,6 +34,7 @@ Handler = function(app) {
     handler = this;
     mongo = app.get('mongodb');
     pdfGeneration = new PdfHandler(app);
+    othersHandler = new OthersHandler(app);
 
     // cron.schedule('0 1 * * *', function() {
     //     shell.exec('sh scripts/dumpDatabase.sh');
@@ -388,68 +392,81 @@ function exportOrders(joinedDatesString, dateFrom, dateTo, path) {
         'state': 'active'
     }
 
-    orders.find(queryOrders)
-    .toArray(function(err, result) {
-        if(err) {
-            console.log('ERROR while exporting orders> ' + err);
-            deferred.reject(err);
-        } else {
-            console.log('Number of exported Orders: ' + result.length);
-            var formattedOrders = [];
+    var allProducts;
 
-            result.forEach(function(order) {
-                for(var i = 0; i < order.products.length; i++) {
-                    var record = {};
+    othersHandler.getAllProductsJson()
+    .then(function(allProducts) {
+        allProducts = allProducts;
 
-                    record.VS = order.payment.vs;
-                    if(i == 0) {
-                        record.firstName = order.address.firstName;
-                        record.lastName = order.address.lastName;
-                        record.phone = order.address.phone;
-                        record.street = order.address.street;
-                        record.city = order.address.city;
-                        record.streetNumber = order.address.streetNumber;
-                        record.zip = order.address.psc;
-                        record.company = order.address.company;
-                        record.orderDate = order.payment.orderDate.getDate() + '.' + (order.payment.orderDate.getMonth() + 1) + '.' + order.payment.orderDate.getFullYear();
-                        record.paymentDate = order.payment.paymentDate
-                            ? order.payment.paymentDate.getDate() + '.' + (order.payment.paymentDate.getMonth() + 1) + '.' + order.payment.paymentDate.getFullYear()
-                            : 'not paid';
-                        record.deliveryPrice = order.payment.price;
-                        record.deliveryCompany = order.deliveryCompany;
+        orders.find(queryOrders)
+        .toArray(function(err, result) {
+            if(err) {
+                console.log('ERROR while exporting orders> ' + err);
+                deferred.reject(err);
+            } else {
+                console.log('Number of exported Orders: ' + result.length);
+                var formattedOrders = [];
+
+                result.forEach(function(order) {
+                    for(var i = 0; i < order.products.length; i++) {
+                        var record = {};
+
+                        record.VS = order.payment.vs;
+                        if(i == 0) {
+                            record.firstName = order.address.firstName;
+                            record.lastName = order.address.lastName;
+                            record.phone = order.address.phone;
+                            record.street = order.address.street;
+                            record.city = order.address.city;
+                            record.streetNumber = order.address.streetNumber;
+                            record.zip = order.address.psc;
+                            record.company = order.address.company;
+                            record.orderDate = order.payment.orderDate.getDate() + '.' + (order.payment.orderDate.getMonth() + 1) + '.' + order.payment.orderDate.getFullYear();
+                            record.paymentDate = order.payment.paymentDate
+                                ? order.payment.paymentDate.getDate() + '.' + (order.payment.paymentDate.getMonth() + 1) + '.' + order.payment.paymentDate.getFullYear()
+                                : 'not paid';
+                            record.deliveryPrice = order.payment.price;
+                            record.deliveryCompany = order.deliveryCompany;
+                        }
+
+                        var tax = allProducts[order.products[i].productName].tax;
+                        var taxCoeficient;
+                        if (tax == 15) {
+                            taxCoeficient = 0.8696;
+                        } else if (tax == 21) {
+                            taxCoeficient = 0.8264;
+                        }
+                        record.productName = order.products[i].productName;
+                        record.productCount = order.products[i].count;
+                        record.priceOfOneExclVAT = order.products[i].pricePerOne * taxCoeficient;
+                        record.priceOfOneInclVAT = order.products[i].pricePerOne;
+                        record.totalPriceExclVAT = order.products[i].totalPricePerProduct * taxCoeficient;
+                        record.totalPriceInclVAT = order.products[i].totalPricePerProduct;
+
+                        formattedOrders.push(record);
                     }
 
-                    record.productName = order.products[i].productName;
-                    record.productCount = order.products[i].count;
-                    record.priceOfOneExclVAT = order.products[i].pricePerOne * 0.85;
-                    record.priceOfOneInclVAT = order.products[i].pricePerOne;
-                    record.totalPriceExclVAT = order.products[i].totalPricePerProduct * 0.85;
-                    record.totalPriceInclVAT = order.products[i].totalPricePerProduct;
-
-                    formattedOrders.push(record);
-                }
-
-            })
-            var xls = json2xls(formattedOrders);
-            fs.writeFileSync('exports/' + joinedDatesString + '-orders.xlsx', xls, 'binary');
-
-            fs.readFile('exports/' + joinedDatesString + '-orders.xlsx', function read(err, data) {
-                if (err) {
-                    throw err;
-                }
-                var orders = data;
-
-                dbx.filesUpload({path: path + '/orders.xlsx', contents: orders, mode: 'overwrite'})
-                .then(function() {
-                    deferred.resolve();
                 })
-                .catch(function(error) {
-                    console.log('error while uploading document to dropbox: ' + error);
-                    deferred.reject(error);
+                var xls = json2xls(formattedOrders);
+                fs.writeFileSync('exports/' + joinedDatesString + '-orders.xlsx', xls, 'binary');
+                fs.readFile('exports/' + joinedDatesString + '-orders.xlsx', function read(err, data) {
+                    if (err) {
+                        throw err;
+                    }
+                    var orders = data;
+
+                    dbx.filesUpload({path: path + '/orders.xlsx', contents: orders, mode: 'overwrite'})
+                    .then(function() {
+                        deferred.resolve();
+                    })
+                    .catch(function(error) {
+                        console.log('error while uploading document to dropbox: ' + error);
+                        deferred.reject(error);
+                    });
                 });
-            });
-        }
-    });
+            }
+        });
+    })
 
     return deferred.promise;
 }
