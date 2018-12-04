@@ -112,6 +112,7 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 
 	var totalPriceNormalTax = 0;
 	var totalPriceLowerTax = 0;
+	var slevy = 0;
 
 	var productsTableHead = [];
 	productsTableHead[0] = [];
@@ -120,6 +121,8 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 	productsTableHead[0].push({ text: 'MJ', style: 'tableHeader', alignment: 'center' });
 	productsTableHead[0].push({ text: 'Cena/MJ', style: 'tableHeader', alignment: 'center' });
 	productsTableHead[0].push({ text: 'Sazba', style: 'tableHeader', alignment: 'center' });
+	productsTableHead[0].push({ text: 'DPH/MJ', style: 'tableHeader', alignment: 'center' });
+	productsTableHead[0].push({ text: 'DPH', style: 'tableHeader', alignment: 'center' });
 	productsTableHead[0].push({ text: 'Celkem', style: 'tableHeader', alignment: 'right' }); // s DPH
 	var mappedProducts = [];
 	for(var i = 0; i < products.length; i++) {
@@ -130,9 +133,27 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 		mappedProducts[i].push({text: appendDecimalPointAndZerosBehindAmount(products[i].pricePerOne), style:'tableContent'});
 		if (products[i].productName == 'Sleva' || products[i].productName == 'Other') {
 			mappedProducts[i].push({text: '-', style:'tableContent'});
+			mappedProducts[i].push({text: '-', style:'tableContent'});
+			mappedProducts[i].push({text: '-', style:'tableContent'});
+			if (products[i].productName == 'Sleva') {
+				slevy += products[i].totalPricePerProduct;
+			}
 		} else {
 			var tax = allProductsData[products[i].productName].tax ? allProductsData[products[i].productName].tax + '%' : '15%'
+			var taxPerItem;
+			var taxPerProduct;
+
+			if (15 == allProductsData[products[i].productName].tax) {
+				taxPerItem = calculateLowerTax(products[i].pricePerOne);
+				taxPerProduct = calculateLowerTax(products[i].totalPricePerProduct);
+			} else {
+				taxPerItem = calculateNormalTax(products[i].pricePerOne);
+				taxPerProduct = calculateNormalTax(products[i].totalPricePerProduct);
+			}
+
 			mappedProducts[i].push({text: tax, style:'tableContent'});
+			mappedProducts[i].push({text: taxPerItem + '', style:'tableContent'});
+			mappedProducts[i].push({text: taxPerProduct + '', style:'tableContent'});
 
 			if (tax == '15%') {
 				totalPriceLowerTax += products[i].totalPricePerProduct;
@@ -144,12 +165,16 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 		mappedProducts[i].push({text: appendCurrencyBehindAmount(appendDecimalPointAndZerosBehindAmount(products[i].totalPricePerProduct)), style:'tableContentTotal'});
 	}
 
+	console.log(slevy)
+
 	var postovneTab = [];
 	postovneTab[0] = [];
 	postovneTab[0].push({text: 'Poštovné', style:'tableProductName'});
 	postovneTab[0].push({text: '1', style:'tableContent'});
 	postovneTab[0].push({text: '', style:'tableContent'});
 	postovneTab[0].push({text: '', style:'tableContent'});
+	postovneTab[0].push({text: '-', style:'tableContent'});
+	postovneTab[0].push({text: '-', style:'tableContent'});
 	postovneTab[0].push({text: '-', style:'tableContent'});
 	postovneTab[0].push({text: appendCurrencyBehindAmount(appendDecimalPointAndZerosBehindAmount(postovneCena)), style:'tableContentTotal'});
 
@@ -233,7 +258,7 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 			},
 			{
 				table: {
-				        widths: [138, 60, 30, 65, 45, 91],
+				        widths: [138, 43, 8, 42, 23, 39, 35, 70],
 						headerRows: 1,
 						style: 'tableContent',
 						body: allProductsTable
@@ -262,7 +287,7 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 												text: 'Celková částka (bez DPH)', style: 'tableHeader', alignment: 'left'
 											},
 											{
-												text: appendCurrencyBehindAmount(((calculatePriceWithoutDPH(totalPriceLowerTax, totalPriceNormalTax)  * 1 + postovneCena) * 1).toFixed(2).toString().replace('.', ',')),
+												text: appendCurrencyBehindAmount(((calculatePriceWithoutDPH(totalPriceLowerTax, totalPriceNormalTax) * 1 + postovneCena) * 1).toFixed(2).toString().replace('.', ',')),
 												style: 'tableHeader',
 												alignment: 'right'
 											}
@@ -375,20 +400,36 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 	var filename = filenameWithoutExtension + '.pdf';
 	pdfDoc.end();
 
-	dbx.filesUpload({path: '/medpharma/faktury/' + filename, contents: pdfDoc, mode: 'overwrite'})
-	.then(function(response) {
-		console.log('upload to dropbox successful');
-		deferred.resolve(pdfDefinition);
-	})
-	.catch(function(error) {
-		console.log('error while uploading document to dropbox: ' + error);
-		deferred.reject(error);
-	});
+	pdfDoc.pipe(fs.createWriteStream('pdfs/' + filename));
+	deferred.resolve(pdfDefinition);
+
+	// dbx.filesUpload({path: '/medpharma/faktury/' + filename, contents: pdfDoc, mode: 'overwrite'})
+	// .then(function(response) {
+	// 	console.log('upload to dropbox successful');
+	// 	deferred.resolve(pdfDefinition);
+	// })
+	// .catch(function(error) {
+	// 	console.log('error while uploading document to dropbox: ' + error);
+	// 	deferred.reject(error);
+	// });
 
     return deferred.promise;
 }
 
+function calculateLowerTax(amount) {
+	return (amount * 0.1304).toFixed(2);
+}
+
+function calculateNormalTax(amount) {
+	return (amount * 0.1736).toFixed(2);
+}
+
 function calculatePriceWithoutDPH(lowerTaxSum, normalTaxSum) {
+	console.log('lower tax sum: ' + lowerTaxSum);
+	console.log('result: ' + (lowerTaxSum * 0.8696))
+	console.log('normal tax sum: ' + normalTaxSum);
+	console.log('result: ' + (normalTaxSum * 0.8264))
+	console.log('mass result: ' + (+((lowerTaxSum * 0.8696)) + +((normalTaxSum * 0.8264))).toFixed(2))
 	return (+((lowerTaxSum * 0.8696)) + +((normalTaxSum * 0.8264))).toFixed(2);
 }
 
