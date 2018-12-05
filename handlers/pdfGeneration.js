@@ -114,6 +114,8 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 	var totalPriceLowerTax = 0;
 	var totalSlevy = 0;
 	var totalTax = 0;
+	var lowerTax = 0;
+	var normalTax = 0;
 
 	var productsTableHead = [];
 	productsTableHead[0] = [];
@@ -147,9 +149,11 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 			if (15 == allProductsData[products[i].productName].tax) {
 				taxPerItem = calculateLowerTax(products[i].pricePerOne);
 				taxPerProduct = calculateLowerTax(products[i].totalPricePerProduct);
+				lowerTax += parseFloat(taxPerProduct);
 			} else {
 				taxPerItem = calculateNormalTax(products[i].pricePerOne);
 				taxPerProduct = calculateNormalTax(products[i].totalPricePerProduct);
+				normalTax += parseFloat(taxPerProduct);
 			}
 			totalTax += parseFloat(taxPerProduct);
 
@@ -166,8 +170,6 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 
 		mappedProducts[i].push({text: appendCurrencyBehindAmount(appendDecimalPointAndZerosBehindAmount(products[i].totalPricePerProduct)), style:'tableContentTotal'});
 	}
-
-	console.log(totalTax);
 
 	var postovneTab = [];
 	postovneTab[0] = [];
@@ -192,6 +194,50 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 	var signature = 'data:image/jpeg;base64,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';
 
 	var heart = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAeAB4AAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAAQABADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9BbnwH+0Z8T/21vit4k0H4q3Wiy/DLU7RdE8A3UBXR/Eelyx+bH5rh9kfn7Zo/P8ALkdXR/mXYNrvBng34/fCr9un4ca74w+LGoatF8QtQv4NZ8GLbldD0ezSz84fZn8wq6wzSW1uJjFFI8roMuHbd9Dftoah4p+HPhRfFHwx8Jf8JJ8UtURfDWl42rGkUrGYyXBYqpji8t3UuwVWc8gOwPCfsofsi/EC6+IOm/ED416pa6hr2jWSwaVpFvevepBctl5r65lYKrTF3cRQxKLe3QjYN3zDzaPC8HS+tVK7T5+ZLnk27O/w37e5r7tru19H+o4jxeqXeBpYGk4PD+xf7iknG9Pk/ict7Kd6/N/F5moc9tV//9k=';
+
+
+	var invoiceSummary = [];
+	invoiceSummary.push([{ text: 'Částka (bez DPH)', style: 'tableHeader', alignment: 'left'},
+	{ text: appendCurrencyBehindAmount(calculatePriceWithoutDPH(totalTax, postovneCena, totalSlevy, totalPrice).toFixed(2).replace('.', ',')),
+		style: 'tableHeader',alignment: 'right' }]);
+
+	invoiceSummary.push([{ text: 'Poštovné (refakturace)', style: 'tableHeader', alignment: 'left'},
+	{ text: appendCurrencyBehindAmount(appendDecimalPointAndZerosBehindAmount(postovneCena)).toString().replace('.', ','), style: 'tableHeader',alignment: 'right' }]);
+
+	invoiceSummary.push([
+		{
+			text: 'Celková částka (bez DPH)', style: 'tableHeader', alignment: 'left'
+		},
+		{
+			text: appendCurrencyBehindAmount(calculatePriceWithShippingWithoutDPH(totalTax, totalSlevy, totalPrice)).replace('.', ','),
+			style: 'tableHeader',
+			alignment: 'right'
+		}
+	]);
+
+	if (lowerTax > 0) {
+		invoiceSummary.push([{ text: '15% DPH (1. snížená)', style: 'tableHeader', alignment: 'left'}, {
+			text: appendCurrencyBehindAmount(lowerTax.toFixed(2).replace('.', ',')),
+			style: 'tableHeader', alignment: 'right' }]);
+	}
+
+	if (normalTax > 0) {
+		invoiceSummary.push([{ text: '21% DPH (základní)', style: 'tableHeader', alignment: 'left'}, {
+			text:appendCurrencyBehindAmount(normalTax.toFixed(2).replace('.', ',')),
+			style: 'tableHeader', alignment: 'right' }]);
+	}
+
+	invoiceSummary.push([{ text: 'DPH (celkem)', style: 'tableHeader', alignment: 'left'}, { text: appendCurrencyBehindAmount(totalTax.toFixed(2).replace('.', ',')),
+		style: 'tableHeader', alignment: 'right' }]);
+
+	invoiceSummary.push([{ text: 'Celková částka (vč. DPH)', style: 'tableHeader', alignment: 'left'}, { text:
+		appendCurrencyBehindAmount(calculateTotalPriceWithoutDiscount(totalPrice, totalSlevy).replace('.', ',')), style: 'tableHeader',alignment: 'right' }]);
+
+	invoiceSummary.push([{ text: (totalSlevy < 0 ? 'Sleva' : ''), style: 'tableHeader', alignment: 'left'},
+		{ text: (totalSlevy < 0 ? appendCurrencyBehindAmount(totalSlevy) : ''), style: 'tableHeader',alignment: 'right' }]);
+
+	invoiceSummary.push([ { text: 'Zbývá uhradit', style: 'tableHeader', style: 'tableHeaderBig', alignment: 'left'},
+		{ text: appendCurrencyBehindAmount(totalPriceStr), style: 'tableHeaderBig',alignment: 'right' }]);
 
     var dd = {
 		header: {
@@ -278,35 +324,7 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 						table: {
 								headerRows: 1,
 								widths: [130, 90],
-								body: [
-										[{ text: 'Částka (bez DPH)', style: 'tableHeader', alignment: 'left'},
-										{ text: appendCurrencyBehindAmount(calculatePriceWithoutDPH(totalTax, postovneCena, totalSlevy, totalPrice).toFixed(2).replace('.', ',')),
-											style: 'tableHeader',alignment: 'right' }],
-
-										[{ text: 'Poštovné (refakturace)', style: 'tableHeader', alignment: 'left'}, { text: appendCurrencyBehindAmount(appendDecimalPointAndZerosBehindAmount(postovneCena)).toString().replace('.', ','), style: 'tableHeader',alignment: 'right' }],
-
-										[
-											{
-												text: 'Celková částka (bez DPH)', style: 'tableHeader', alignment: 'left'
-											},
-											{
-												text: appendCurrencyBehindAmount(calculatePriceWithShippingWithoutDPH(totalTax, totalSlevy, totalPrice)).replace('.', ','),
-												style: 'tableHeader',
-												alignment: 'right'
-											}
-										],
-
-										[{ text: 'DPH (1. snížená)', style: 'tableHeader', alignment: 'left'}, { text: appendCurrencyBehindAmount(totalTax.toFixed(2).replace('.', ',')),
-											style: 'tableHeader',alignment: 'right' }],
-
-										[{ text: 'Celková částka (vč. DPH)', style: 'tableHeader', alignment: 'left'}, { text:
-											appendCurrencyBehindAmount(calculateTotalPriceWithoutDiscount(totalPrice, totalSlevy).replace('.', ',')), style: 'tableHeader',alignment: 'right' }],
-
-										[{ text: (totalSlevy < 0 ? 'Sleva' : ''), style: 'tableHeader', alignment: 'left'},
-										{ text: (totalSlevy < 0 ? appendCurrencyBehindAmount(totalSlevy) : ''), style: 'tableHeader',alignment: 'right' }],
-
-										[ { text: 'Zbývá uhradit', style: 'tableHeader', style: 'tableHeaderBig', alignment: 'left'}, { text: appendCurrencyBehindAmount(totalPriceStr), style: 'tableHeaderBig',alignment: 'right' }],
-								]
+								body: invoiceSummary
 						},
 						layout: 'noBorders'
 					}
