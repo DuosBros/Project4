@@ -12,6 +12,10 @@
 29/11 - 2.5h new product attributes + order drafts
 04/12 - 2h tax handling
 05/12 - 2h invoices
+07/12 - 0.5h invoices
+
+----------------------------
+20.5h
 
 
 168USD/year

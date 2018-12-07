@@ -197,23 +197,21 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 
 
 	var invoiceSummary = [];
-	invoiceSummary.push([{ text: 'Částka (bez DPH)', style: 'tableHeader', alignment: 'left'},
-	{ text: appendCurrencyBehindAmount(calculatePriceWithoutDPH(totalTax, postovneCena, totalSlevy, totalPrice).toFixed(2).replace('.', ',')),
-		style: 'tableHeader',alignment: 'right' }]);
+
+	if (totalPriceNormalTax > 0) {
+		invoiceSummary.push([{ text: 'Částka bez DPH - 21%', style: 'tableHeader', alignment: 'left'},
+		{ text: appendCurrencyBehindAmount(calculatePriceWithoutNormalTax(totalPriceNormalTax).replace('.', ',')),
+			style: 'tableHeader',alignment: 'right' }]);
+	}
+
+	if (totalPriceLowerTax > 0) {
+		invoiceSummary.push([{ text: 'Částka bez DPH - 15%', style: 'tableHeader', alignment: 'left'},
+		{ text: appendCurrencyBehindAmount(calculatePriceWithoutLowerTax(totalPriceLowerTax).replace('.', ',')),
+			style: 'tableHeader',alignment: 'right' }]);
+	}
 
 	invoiceSummary.push([{ text: 'Poštovné (refakturace)', style: 'tableHeader', alignment: 'left'},
 	{ text: appendCurrencyBehindAmount(appendDecimalPointAndZerosBehindAmount(postovneCena)).toString().replace('.', ','), style: 'tableHeader',alignment: 'right' }]);
-
-	invoiceSummary.push([
-		{
-			text: 'Celková částka (bez DPH)', style: 'tableHeader', alignment: 'left'
-		},
-		{
-			text: appendCurrencyBehindAmount(calculatePriceWithShippingWithoutDPH(totalTax, totalSlevy, totalPrice)).replace('.', ','),
-			style: 'tableHeader',
-			alignment: 'right'
-		}
-	]);
 
 	if (lowerTax > 0) {
 		invoiceSummary.push([{ text: '15% DPH (1. snížená)', style: 'tableHeader', alignment: 'left'}, {
@@ -226,9 +224,6 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 			text:appendCurrencyBehindAmount(normalTax.toFixed(2).replace('.', ',')),
 			style: 'tableHeader', alignment: 'right' }]);
 	}
-
-	invoiceSummary.push([{ text: 'DPH (celkem)', style: 'tableHeader', alignment: 'left'}, { text: appendCurrencyBehindAmount(totalTax.toFixed(2).replace('.', ',')),
-		style: 'tableHeader', alignment: 'right' }]);
 
 	invoiceSummary.push([{ text: 'Celková částka (vč. DPH)', style: 'tableHeader', alignment: 'left'}, { text:
 		appendCurrencyBehindAmount(calculateTotalPriceWithoutDiscount(totalPrice, totalSlevy).replace('.', ',')), style: 'tableHeader',alignment: 'right' }]);
@@ -437,6 +432,14 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 	});
 
     return deferred.promise;
+}
+
+function calculatePriceWithoutNormalTax(totalPriceNormalTax) {
+	return (totalPriceNormalTax * 0.8264).toFixed(2);
+}
+
+function calculatePriceWithoutLowerTax(totalPriceLowerTax) {
+	return (totalPriceLowerTax * 0.8696).toFixed(2);
 }
 
 function calculateLowerTax(amount) {
