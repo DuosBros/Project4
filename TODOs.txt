@@ -13,15 +13,17 @@
 04/12 - 2h tax handling
 05/12 - 2h invoices
 07/12 - 0.5h invoices
-
+10/12 - 0.5 deployment + small improvements
 ----------------------------
-20.5h
+21h
+
+
 
 
 168USD/year
 
 new todo list:
-1. zvysit delay na dropbox
+1. cislovani faktur - 12 delka, rokmesicvs - 201812255500
 
 
 4. gmail integraci

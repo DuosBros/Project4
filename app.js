@@ -19,7 +19,7 @@ app.use(express.static(__dirname + "/public"));
 app.set('mongodb.url', 'mongodb://localhost:27017/medpharma');
 //app.set('mongodb.url', 'mongodb://localhost:27017/tranmedgroup');
 app.set('salt', 'superSer123.bullsh18t');
-app.set('tokenExpiracy', 60 * 30 * 2 * 2 * 12);
+app.set('tokenExpiracy', 60 * 30 * 2 * 2 * 12 * 2);
 app.set('DELETED_ORDERS_STATE', 'abandoned');
 app.set('ACTIVE_ORDERS_STATE', 'active');
 app.set('DRAFT_ORDERS_STATE', 'draft');
