@@ -70,9 +70,12 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
     var dnesniDatum = new Date();
 	var datumSplatnosti = new Date();
 	datumSplatnosti.setTime( datumSplatnosti.getTime() + DATUM_SPLATNOSTI_DAYS * 86400000 );
-    var aktualniRok = dnesniDatum.getFullYear();
+	var invoiceDateFormat = 'yyyymm';
+	var invoiceName = dateFormat(dnesniDatum, invoiceDateFormat) + vs;
 
-	var invoiceNumber = '' + vs;
+	while (invoiceName.length < 12) {
+		invoiceName += '0';
+	}
 
 	var address = order.address;
 	var firstName = '';
@@ -242,7 +245,7 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 			width: 125,
 			margin: [0, 10, 0, 0]
 	      },
-		  {text: 'FAKTURA - daňový doklad č. ' + invoiceNumber, alignment: 'right', style: 'header'}
+		  {text: 'FAKTURA - daňový doklad č. ' + invoiceName, alignment: 'right', style: 'header'}
 	    ]
 	  },
 	    footer: {
@@ -283,9 +286,9 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
 										style: 'bankovniInfo',
 										colSpan: 2,
 										text: [
-										'Účet:                           FIO BANKA 2401089228 / 2010          Faktura číslo:                                                         ' + invoiceNumber
-										+'\nSWIFT:                                                     FIOBCZPPXXX           Objednávka:                                                           '
-										+ invoiceNumber + '\n' +
+										'Účet:                           FIO BANKA 2401089228 / 2010          Faktura číslo:                                        ' + invoiceName
+										+'\nSWIFT:                                                     FIOBCZPPXXX           Objednávka:                                          '
+										+ invoiceName + '\n' +
 										'IBAN:                            CZ4720100000002401089228          Konstantní symbol:\n' +
 										'Způsob platby:                           Bankovním převodem          Variabilní symbol:                                                  '
 										+ vs + '\n' +
@@ -412,7 +415,7 @@ Handler.prototype.generatePdf = function(order, index, dataForScripts) {
     var pdfDefinition = dd;
 
 	var pdfDoc = printer.createPdfKitDocument(pdfDefinition);
-	var filenameWithoutExtension = invoiceNumber;
+	var filenameWithoutExtension = invoiceName;
 	if (index) {
 		filenameWithoutExtension += '-' + index;
 	}

@@ -14,8 +14,9 @@
 05/12 - 2h invoices
 07/12 - 0.5h invoices
 10/12 - 0.5 deployment + small improvements
+26/12 - 1h invoices
 ----------------------------
-21h
+22h
 
 
 
