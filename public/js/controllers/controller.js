@@ -596,7 +596,7 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
             limit = 100;
         }
         $scope.loading = true;
-        medPharmaOrders.getAllOrders('December 31, 2017 23:59:59', 'December 31, 2018 23:59:59', limit, sinceId)
+        medPharmaOrders.getAllOrders('December 31, 2017 23:59:59', 'December 31, 2019 23:59:59', limit, sinceId)
         .then(function(orders) {
             orders.forEach(function(order) {
                 order.collapsed = true;
@@ -614,7 +614,7 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
     }
 
     function getAllOrdersEagerly() {
-        medPharmaOrders.getAllOrders('December 31, 2017 23:59:59', 'December 31, 2018 23:59:59')
+        medPharmaOrders.getAllOrders('December 31, 2017 23:59:59', 'December 31, 2019 23:59:59')
         .then(function(orders) {
             orders.forEach(function(order) {
                 order.collapsed = true;
