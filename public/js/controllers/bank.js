@@ -27,7 +27,7 @@ myApp.controller('BankCtrl', ['$scope', '$modal', 'medPharmaBank', 'medPharmaOth
 
             $scope.loadingOrders = true;
             $scope.loadingBankInfo = true;
-            medPharmaOrders.getAllOrders('September 31, 2017 23:59:59', 'December 31, 2018 23:59:59')
+            medPharmaOrders.getAllOrders('September 31, 2017 23:59:59', 'December 31, 2019 23:59:59')
             .then(function(orders) {
                 $scope.orders = $scope.filterVsOrders(orders);
                 $scope.loadingOrders = false;
