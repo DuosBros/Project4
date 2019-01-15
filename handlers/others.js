@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 var passwordHash = require('password-hash');
 var jwt = require('jsonwebtoken');
+var rp = require('request-promise');
 var mongo;
 var salt;
 var tokenExpiracy;
@@ -269,6 +270,33 @@ Handler.prototype.getAllSenders = function() {
             deferred.resolve(senders);
         }
     });
+    return deferred.promise;
+}
+
+Handler.prototype.smartform = function(body) {
+    var deferred = Q.defer();
+
+    var options = {
+        method: 'POST',
+        uri: 'https://secure.smartform.cz/smartform-ws/oracle/v4',
+        body: body,
+        headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json'
+        },
+        json: true
+    };
+
+    rp(options)
+    .then(function(response) {
+        console.log(response);
+        deferred.resolve(response);
+    })
+    .catch(function(err) {
+        console.log('error fetching from smartform > ' + err.message);
+        deferred.reject(err.message);
+    });
+
     return deferred.promise;
 }
 

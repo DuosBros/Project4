@@ -175,4 +175,26 @@ module.exports = function(app) {
             res.status(403).send({message: 'No authentication token!'});
         }
     });
+
+    app.post('/rest/smartform', function (req, res) {
+        var token = tools.extractToken(req);
+        var body = req.body;
+
+        if (token) {
+            authenticationHandler.validateToken(token)
+            .then(function() {
+                return handler.smartform(body);
+            })
+            .then(function(resp) {
+                res.json(resp);
+                res.end();
+            })
+            .fail(function(err) {
+                tools.replyError(err, res);
+            })
+            .done();
+        } else {
+            res.status(403).send({message: 'No authentication token!'});
+        }
+    });
 }
