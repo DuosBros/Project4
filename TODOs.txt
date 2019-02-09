@@ -16,8 +16,9 @@
 10/12 - 0.5 deployment + small improvements
 26/12 - 1h invoices
 15/01 - 0.5h smarform api
+09/02 - 0.5h branch vn/cz
 ----------------------------
-22.5h
+23h
 
 
 
@@ -25,7 +26,6 @@
 168USD/year
 
 new todo list:
-1. cislovani faktur - 12 delka, rokmesicvs - 201812255500
 
 
 4. gmail integraci

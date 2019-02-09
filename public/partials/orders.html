@@ -77,6 +77,9 @@
                 <span ng-show="isMobile"><small>{{$index + 1}}.</small><br></span>
                 <span ng-show="isMobile"><small>Name: </small></span>
                 <span ng-show="!isMobile" style="float: left">{{$index + 1}}.</span>
+                <span ng-show="order.branch == 'cz'" style="float: left">
+                    <img src="cz.png" width="20" height="20"/>
+                </span>
                 {{order.address.lastName}} {{order.address.firstName}}
             </div>
             <div class="col-sm-1" style="text-align: center; padding-left: 0px; padding-right: 0px">

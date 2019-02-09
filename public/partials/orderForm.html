@@ -73,6 +73,15 @@
                         <div class="col-sm-8">
                             <input type="text" class="form-control input-sm" placeholder="Company" ng-model="order.address.company">
                         </div>
+
+                        <label class="col-sm-4" ng-show="loggedUser == 'admin'">Branch</label>
+                        <div class="col-sm-8" ng-show="loggedUser == 'admin'">
+                            <select ng-model="order.branch" class="form-control input-sm">
+                                <option value="vn">VN</option>
+                                <option value="cz">CZ</option>
+                            </select>
+                        </div>
+
                         <input type="text" style="display: none" class="smartform-street" id="hiddenStreet">
                         <input type="text" style="display: none" class="smartform-number" id="hiddenStreetNumber">
                     </div>

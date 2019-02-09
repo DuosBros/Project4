@@ -76,6 +76,8 @@ medPharmaController.controller('orderController',
             $scope.streetAndNumber = $scope.mergeStreetAndStreetNumber($scope.order.address.street, $scope.order.address.streetNumber);
             $scope.loadAvailableProducts();
             $scope.initSelectorValue();
+
+            $scope.loggedUser = medPharmaOthers.getLoggedInUser()
         });
     } else {
         $scope.order = {};
@@ -88,6 +90,7 @@ medPharmaController.controller('orderController',
         $scope.order.payment.orderDate = new Date();
         $scope.order.state = 'active';
         $scope.order.payment.cashOnDelivery = true;
+        $scope.order.branch = 'vn';
         $scope.loadAvailableProducts();
         $scope.initSelectorValue();
 
@@ -95,6 +98,8 @@ medPharmaController.controller('orderController',
         .then(function(vs) {
             $scope.order.payment.vs = vs;
         })
+
+        $scope.loggedUser = medPharmaOthers.getLoggedInUser()
     }
 
     $scope.increaseLock = true;
