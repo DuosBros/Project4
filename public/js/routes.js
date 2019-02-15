@@ -53,5 +53,9 @@ angular.module('medPharmaRoutes', []).config(function($routeProvider) {
     $routeProvider.when('/scripts', {
         templateUrl : '/partials/scripts.html',
         controller : 'ScriptsCtrl'
+    }),
+    $routeProvider.when('/gmail', {
+        templateUrl : '/partials/gmail.html',
+        controller : 'GmailCtrl'
     })
 });
