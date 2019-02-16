@@ -15,9 +15,29 @@
 		<span style="margin-left: 45em" ng-show="!loggedIn">
 			<img src="google.png" ng-click="login()">
 		</span>
-		<span ng-show="loggedIn">
-			logged in
-		</span>
+	</div>
+
+	<div class="row" ng-show="loggedIn && emails">
+		<table class="table table-condensed">
+			<thead>
+				<tr>
+					<th>Subject</th>
+					<th>From</th>
+					<th>Date</th>
+					<th>Snippet</th>
+					<!-- <th>Body</th> -->
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="email in emails">
+					<td>{{email.subject}}</td>
+					<td>{{email.from}}</td>
+					<td>{{email.date | date:'h:mm:ss dd.MM.yyyy'}}</td>
+					<td>{{email.snippet}}</td>
+					<!-- <td>{{body(email.body)}}</td> -->
+				</tr>
+			</tbody>
+		</table>
 	</div>
 	
 	<br/><br/><br/><br/><br/><br/><br/><br/>

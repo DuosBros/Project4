@@ -34,6 +34,15 @@ Handler.prototype.getEmail = function(id, token) {
     return deferred.promise;
 }
 
+function getEmailHeader(header, headers) {
+    for (var i = 0; i < headers.length; i++) {
+        var h = headers[i];
+        if (h.name == header) {
+            return h.value;
+        }
+    }
+}
+
 Handler.prototype.getEmails = function() {
     var deferred = Q.defer();
 
@@ -62,12 +71,23 @@ Handler.prototype.getEmails = function() {
             return Q.all(emailPromises);
         })
         .then(function(emailsResponse) {
-            var snippets = [];
+            var emails = [];
             for (var i = 0; i < emailsResponse.length; i++) {
-                snippets.push(emailsResponse[i].snippet);
+                var emailResponse = emailsResponse[i];
+                var email = {
+                    date: new Date(parseInt(emailResponse.internalDate)),
+                    snippet: emailResponse.snippet,
+                    subject: getEmailHeader("Subject", emailResponse.payload.headers),
+                    from: getEmailHeader("From", emailResponse.payload.headers),
+                    body: emailResponse.payload.parts
+                }
+                emails.push(email);
+                // emails.push(emailResponse);
+
+                // console.log(emailsResponse[i]);
             }
 
-            deferred.resolve(snippets);
+            deferred.resolve(emails);
         })
         .catch(function(err) {
             console.log('error fetching emails > ' + err.message);
@@ -82,13 +102,15 @@ Handler.prototype.storeToken = function(tokens) {
     var deferred = Q.defer();
     var gmail = mongo.collection('gmail');
 
-    gmail.insertOne(tokens, function(err, res) {
+    gmail.remove({}, function(err, res) {
+        gmail.insertOne(tokens, function(err, res) {
             if(err) {
                 console.log('ERROR while saving token' + err);
                 deferred.reject(err);
             } else {
                 deferred.resolve(res);
             }
+        });
     });
 
     return deferred.promise;
@@ -103,7 +125,11 @@ Handler.prototype.isLogged = function() {
                 console.log('ERROR while getting token' + err);
                 deferred.reject(err);
             } else {
-                deferred.resolve(res.expiry_date);
+                if (res) {
+                    deferred.resolve(res.expiry_date);
+                } else {
+                    deferred.resolve(undefined);
+                }
             }
     });
 

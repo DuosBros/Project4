@@ -29,12 +29,32 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
 
         medPharmaGmail.getEmails()
         .then(function(emails) {
-            console.log(emails);
+            $scope.emails = emails;
         })
         .catch(function(err) {
             console.log(err);
             alert(err);
         })
+
+        $scope.body = function(bodyParts) {
+            var body = '';
+            for (var i = 0; i < bodyParts.length; i++) {
+                var bodyPart = bodyParts[i];
+                if (bodyPart.mimeType == 'text/plain') {
+                    var base64 = bodyPart.body.data;
+                    try {
+                        body += atob(base64);
+                        var aaa = 'aa'
+                    } catch (err) {
+                        var aaaaa = 111;
+                    }
+
+                    var a = 1;
+                }
+            }
+
+            return body;
+        }
 
         $scope.login = function() {
             authWindow = $window.open(url, "Please sign in with Google", "width=500px,height:700px");
