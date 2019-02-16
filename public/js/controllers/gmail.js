@@ -3,16 +3,37 @@
 
 var myApp = angular.module('medPharmaController');
 
-myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', '$http',
-    function($scope, medPharmaOthers, $window, $http) {
+myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharmaGmail',
+    function($scope, medPharmaOthers, $window, medPharmaGmail) {
 
         $scope.isMobile = medPharmaOthers.isMobile();
 
         var authWindow;
         var url;
-        $http.get("/rest/gmail/auth")
+
+        medPharmaGmail.auth()
         .then(function(response) {
-            url = response.data;
+            url = response;
+        });
+
+        medPharmaGmail.isLogged()
+        .then(function(resp) {
+            $scope.loggedIn = resp;
+        });
+        setInterval(function() {
+            medPharmaGmail.isLogged()
+            .then(function(resp) {
+                $scope.loggedIn = resp;
+            });
+        }, 5000);
+
+        medPharmaGmail.getEmails()
+        .then(function(emails) {
+            console.log(emails);
+        })
+        .catch(function(err) {
+            console.log(err);
+            alert(err);
         })
 
         $scope.login = function() {
@@ -26,12 +47,9 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', '$http',
             var codeWithScope = urlWithCode.substring(idx + 5).replace("#", "");
             var code = codeWithScope.substring(0, codeWithScope.lastIndexOf('&'));
 
-            console.log(code);
-            console.log(urlWithCode);
-
-            $http.get("/rest/gmail/token?code=" + code)
+            medPharmaGmail.getToken(code)
             .then(function(response) {
-                console.log(response);
-            })
+                $scope.token = response.access_token;
+            });
         }
 }]);

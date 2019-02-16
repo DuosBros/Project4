@@ -40,6 +40,7 @@ app.set('zaslat-token', 'CLqoi4we0JEaJTCLY25uk7QXdSzgNt5qevOxAlLA');
 app.set('dropbox-token', 'iNhg1bcaxL8AAAAAAABAS-Nu_J1oDWWOrMvcFXGvmwnHc8iDr2sKNIMaYdafoWN-');
 
 app.set('gmail-redirect-uri', 'http://localhost:3000/rest/gmail/oauthcallback');
+app.set('gmail-base-uri', 'https://www.googleapis.com/gmail/v1/users/tnmephagroup@gmail.com/')
 
 if (env != 'development') {
     app.use(enforce.HTTPS({ trustProtoHeader: true }));

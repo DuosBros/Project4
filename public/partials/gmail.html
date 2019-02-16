@@ -12,8 +12,12 @@
 <div class="container-fluid"
 	ng-style="{'z-index' : isMobile ? 0 : 1, 'top': isMobile ? '0em' : '14em'}" style="position: relative; margin-left: 3%; margin-right:3%">
 	<div class="row">
-        suck my dick gmail {{gmail}}
-        <img src="google.png" ng-click="login()">
+		<span style="margin-left: 45em" ng-show="!loggedIn">
+			<img src="google.png" ng-click="login()">
+		</span>
+		<span ng-show="loggedIn">
+			logged in
+		</span>
 	</div>
 	
 	<br/><br/><br/><br/><br/><br/><br/><br/>

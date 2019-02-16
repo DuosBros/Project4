@@ -33,8 +33,39 @@ module.exports = function(app) {
 
     app.get('/rest/gmail/token', function(req, res) {
         var code = req.query.code;
-        console.log(code);
-        res.send(code);
+
+        oauth2Client.getToken(code, function(err, tokens) {
+            if (err) {
+                console.log(err);
+                tools.replyError(err, res);
+            }
+
+            handler.storeToken(tokens)
+            .then(function() {
+                res.send();
+            });
+        });
+    });
+
+    app.get('/rest/gmail/is_logged', function(req, res) {
+        var token = tools.extractToken(req);
+
+        if(token) {
+            authenticationHandler.validateToken(token)
+            .then(function() {
+                return handler.isLogged()
+            })
+            .then(function(response) {
+                res.json(response);
+                res.end();
+            })
+            .fail(function(err) {
+                tools.replyError(err, res);
+            })
+            .done();
+        } else {
+            res.status(403).send({message: 'No authentication token!'});
+        }
     });
 
     app.get('/rest/gmail/emails', function(req, res) {
