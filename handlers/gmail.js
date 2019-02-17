@@ -29,6 +29,7 @@ Handler.prototype.getEmail = function(id, token) {
     })
     .catch(function(err) {
         console.log('error fetching emails > ' + err.message);
+        deferred.reject(err.message);
     })
 
     return deferred.promise;
@@ -43,10 +44,11 @@ function getEmailHeader(header, headers) {
     }
 }
 
-Handler.prototype.getEmails = function() {
+Handler.prototype.getEmails = function(pageToken) {
     var deferred = Q.defer();
 
     var token;
+    var nextPageToken;
     this.getToken()
     .then(function(token) {
         token = token;
@@ -54,8 +56,13 @@ Handler.prototype.getEmails = function() {
             'Authorization': 'Bearer ' + token
         }
 
+        var uri = BASE_URL + 'messages';
+        if (pageToken) {
+            uri += '?pageToken=' + pageToken
+        }
+
         var options = {
-            uri: BASE_URL + 'messages',
+            uri: uri,
             headers: headers,
             json: true
         };
@@ -63,6 +70,8 @@ Handler.prototype.getEmails = function() {
         rp(options)
         .then(function(response) {
             var ids = response.messages;
+            nextPageToken = response.nextPageToken;
+
             var emailPromises = [];
             for (var i = 0; i < ids.length; i++) {
                 emailPromises.push(handler.getEmail(ids[i].id, token));
@@ -71,7 +80,11 @@ Handler.prototype.getEmails = function() {
             return Q.all(emailPromises);
         })
         .then(function(emailsResponse) {
-            var emails = [];
+            var data = {
+                nextPageToken: nextPageToken,
+                emails: []
+            };
+
             for (var i = 0; i < emailsResponse.length; i++) {
                 var emailResponse = emailsResponse[i];
                 var email = {
@@ -81,13 +94,13 @@ Handler.prototype.getEmails = function() {
                     from: getEmailHeader("From", emailResponse.payload.headers),
                     body: emailResponse.payload.parts
                 }
-                emails.push(email);
+                data.emails.push(email);
                 // emails.push(emailResponse);
 
                 // console.log(emailsResponse[i]);
             }
 
-            deferred.resolve(emails);
+            deferred.resolve(data);
         })
         .catch(function(err) {
             console.log('error fetching emails > ' + err.message);

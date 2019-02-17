@@ -4,9 +4,15 @@
     <div class="row" style="padding-top: 1em">
 		<div class="col-sm-1">
 		</div>
-		<div class="col-sm-7">
-            <h1>Gmail</h1>
-        </div>
+		<div class="col-sm-4">
+			<h1>Gmail</h1>
+		</div>
+		<div ng-if="loading" class="col-md-2 col-sm-offset-5" style="position: fixed; margin-top: 2em; z-index: 999999">
+			<img src="loading.svg" width="40" height="40" style="margin-left: 6.5em"/>
+		</div>
+		<div class="col-sm-2 col-sm-offset-5">
+			<input type="text" ng-model="filter" class="form-control input-sm" placeholder="Filter Emails" ng-show="!isMobile" style="margin-top: 1em">
+		</div>
     </div>
 </div>
 <div class="container-fluid"
@@ -21,6 +27,7 @@
 		<table class="table table-condensed">
 			<thead>
 				<tr>
+					<th>Id</th>
 					<th>Subject</th>
 					<th>From</th>
 					<th>Date</th>
@@ -29,7 +36,8 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="email in emails">
+				<tr ng-repeat="email in filteredEmails()">
+					<td>{{$index + 1}}.</td>
 					<td>{{email.subject}}</td>
 					<td>{{email.from}}</td>
 					<td>{{email.date | date:'h:mm:ss dd.MM.yyyy'}}</td>
@@ -38,6 +46,14 @@
 				</tr>
 			</tbody>
 		</table>
+		<div style="margin-top: 1em; text-align: center">
+			<button type="button" class="btn btn-default btn-sm" ng-click="getEmails(emails.nextPageToken)">
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span ng-if="!loading"><strong>Show more..</strong></span>
+				<span ng-if="loading"><strong>Loading..</strong></span>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</button>
+		</div>
 	</div>
 	
 	<br/><br/><br/><br/><br/><br/><br/><br/>

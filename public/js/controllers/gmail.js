@@ -19,6 +19,10 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
         medPharmaGmail.isLogged()
         .then(function(resp) {
             $scope.loggedIn = resp;
+
+            if ($scope.loggedIn) {
+                $scope.getEmails();
+            }
         });
         setInterval(function() {
             medPharmaGmail.isLogged()
@@ -27,14 +31,53 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
             });
         }, 5000);
 
-        medPharmaGmail.getEmails()
-        .then(function(emails) {
-            $scope.emails = emails;
-        })
-        .catch(function(err) {
-            console.log(err);
-            alert(err);
-        })
+        if ($scope.loggedIn) {
+            $scope.getEmails();
+        }
+
+        $scope.filteredEmails = function() {
+            if (!$scope.loggedIn || !$scope.emails) {
+                return undefined;
+            }
+            if (!$scope.filter || $scope.filter == '') {
+                return $scope.emails.emails;
+            }
+
+            var filter = $scope.filter.toLowerCase();
+
+            var filteredEmails = [];
+            for (var i = 0; i < $scope.emails.emails.length; i++) {
+                var email = $scope.emails.emails[i];
+
+                var stringifiedEmail = JSON.stringify(email);
+
+                if (stringifiedEmail.indexOf(filter) > -1) {
+                    filteredEmails.push(email);
+                }
+            }
+
+            return filteredEmails;
+        }
+
+        $scope.getEmails = function(nextPageToken) {
+            $scope.loading = true;
+            medPharmaGmail.getEmails(nextPageToken)
+            .then(function(emails) {
+                $scope.loading = false;
+
+                if (!$scope.emails) {
+                    $scope.emails = emails;
+                } else {
+                    $scope.emails.nextPageToken = emails.nextPageToken;
+                    $scope.emails.emails = $scope.emails.emails.concat(emails.emails);
+                }
+            })
+            .catch(function(err) {
+                $scope.loading = false;
+                console.log(err);
+                alert(err);
+            })
+        }
 
         $scope.body = function(bodyParts) {
             var body = '';
@@ -70,6 +113,7 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
             medPharmaGmail.getToken(code)
             .then(function(response) {
                 $scope.token = response.access_token;
+                $scope.getEmails();
             });
         }
 }]);

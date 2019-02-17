@@ -70,11 +70,12 @@ module.exports = function(app) {
 
     app.get('/rest/gmail/emails', function(req, res) {
         var token = tools.extractToken(req);
+        var pageToken = req.query.pageToken;
 
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.getEmails()
+                return handler.getEmails(pageToken)
             })
             .then(function(emails) {
                 res.json(emails);

@@ -29,13 +29,18 @@ medPharmaServices.factory('medPharmaGmail', ['$http', '$q', 'medPharmaUtilities'
             return deferred.promise;
         };
 
-        medPharmaGmail.getEmails = function() {
+        medPharmaGmail.getEmails = function(pageToken) {
             var deferred = $q.defer();
 
             var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
+            var uri = '/rest/gmail/emails';
+            if (pageToken) {
+                uri += '?pageToken=' + pageToken;
+            }
+
             $http({
                 method : 'GET',
-                url : '/rest/gmail/emails',
+                url : uri,
                 headers: requestHeaders,
                 cache : false,
                 })
