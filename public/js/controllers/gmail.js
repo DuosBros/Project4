@@ -79,6 +79,31 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
             })
         }
 
+        $scope.sendEmail = function() {
+
+            var from = 'From: TN MephaGroup <tnmephagroup@gmail.com>\n';
+            var to = 'To: Tomas Mocek <tomasmocek92@gmail.com>\n';
+            var subject = 'Subject: Saying Hello\n';
+            var date = new Date();
+
+            var body = 'hii';
+
+            var email = from + to + subject + date + '\n\n' + body;
+
+            var data = {
+                email: email
+            }
+
+            medPharmaGmail.sendEmail(data)
+            .then(function(result) {
+                console.log(result);
+            })
+            .catch(function(err) {
+                console.log(err);
+                alert(err);
+            })
+        }
+
         $scope.body = function(bodyParts) {
             var body = '';
             for (var i = 0; i < bodyParts.length; i++) {

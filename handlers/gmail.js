@@ -3,12 +3,63 @@
 var Q = require('q');
 var rp = require('request-promise');
 
+var { base64encode, base64decode } = require('nodejs-base64');
+
 Handler = function(app) {
     mongo = app.get('mongodb');
 
     BASE_URL = app.get('gmail-base-uri');
     handler = this;
 };
+
+Handler.prototype.sendEmail = function(email) {
+    var deferred = Q.defer();
+
+    this.getToken()
+    .then(function(token) {
+        var headers = {
+            'Authorization': 'Bearer ' + token
+        }
+
+        var uri = BASE_URL + 'messages/send';
+
+        console.log(email);
+        var base64EncodedEmail = base64encode(email);
+
+        var data = {
+            userId: 'tnmephagroup@gmail.com',
+            resource: {
+                raw: base64EncodedEmail
+            }
+        }
+
+        var options = {
+            method: 'POST',
+            uri: uri,
+            headers: headers,
+            body: data,
+            json: true
+        };
+
+
+        console.log(options);
+
+        rp(options)
+        .then(function(response) {
+            deferred.resolve(response);
+        })
+        .catch(function(err) {
+            console.log('error sending email > ' + err.message);
+            deferred.reject(err.message);
+        })
+    })
+    .catch(function(err) {
+        console.log('error sending email > ' + err.message);
+        deferred.reject(err.message);
+    })
+
+    return deferred.promise;
+}
 
 Handler.prototype.getEmail = function(id, token) {
     var deferred = Q.defer();
@@ -106,6 +157,10 @@ Handler.prototype.getEmails = function(pageToken) {
             console.log('error fetching emails > ' + err.message);
             deferred.reject(err.message);
         })
+    })
+    .catch(function(err) {
+        console.log('error fetching emails > ' + err.message);
+        deferred.reject(err.message);
     })
 
     return deferred.promise;

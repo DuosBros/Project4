@@ -29,6 +29,29 @@ medPharmaServices.factory('medPharmaGmail', ['$http', '$q', 'medPharmaUtilities'
             return deferred.promise;
         };
 
+        medPharmaGmail.sendEmail = function(email) {
+            var deferred = $q.defer();
+
+            var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
+            var uri = '/rest/gmail/emails';
+
+            $http({
+                method : 'POST',
+                url : uri,
+                headers: requestHeaders,
+                data: email,
+                cache : false,
+                })
+                .then(function(resp) {
+                    deferred.resolve(resp.data);
+                },
+                function(err) {
+                    deferred.reject(err.data.message);
+                });
+
+            return deferred.promise;
+        };
+
         medPharmaGmail.getEmails = function(pageToken) {
             var deferred = $q.defer();
 

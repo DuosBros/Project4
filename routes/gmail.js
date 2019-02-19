@@ -98,7 +98,7 @@ module.exports = function(app) {
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.sendEmail(email)
+                return handler.sendEmail(email.email)
             })
             .then(function(result) {
                 res.json(result);
