@@ -2,8 +2,7 @@
 
 var Q = require('q');
 var rp = require('request-promise');
-
-var { base64encode, base64decode } = require('nodejs-base64');
+var base64url = require('base64url');
 
 Handler = function(app) {
     mongo = app.get('mongodb');
@@ -24,13 +23,10 @@ Handler.prototype.sendEmail = function(email) {
         var uri = BASE_URL + 'messages/send';
 
         console.log(email);
-        var base64EncodedEmail = base64encode(email);
+        var base64EncodedEmail = base64url(email);
 
         var data = {
-            userId: 'tnmephagroup@gmail.com',
-            resource: {
-                raw: base64EncodedEmail
-            }
+            raw: base64EncodedEmail
         }
 
         var options = {
@@ -143,6 +139,7 @@ Handler.prototype.getEmails = function(pageToken) {
                     snippet: emailResponse.snippet,
                     subject: getEmailHeader("Subject", emailResponse.payload.headers),
                     from: getEmailHeader("From", emailResponse.payload.headers),
+                    to: getEmailHeader("To", emailResponse.payload.headers),
                     body: emailResponse.payload.parts
                 }
                 data.emails.push(email);

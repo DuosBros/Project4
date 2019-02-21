@@ -2,30 +2,31 @@
 	ng-style="{'z-index' : isMobile ? 0 : 2, 'top': isMobile ? '0em' : '3.7em', 'position': isMobile ? 'relative' : 'fixed'}"
     style="background: white; left: 0; right: 0; padding-left: 3%; padding-right:3%;">
     <div class="row" style="padding-top: 1em">
-		<div class="col-sm-1">
-		</div>
-		<div class="col-sm-4">
-			<h1>Gmail</h1>
-		</div>
-		<div ng-if="loading" class="col-md-2 col-sm-offset-5" style="position: fixed; margin-top: 2em; z-index: 999999">
-			<img src="loading.svg" width="40" height="40" style="margin-left: 6.5em"/>
-		</div>
-		<div class="col-sm-2 col-sm-offset-5">
-			<input type="text" ng-model="filter" class="form-control input-sm" placeholder="Filter Emails" ng-show="!isMobile" style="margin-top: 1em">
-		</div>
+			<div class="col-sm-1">
+			</div>
+			<div class="col-sm-8">
+				<h1>Gmail</h1>
+			</div>
+			<div ng-if="loading" class="col-md-2 col-sm-offset-5" style="position: fixed; margin-top: 2em; z-index: 999999">
+				<img src="loading.svg" width="40" height="40" style="margin-left: 6.5em"/>
+			</div>
+
+			<form class="form-inline" style="margin-top: 3em">
+				<button type="button" class="btn btn-default" ng-click="openSendEmailModal()">
+					Send email
+				</button>
+				<div class="form-group">
+					<input type="text" ng-model="filter" class="form-control" placeholder="Filter Emails"
+						ng-show="!isMobile">
+				</div>
+			</form>
     </div>
 </div>
 <div class="container-fluid"
 	ng-style="{'z-index' : isMobile ? 0 : 1, 'top': isMobile ? '0em' : '14em'}" style="position: relative; margin-left: 3%; margin-right:3%">
 	<div class="row">
-		<span style="margin-left: 45em" ng-show="!loggedIn">
-			<img src="google.png" ng-click="login()">
-		</span>
+			<img src="google.png" ng-click="login()" ng-show="!loggedIn" style="display: block; margin-left: auto; margin-right: auto">
 	</div>
-
-	<button type="button" class="btn btn-default" ng-click="sendEmail()">
-		Send email
-	</button>
 
 	<div class="row" ng-show="loggedIn && emails">
 		<table class="table table-condensed">
@@ -34,6 +35,7 @@
 					<th>Id</th>
 					<th>Subject</th>
 					<th>From</th>
+					<th>To</th>
 					<th>Date</th>
 					<th>Snippet</th>
 					<!-- <th>Body</th> -->
@@ -44,6 +46,7 @@
 					<td>{{$index + 1}}.</td>
 					<td>{{email.subject}}</td>
 					<td>{{email.from}}</td>
+					<td>{{email.to}}</td>
 					<td>{{email.date | date:'h:mm:ss dd.MM.yyyy'}}</td>
 					<td>{{email.snippet}}</td>
 					<!-- <td>{{body(email.body)}}</td> -->

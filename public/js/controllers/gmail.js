@@ -3,8 +3,8 @@
 
 var myApp = angular.module('medPharmaController');
 
-myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharmaGmail',
-    function($scope, medPharmaOthers, $window, medPharmaGmail) {
+myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharmaGmail', '$modal',
+    function($scope, medPharmaOthers, $window, medPharmaGmail, $modal) {
 
         $scope.isMobile = medPharmaOthers.isMobile();
 
@@ -79,30 +79,69 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
             })
         }
 
-        $scope.sendEmail = function() {
+        $scope.openSendEmailModal = function() {
 
-            var from = 'From: TN MephaGroup <tnmephagroup@gmail.com>\n';
-            var to = 'To: Tomas Mocek <tomasmocek92@gmail.com>\n';
-            var subject = 'Subject: Saying Hello\n';
-            var date = new Date();
-
-            var body = 'hii';
-
-            var email = from + to + subject + date + '\n\n' + body;
-
-            var data = {
-                email: email
+            var $modalScope = $scope.$new(true);
+            $modalScope.email = {
+                subject: '',
+                from: 'From: TN MephaGroup <tnmephagroup@gmail.com>\n',
+                to: '',
+                body: ''
             }
 
-            medPharmaGmail.sendEmail(data)
-            .then(function(result) {
-                console.log(result);
-            })
-            .catch(function(err) {
-                console.log(err);
-                alert(err);
-            })
-        }
+            var modal = $modal({
+                            scope: $modalScope,
+                            templateUrl: 'partials/modals/sendEmail.html',
+                            show: false
+                            });
+            modal.$promise.then(modal.show);
+
+            $modalScope.sendEmail = function() {
+                $modalScope.sendingEmail = true;
+
+                var from = $modalScope.email.from;
+                var to = 'To: <' + $modalScope.email.to + '>\n';
+                var subject = 'Subject: ' + $modalScope.email.subject + '\n';
+                var date = new Date();
+
+                var body = $modalScope.email.body;
+
+                var email = from + to + subject + date + '\n\n' + body;
+
+                var data = {
+                    email: email
+                }
+
+                medPharmaGmail.sendEmail(data)
+                .then(function(result) {
+                    $modalScope.sendingEmail = false;
+                    console.log(result);
+
+                    $modalScope.email = {
+                        subject: '',
+                        from: 'From: TN MephaGroup <tnmephagroup@gmail.com>\n',
+                        to: '',
+                        body: ''
+                    }
+                })
+                .catch(function(err) {
+                    $modalScope.sendingEmail = false;
+                    console.log(err);
+
+                    $modalScope.email = {
+                        subject: '',
+                        from: 'From: TN MephaGroup <tnmephagroup@gmail.com>\n',
+                        to: '',
+                        body: ''
+                    }
+                    alert(err);
+                })
+            }
+
+            $modalScope.close = function() {
+                this.$hide();
+            }
+           }
 
         $scope.body = function(bodyParts) {
             var body = '';
@@ -125,7 +164,7 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
         }
 
         $scope.login = function() {
-            authWindow = $window.open(url, "Please sign in with Google", "width=500px,height:700px");
+            authWindow = $window.open(url, "Please sign in with Google", "width=300px,height:500px");
         }
 
         window.onmessage = function(e) {

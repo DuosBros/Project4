@@ -1,0 +1,43 @@
+<div class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"> <strong> Send email </strong> </h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-1">
+                        </div>
+                        <div class="col-sm-10">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label>Subject: </label>
+                                    <input type="text" class="form-control" placeholder="Subject" ng-model="email.subject" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>To: </label>
+                                    <input type="email" class="form-control" placeholder="To - Must be a valid email address"
+                                        ng-model="email.to" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Body: </label>
+                                    <input type="text" class="form-control" placeholder="Body" ng-model="email.body" required>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="close()">Cancel</button>
+                    <button type="button"
+                    ng-disabled="!email.subject || email.subject.length == 0 || !email.to || email.to.length == 0
+                        || !email.body || email.body.length == 0 || sendingEmail"
+                    class="btn btn-default" ng-click="sendEmail()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
