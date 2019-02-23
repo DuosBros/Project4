@@ -98,6 +98,8 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
 
             $modalScope.sendEmail = function() {
                 $modalScope.sendingEmail = true;
+                $modalScope.success = false;
+                $modalScope.error = undefined;
 
                 var from = $modalScope.email.from;
                 var to = 'To: <' + $modalScope.email.to + '>\n';
@@ -115,6 +117,8 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
                 medPharmaGmail.sendEmail(data)
                 .then(function(result) {
                     $modalScope.sendingEmail = false;
+                    $modalScope.success = true;
+                    $modalScope.error = undefined;
                     console.log(result);
 
                     $modalScope.email = {
@@ -126,6 +130,8 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
                 })
                 .catch(function(err) {
                     $modalScope.sendingEmail = false;
+                    $modalScope.success = false;
+                    $modalScope.error = err;
                     console.log(err);
 
                     $modalScope.email = {

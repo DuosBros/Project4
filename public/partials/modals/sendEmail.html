@@ -6,29 +6,31 @@
                 </div>
 
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-1">
-                        </div>
-                        <div class="col-sm-10">
-                            <form class="form-horizontal">
-                                <div class="form-group">
-                                    <label>Subject: </label>
-                                    <input type="text" class="form-control" placeholder="Subject" ng-model="email.subject" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>To: </label>
-                                    <input type="email" class="form-control" placeholder="To - Must be a valid email address"
-                                        ng-model="email.to" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Body: </label>
-                                    <input type="text" class="form-control" placeholder="Body" ng-model="email.body" required>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="col-sm-1">
-                        </div>
+                    <div class="alert alert-info" role="alert" ng-show="sendingEmail">
+                        <strong>Sending email..</strong>
                     </div>
+                    <div class="alert alert-success" role="alert" ng-show="!sendingEmail && success && !error">
+                        <strong>Email sent!</strong>
+                    </div>
+                    <div class="alert alert-danger" role="alert" ng-show="!sendingEmail && !success && error">
+                        <strong>Error:</strong>
+                        {{zaslatError}}
+                    </div>
+                    <form>
+                        <div class="form-group">
+                            <label for="subject">Subject: </label>
+                            <input type="text" class="form-control" placeholder="Subject" ng-model="email.subject" id="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="to">To: </label>
+                            <input type="email" class="form-control" placeholder="To - Must be a valid email address"
+                                ng-model="email.to" id="to" required>
+                        </div>
+                        <div class="form-group">
+                        <label for="message-text" class="control-label">Message:</label>
+                        <textarea rows="5" class="form-control" id="message-text" placeholder="Body" ng-model="email.body"></textarea>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="modal-footer">
