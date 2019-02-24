@@ -35,6 +35,30 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
             $scope.getEmails();
         }
 
+        medPharmaOthers.getAllSendersJson()
+        .then(function(senders) {
+            $scope.senders = $scope.createAddresses(senders);
+        });
+
+        $scope.createAddresses = function(senders) {
+            var addresses = [];
+
+            for (var i = 0; i < senders.length; i++) {
+                var sender = senders[i];
+                var address = '';
+                address += sender.street + ' ' + sender.street_number + ', ' + sender.city + ', ' + sender.zip + ', ' + sender.country;
+
+                addresses.push(address);
+            }
+
+            return addresses;
+        }
+
+        medPharmaOthers.getAllProductsJson()
+        .then(function(products) {
+            $scope.allProductNames = Object.keys(products);
+        });
+
         $scope.filteredEmails = function() {
             if (!$scope.loggedIn || !$scope.emails) {
                 return undefined;
@@ -82,12 +106,73 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
         $scope.openSendEmailModal = function() {
 
             var $modalScope = $scope.$new(true);
-            $modalScope.email = {
-                subject: '',
-                from: 'From: TN MephaGroup <tnmephagroup@gmail.com>\n',
-                to: '',
-                body: ''
+
+            // $modalScope.defaultRecipient = 'hlasenska@medpharma.cz';
+            $modalScope.defaultRecipient = 'tomasmocek92@gmail.com';
+
+            $modalScope.createEmailBody = function() {
+                var body = '';
+
+                if (!$modalScope.email) {
+                    return body;
+                }
+
+                body += $modalScope.email.to == $modalScope.defaultRecipient ? 'Hello,\n' : 'Dobry den,\n';
+                body += $modalScope.email.to == $modalScope.defaultRecipient
+                    ? 'I would like to order following products:\n' : 'Chtel bych si objednat nasledujici produkty:\n';
+
+                for(var i = 0; i < $modalScope.bodyAttributes.products.length; i++) {
+                    var product = $modalScope.bodyAttributes.products[i];
+                    if (product.productName) {
+                        body += "    " + product.productName + ': ' + product.count + '\n';
+                    }
+                }
+
+                body += $modalScope.email.to == $modalScope.defaultRecipient ? '\nDelivery address is ' : '\nDodaci adresa je ';
+                body += $modalScope.bodyAttributes.address + '.\n';
+                body += '\n' + 'BR,' + '\n' + 'An.';
+
+                return body;
             }
+
+            $modalScope.incompleteProducts = function() {
+                for(var i = 0; i < $modalScope.bodyAttributes.products.length; i++) {
+                    var product = $modalScope.bodyAttributes.products[i];
+                    if (!product.productName) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            $modalScope.email = {
+                subject: 'Order',
+                from: 'From: TN MephaGroup <tnmephagroup@gmail.com>\n',
+                to: $modalScope.defaultRecipient,
+                body: $modalScope.createEmailBody()
+            }
+
+            $modalScope.senders = $scope.senders;
+            $modalScope.bodyAttributes = {
+                address: $modalScope.senders[0],
+                products: [{
+                    productName: "",
+                    count: 1
+                }]
+            };
+
+            $modalScope.allProductNames = $scope.allProductNames;
+
+            $modalScope.$watch('bodyAttributes', function() {
+                $modalScope.email.body = $modalScope.createEmailBody();
+            }, true);
+
+            $modalScope.$watch('email.to', function() {
+                $modalScope.email.body = $modalScope.createEmailBody();
+            });
+
+            $modalScope.createEmailBody();
 
             var modal = $modal({
                             scope: $modalScope,
@@ -119,14 +204,9 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
                     $modalScope.sendingEmail = false;
                     $modalScope.success = true;
                     $modalScope.error = undefined;
-                    console.log(result);
 
-                    $modalScope.email = {
-                        subject: '',
-                        from: 'From: TN MephaGroup <tnmephagroup@gmail.com>\n',
-                        to: '',
-                        body: ''
-                    }
+                    $modalScope.bodyAttributes.products = [{ productName: "", count: 1 }];
+                    console.log(result);
                 })
                 .catch(function(err) {
                     $modalScope.sendingEmail = false;
@@ -134,12 +214,6 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
                     $modalScope.error = err;
                     console.log(err);
 
-                    $modalScope.email = {
-                        subject: '',
-                        from: 'From: TN MephaGroup <tnmephagroup@gmail.com>\n',
-                        to: '',
-                        body: ''
-                    }
                     alert(err);
                 })
             }
