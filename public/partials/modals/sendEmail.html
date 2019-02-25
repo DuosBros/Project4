@@ -44,9 +44,9 @@
                             <label for="subject">Products: </label>
                             <div ng-repeat="product in bodyAttributes.products">
                                 <div class="row">
-                                    <div class="col-sm-5" ng-class="{'has-error': incorrectProducts.indexOf($index) >= 0}" style="padding-right: 0px" bs-tooltip="'Product name'">
+                                    <div class="col-sm-9" style="padding-right: 0px" bs-tooltip="'Product name'">
                                         <select ng-model="product.productName" class="form-control" ng-options="p as p for p in allProductNames"
-                                            placeholder="Select product">
+                                            placeholder="Select product" ng-change="addProduct()">
                                             <option value="" disabled>Select product<option>
                                         </select>
                                     </div>
@@ -55,7 +55,8 @@
                                             placeholder="Count">
                                     </div>
                                     <div class="col-sm-1" style="padding-left: 0px">
-                                        <button ng-if="!$last" class="btn btn-default" data-placement="bottom" bs-tooltip="'Remove this product'">
+                                        <button ng-if="!$last" class="btn btn-default" data-placement="bottom"
+                                            bs-tooltip="'Remove this product'" ng-click="removeProduct($index)">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                     </div>

@@ -46,7 +46,7 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
             for (var i = 0; i < senders.length; i++) {
                 var sender = senders[i];
                 var address = '';
-                address += sender.street + ' ' + sender.street_number + ', ' + sender.city + ', ' + sender.zip + ', ' + sender.country;
+                address += sender.company + ', ' + sender.street + ' ' + sender.street_number + ', ' + sender.city + ', ' + sender.zip + ', ' + sender.country;
 
                 addresses.push(address);
             }
@@ -123,12 +123,12 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
 
                 for(var i = 0; i < $modalScope.bodyAttributes.products.length; i++) {
                     var product = $modalScope.bodyAttributes.products[i];
-                    if (product.productName) {
+                    if (product.productName && product.count) {
                         body += "    " + product.productName + ': ' + product.count + '\n';
                     }
                 }
 
-                body += $modalScope.email.to == $modalScope.defaultRecipient ? '\nDelivery address is ' : '\nDodaci adresa je ';
+                body += $modalScope.email.to == $modalScope.defaultRecipient ? '\nDelivery address is: ' : '\nDodaci adresa je: ';
                 body += $modalScope.bodyAttributes.address + '.\n';
                 body += '\n' + 'BR,' + '\n' + 'An.';
 
@@ -138,12 +138,12 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
             $modalScope.incompleteProducts = function() {
                 for(var i = 0; i < $modalScope.bodyAttributes.products.length; i++) {
                     var product = $modalScope.bodyAttributes.products[i];
-                    if (!product.productName) {
-                        return true;
+                    if (product.productName && product.count) {
+                        return false;
                     }
                 }
 
-                return false;
+                return true;
             }
 
             $modalScope.email = {
@@ -161,6 +161,20 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
                     count: 1
                 }]
             };
+
+            $modalScope.addProduct = function() {
+                var lastProduct = $modalScope.bodyAttributes.products[$modalScope.bodyAttributes.products.length - 1];
+                if (lastProduct.productName !== "") {
+                    $modalScope.bodyAttributes.products.push({
+                        productName: "",
+                        count: 1
+                    });
+                }
+            };
+
+            $modalScope.removeProduct = function(index) {
+                $modalScope.bodyAttributes.products.splice(index, 1);
+            }
 
             $modalScope.allProductNames = $scope.allProductNames;
 

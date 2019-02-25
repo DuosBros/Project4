@@ -24,8 +24,9 @@
 21/02 - 1h gmail
 23/02 - 1h gmail
 24/02 - 2h gmail
+25/02 - 1h gmail
 ----------------------------
-36h
+37h
 
 
 
@@ -35,7 +36,6 @@
 new todo list:
 
 
-4. gmail integraci
 
 pozor: nove se nepocitaji ty ordery, ktere jsou abandoned - cerne
 Booked: produkty na aktivnich orderach po calculation date, ktere nejsou zaplacene
@@ -44,7 +44,6 @@ Available for booking: hodnota ve warehouse kolekci v DB
 In store: hodnota ve warehouse kolekci v DB - produkty na zaplacenych aktivnich orderach od calc date
 
 
-https://accounts.google.com/o/oauth2/v2/auth?client_id=40328072649-u39hp3l0t475abmlgtsu8rvphdn81kf5.apps.googleusercontent.com&response_type=code&scope=https://mail.google.com/&redirect_uri=http://localhost:3000/rest/gmail/auth
 
 
 zralok - 86g
