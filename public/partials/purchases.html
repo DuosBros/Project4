@@ -1,0 +1,20 @@
+<div class="container-fluid"
+	ng-style="{'z-index' : isMobile ? 0 : 2, 'top': isMobile ? '0em' : '3.7em', 'position': isMobile ? 'relative' : 'fixed'}"
+    style="background: white; left: 0; right: 0; padding-left: 3%; padding-right:3%;">
+    <div class="row" style="padding-top: 1em">
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-8">
+            <h1>Purchases</h1>
+        </div>
+        <div ng-if="loading" class="col-md-2 col-sm-offset-5" style="position: fixed; margin-top: 2em; z-index: 999999">
+            <img src="loading.svg" width="40" height="40" style="margin-left: 6.5em"/>
+        </div>
+    </div>
+</div>
+<div class="container-fluid"
+	ng-style="{'z-index' : isMobile ? 0 : 1, 'top': isMobile ? '0em' : '14em'}" style="position: relative; margin-left: 3%; margin-right:3%">
+	<div class="row">
+            Coming soon
+	</div>
+</div>

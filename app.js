@@ -84,6 +84,7 @@ MongoClient.connect(dbUrl, {}, function(err, db) {
     require('./routes/bank.js')(app);
     require('./routes/notifications.js')(app);
     require('./routes/gmail.js')(app);
+    require('./routes/purchases.js')(app);
     require('./routes/scripts.js')(app);
     require('./routes/default')(app);
 
