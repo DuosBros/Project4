@@ -109,8 +109,8 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
 
             var $modalScope = $scope.$new(true);
 
-            // $modalScope.defaultRecipient = 'hlasenska@medpharma.cz';
-            $modalScope.defaultRecipient = 'tomasmocek92@gmail.com';
+            $modalScope.defaultRecipient = 'hlasenska@medpharma.cz';
+            // $modalScope.defaultRecipient = 'tomasmocek92@gmail.com';
 
             $modalScope.createEmailBody = function() {
                 var body = '';
