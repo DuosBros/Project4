@@ -14,7 +14,27 @@
 </div>
 <div class="container-fluid"
 	ng-style="{'z-index' : isMobile ? 0 : 1, 'top': isMobile ? '0em' : '14em'}" style="position: relative; margin-left: 3%; margin-right:3%">
-	<div class="row">
-            Coming soon
+	<div class="row" ng-show="!loading && purchases">
+		<table class="table table-condensed">
+			<thead>
+				<tr>
+					<th>User</th>
+					<th>To</th>
+					<th>Date</th>
+					<th>Products</th>
+					<!-- <th>Body</th> -->
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="purchase in purchases">
+					<td>{{purchase.user}}</td>
+					<td>{{purchase.to}}</td>
+					<td>{{purchase.date | date:'h:mm:ss dd.MM.yyyy'}}</td>
+					<td>{{printProducts(purchase.products)}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<br/><br/>
+        <br/><br/>
 	</div>
 </div>

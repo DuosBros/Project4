@@ -7,6 +7,27 @@ medPharmaServices.factory('medPharmaPurchases', ['$http', '$q', 'medPharmaUtilit
 
     var medPharmaPurchases = {};
 
+    medPharmaPurchases.addPurchase = function(purchase) {
+        var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
+        return $http({
+            method : 'POST',
+            url : '/rest/purchases',
+            headers: requestHeaders,
+            data : purchase,
+            cache : false,
+        });
+    };
+
+    medPharmaPurchases.getPurchases = function() {
+        var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
+        return $http({
+            method : 'GET',
+            url : '/rest/purchases',
+            headers: requestHeaders,
+            cache : false,
+        });
+    };
+
 
     return medPharmaPurchases;
 }]);

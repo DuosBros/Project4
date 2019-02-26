@@ -1,6 +1,6 @@
 module.exports = function(app) {
 
-    var Handler = require('../handlers/costs.js').Handler;
+    var Handler = require('../handlers/purchases.js').Handler;
     var handler = new Handler(app);
     var tools = require('../tools/tools.js');
     var AuthenticationHandler = require('../handlers/others.js').Handler;

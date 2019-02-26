@@ -19,12 +19,12 @@ Handler.prototype.getAllPurchases = function() {
     var purchases = mongo.collection('purchases');
 
     purchases.find({}, {}, {"sort": {'date': -1}})
-    .toArray(function(err, costs) {
+    .toArray(function(err, purchases) {
         if(err) {
             console.log('ERROR while getting all purchases> ' + err);
             deferred.reject(err);
         } else {
-            deferred.resolve(costs);
+            deferred.resolve(purchases);
         }
     });
 
@@ -38,6 +38,14 @@ Handler.prototype.addPurchase = function(purchase) {
     var id;
     var parsedPurchase = purchase;
     parsedPurchase.date = new Date();
+
+    for (var i = 0; i < parsedPurchase.products.length; i++) {
+        var prod = parsedPurchase.products[i];
+        if (!prod.productName || prod.productName.length == 0 || !prod.count || prod.count == 0) {
+            parsedPurchase.products.splice(i, 1);
+        }
+    }
+
     purchases.findOne(
             {},
             { sort: {'id' : -1} },

@@ -3,10 +3,12 @@
 
 var myApp = angular.module('medPharmaController');
 
-myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharmaGmail', '$modal',
-    function($scope, medPharmaOthers, $window, medPharmaGmail, $modal) {
+myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharmaGmail', '$modal', 'medPharmaPurchases',
+    function($scope, medPharmaOthers, $window, medPharmaGmail, $modal, medPharmaPurchases) {
 
         $scope.isMobile = medPharmaOthers.isMobile();
+
+        $scope.loggedInUser = medPharmaOthers.getLoggedInUser()
 
         var authWindow;
         var url;
@@ -219,8 +221,19 @@ myApp.controller('GmailCtrl', ['$scope', 'medPharmaOthers', '$window', 'medPharm
                     $modalScope.success = true;
                     $modalScope.error = undefined;
 
+                    var purchase = {
+                        user: $scope.loggedInUser,
+                        products: JSON.parse(JSON.stringify($modalScope.bodyAttributes.products)),
+                        to: $modalScope.email.to
+                    }
+
                     $modalScope.bodyAttributes.products = [{ productName: "", count: 1 }];
                     console.log(result);
+
+                    medPharmaPurchases.addPurchase(purchase)
+                    .then(function(addedPurchase) {
+
+                    })
                 })
                 .catch(function(err) {
                     $modalScope.sendingEmail = false;
