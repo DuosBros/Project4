@@ -14,7 +14,7 @@
 </div>
 <div class="container-fluid"
 	ng-style="{'z-index' : isMobile ? 0 : 1, 'top': isMobile ? '0em' : '14em'}" style="position: relative; margin-left: 3%; margin-right:3%">
-	<div class="row" ng-show="!loading && purchases">
+	<div class="row" ng-show="!loading && purchases && purchases.length > 0">
 		<table class="table table-condensed">
 			<thead>
 				<tr>
