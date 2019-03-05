@@ -278,6 +278,16 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
         }
     }
 
+    $scope.calculateNumberOfProducts = function(products) {
+        var count = 0;
+
+        for(var i = 0; i < products.length; i++) {
+            count += products[i].count;
+        }
+
+        return count;
+    }
+
     $scope.exportOrder = function(orderId) {
         medPharmaOrders.verifyLock(orderId, $scope.user)
         .then(function(locked) {

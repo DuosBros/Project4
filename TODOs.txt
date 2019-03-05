@@ -1,35 +1,4 @@
-﻿22/10 - 1h zaslat rates
-30/10 - 0.5h force https + config improvements for dev
-30/10 - 0.5h auth query params to payload
-05/11 - 1.5h api for product notification threshold + notification endpoints preparations
-06/11 - 1h work on warehouse notifications and endpoints refactored
-07/11 - 1h work on WH notifications - endpoint DONE
-09/11 - 1.5h WH notifications done
-10/11 - 0.5h zaslat notifs endpoint
-12/11 - 1.5h more zaslat notifs
-24/11 - 2.5h unlock ordery + costs category + gmail + products cat
-25/11 - 2h gmail shit
-29/11 - 2.5h new product attributes + order drafts
-04/12 - 2h tax handling
-05/12 - 2h invoices
-07/12 - 0.5h invoices
-10/12 - 0.5 deployment + small improvements
-26/12 - 1h invoices
-15/01 - 0.5h smarform api
-09/02 - 0.5h branch vn/cz
-15/02 - 2.5h gmail pain
-16/02 - 4.5h gmail pain 2
-17/02 - 1h gmail
-19/02 - 1h gmail
-21/02 - 1h gmail
-23/02 - 1h gmail
-24/02 - 2h gmail
-25/02 - 2h gmail
-26/02 - 1h gmail
-----------------------------
-39h
-
-
+﻿05/03 - 0.5h
 
 
 168USD/year

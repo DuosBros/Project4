@@ -230,7 +230,12 @@
                     <div class="col-sm-6" ng-style="{'text-align' : isMobile ? 'center' : ''}">
                         <strong style="padding-left: 1em">Delivery price:</strong> {{order.payment.price ? order.payment.price : 0}} Kč
                     </div>
-                    <div class="col-sm-6" ng-style="{'text-align' : isMobile ? 'center' : ''}">
+                    <div class="col-sm-1" ng-style="{'text-align' : isMobile ? 'center' : ''}">
+                        <span style="float: right; padding-right: 6.6em">
+                            <strong>{{calculateNumberOfProducts(order.products)}}</strong>
+                        </span>
+                    </div>
+                    <div class="col-sm-5" ng-style="{'text-align' : isMobile ? 'center' : ''}">
                         <span style="float: right; padding-right: 5em">
                             <strong>Total price: {{order.totalPrice}} Kč</strong>
                         </span>
