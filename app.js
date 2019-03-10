@@ -52,8 +52,8 @@ if (env == 'production') {
 
 if (env == 'test') {
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
-    app.set('gmail-redirect-uri', 'https://medpharmavn.herokuapp.com/rest/gmail/oauthcallback');//TODO: change this when test url is known
-    //TODO: set test DB url
+    app.set('mongodb.url', 'mongodb://medpharma2:TranMedGroup12e@ds137483.mlab.com:37483/heroku_q57klscp');
+    app.set('gmail-redirect-uri', 'https://medpharmavn-test.herokuapp.com/rest/gmail/oauthcallback');
 }
 
 morgan.token('remote-user', function getRemoveUser (req) {
