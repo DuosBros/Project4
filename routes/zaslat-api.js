@@ -70,6 +70,11 @@ module.exports = function(app) {
         }
     });
 
+    app.get('/rest/zaslat/addressId', function(req, res) {
+        res.json(app.get('zaslat-address-id'));
+        res.end();
+    })
+
     app.get('/rest/zaslat/orders/list', function(req, res) {
         var token = tools.extractToken(req);
         if(token) {

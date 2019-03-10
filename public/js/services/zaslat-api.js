@@ -190,6 +190,24 @@ medPharmaServices.factory('medPharmaZaslat', ['$http', '$q', 'medPharmaUtilities
             return deferred.promise;
         };
 
+        medPharmaZaslat.getAddressId = function() {
+            var deferred = $q.defer();
+
+            $http({
+                method : 'GET',
+                url : '/rest/zaslat/addressId',
+                cache : false
+            })
+            .then(function(response) {
+                deferred.resolve(response.data);
+            },
+            function(err) {
+                deferred.reject(err);
+            });
+
+            return deferred.promise;
+        }
+
         medPharmaZaslat.removeFromQueue = function(orderIds) {
             var deferred = $q.defer();
 

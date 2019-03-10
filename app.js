@@ -25,8 +25,7 @@ app.set('ACTIVE_ORDERS_STATE', 'active');
 app.set('DRAFT_ORDERS_STATE', 'draft');
 app.set('ARCHIVED_ORDERS_STATE', 'archived');
 app.set('EXPIRED_ORDERS_STATE', 'expired');
-app.set('zaslat-base-uri', 'https://www.zaslat.cz/api/v1/');
-//app.set('zaslat-base-uri', 'https://test.zaslat.cz/api/v1/');
+app.set('zaslat-base-uri', 'https://test.zaslat.cz/api/v1/');
 app.set('zaslat-pickup-uri', 'pickups/add');
 app.set('zaslat-get-pickups-uri', 'pickups/list')
 app.set('zaslat-rates-uri', 'rates/get')
@@ -34,6 +33,7 @@ app.set('zaslat-get-all-shipments-uri', 'shipments/list');
 app.set('zaslat-get-shipments-tracking-uri', 'shipments/tracking');
 app.set('zaslat-create-shipment', 'shipments/create');
 app.set('zaslat-label', 'shipments/label');
+app.set('zaslat-address-id', 8);
 app.set('bank-base-uri', 'https://www.fio.cz/ib_api/rest/periods/o3mjc3g69SqnDBaE7Ul7AvafQldh3MUDanF9A837CfmRMsG0idVjPIh0TAb7WVE4/');
 
 app.set('zaslat-token', 'cLqoi4we0JEaJTCLY25uk7QXdSzgNt5qevOxAlLA');
@@ -42,10 +42,18 @@ app.set('dropbox-token', 'iNhg1bcaxL8AAAAAAABAS-Nu_J1oDWWOrMvcFXGvmwnHc8iDr2sKNI
 app.set('gmail-redirect-uri', 'http://localhost:3000/rest/gmail/oauthcallback');
 app.set('gmail-base-uri', 'https://www.googleapis.com/gmail/v1/users/tnmephagroup@gmail.com/')
 
-if (env != 'development') {
+if (env == 'production') {
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
     app.set('mongodb.url', 'mongodb://medpharma2:TranMedGroup12e@ds153890.mlab.com:53890/heroku_gvlqrgxg');
     app.set('gmail-redirect-uri', 'https://medpharmavn.herokuapp.com/rest/gmail/oauthcallback');
+    app.set('zaslat-base-uri', 'https://www.zaslat.cz/api/v1/');
+    app.set('zaslat-address-id', 50470);
+}
+
+if (env == 'test') {
+    app.use(enforce.HTTPS({ trustProtoHeader: true }));
+    app.set('gmail-redirect-uri', 'https://medpharmavn.herokuapp.com/rest/gmail/oauthcallback');//TODO: change this when test url is known
+    //TODO: set test DB url
 }
 
 morgan.token('remote-user', function getRemoveUser (req) {

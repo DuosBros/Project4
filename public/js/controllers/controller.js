@@ -16,8 +16,14 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
     });
 
     $scope.isMobile = medPharmaOthers.isMobile();
-    $scope.zaslatAddressId = 50470;
-    //$scope.zaslatAddressId = 8;
+
+    medPharmaZaslat.getAddressId()
+    .then(function(zaslatAddressId) {
+        console.log(zaslatAddressId);
+        $scope.zaslatAddressId = zaslatAddressId;
+        // $scope.zaslatAddressId = 50470;
+        // $scope.zaslatAddressId = 8;
+    })
 
     $scope.orders = [];
     $scope.uncollapsedOrders = [];

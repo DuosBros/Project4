@@ -4,7 +4,11 @@
 168USD/year
 
 new todo list:
+Hi Ph,
 
+while waiting for the new version of the app, can you add these simple features?
+1. Receivables = total value of yellow orders. Put it in bank page.
+2. Warehouse value = total value of Available product multiplies by the selling price. In warehouse page.
 
 
 pozor: nove se nepocitaji ty ordery, ktere jsou abandoned - cerne
