@@ -7,7 +7,9 @@ var methodOverride = require('method-override');
 var morgan = require('morgan');
 var app = express();
 var env = app.get('env');
+var cors = require('cors');
 
+app.use(cors());
 app.use(helmet());
 
 app.set('views', __dirname + '/public/views');
