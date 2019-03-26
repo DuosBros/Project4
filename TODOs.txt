@@ -2,16 +2,13 @@
 10/03 - 1h test api
 16/03 - 0.5h heroku analysis
 18/03 - 1h CORS + support
+26/03 - 0.5h general shits
 
 
 168USD/year
 
 new todo list:
-Hi Ph,
 
-while waiting for the new version of the app, can you add these simple features?
-1. Receivables = total value of yellow orders. Put it in bank page.
-2. Warehouse value = total value of Available product multiplies by the selling price. In warehouse page.
 
 
 pozor: nove se nepocitaji ty ordery, ktere jsou abandoned - cerne
@@ -19,8 +16,6 @@ Booked: produkty na aktivnich orderach po calculation date, ktere nejsou zaplace
 Available for booking: hodnota ve warehouse kolekci v DB
     - pocty produktu na vsech objednavkach (aktivnich, po calculation date - paid i not paid)
 In store: hodnota ve warehouse kolekci v DB - produkty na zaplacenych aktivnich orderach od calc date
-
-
 
 
 zralok - 86g

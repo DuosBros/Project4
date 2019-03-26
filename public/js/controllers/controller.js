@@ -435,10 +435,6 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
                         newNote += $modalScope.shipment.note;
                     }
 
-                    //todo remove this shit after 22. dec
-                    if($modalScope.shipment.packages[0].weight > 5) {
-                        $modalScope.shipment.packages[0].weight = 5;
-                    }
                     medPharmaZaslat.createShipment($modalScope.zaslatData, $modalScope.order.id,
                         $modalScope.shipment.type, newNote)
                     .then(function(response) {
