@@ -6,7 +6,6 @@ medPharmaServices.factory('medPharmaOthers', ['$http', '$q', '$cookies', '$locat
     function($http, $q, $cookies, $location, $modal, medPharmaUtilities) {
 
     var medPharmaOthers = {};
-    var cachedProductsJson;
     var cachedProductsJsonWithOther;
 
     medPharmaOthers.getAllProductsJson = function() {
@@ -20,12 +19,15 @@ medPharmaServices.factory('medPharmaOthers', ['$http', '$q', '$cookies', '$locat
             headers: requestHeaders,
             cache : false,
         })
-        .then(function(order) {
-            if(order.data.Other != undefined) {
-                delete order.data.Other;
+        .then(function(products) {
+            for (var product in products.data) {
+                if (products.data.hasOwnProperty(product)) {
+                    if (products.data[product].category == 'Nonbillable') {
+                        delete products.data[product];
+                    }
+                }
             }
-            cachedProductsJson = order.data;
-            deferred.resolve(order.data);
+            deferred.resolve(products.data);
         },
         function(err) {
             deferred.reject(err);

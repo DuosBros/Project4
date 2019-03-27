@@ -73,7 +73,7 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 					scales: {
 						yAxes: [{
 							ticks: {
-								stepSize: 30000,
+								stepSize: 50000,
 							}
 						}],
 						xAxes: [{
@@ -201,7 +201,7 @@ myApp.controller('chartsController', ['$scope', 'medPharmaOthers', 'medPharmaCha
 					scales: {
 						yAxes: [{
 							ticks: {
-								stepSize: 200,
+								stepSize: 500,
 							}
 						}],
 						xAxes: [{
