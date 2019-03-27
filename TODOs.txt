@@ -3,6 +3,7 @@
 16/03 - 0.5h heroku analysis
 18/03 - 1h CORS + support
 26/03 - 0.5h general shits
+27/03 - 1h charts + WH improvements
 
 
 168USD/year
