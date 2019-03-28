@@ -97,6 +97,7 @@ MongoClient.connect(dbUrl, {}, function(err, db) {
     require('./routes/purchases.js')(app);
     require('./routes/scripts.js')(app);
     require('./routes/default')(app);
+    require('./routes/export.js')(app);
 
     console.log("Server running!");
 });
