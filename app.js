@@ -15,7 +15,7 @@ app.use(helmet());
 app.set('views', __dirname + '/public/views');
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(methodOverride());
 app.use(express.static(__dirname + "/public"));
 app.set('mongodb.url', 'mongodb://localhost:27017/medpharma');
@@ -58,19 +58,19 @@ if (env == 'test') {
     app.set('gmail-redirect-uri', 'https://medpharmavn-test.herokuapp.com/rest/gmail/oauthcallback');
 }
 
-morgan.token('remote-user', function getRemoveUser (req) {
+morgan.token('remote-user', function getRemoveUser(req) {
     return req.headers.authorization;
 })
 app.use(morgan('combined'))
 //app.disable('etag');
 
-app.use(bodyParser.urlencoded({'extended':'true'}));
+app.use(bodyParser.urlencoded({ 'extended': 'true' }));
 
 
 var MongoClient = require('mongodb').MongoClient;
 var dbUrl = app.get('mongodb.url');
 
-MongoClient.connect(dbUrl, {}, function(err, db) {
+MongoClient.connect(dbUrl, {}, function (err, db) {
     if (err) {
         console.log("Cannot connect to MongoDB at " + dbUrl);
         throw err;

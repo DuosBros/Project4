@@ -3,3 +3,7 @@
 *.iml
 .idea
 /node_modules/*
+
+scripts/temp/
+
+package-lock\.json
