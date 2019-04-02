@@ -19,7 +19,7 @@ MongoClient.connect(dbUrl, {}, function (err, db) {
                 let oldestHistoryItem = productHistory.sort((a, b) => a.timestamp - b.timestamp)[0]
                 if(oldestHistoryItem) {
                     let oldestHistoryItemTimestamp = oldestHistoryItem.timestamp
-                    product.calculationDate = new Date(Date.parse(oldestHistoryItemTimestamp) - 1000).toISOString()
+                    product.calculationDate.$date = new Date(Date.parse(oldestHistoryItemTimestamp) - 1000).toISOString()
                     warehouse.update({ '_id': product._id }, product, function (err, updateResult) {
                         if (err) {
                             console.log(JSON.stringify(err));
