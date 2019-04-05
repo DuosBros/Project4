@@ -64,7 +64,7 @@ Handler.prototype.addPurchase = function(purchase) {
                         console.log('ERROR while adding new purchase(insert)> ' + err);
                         deferred.reject(err);
                     } else {
-                        deferred.resolve(doc);
+                        deferred.resolve(parsedPurchase);
                     }
                 });
     });

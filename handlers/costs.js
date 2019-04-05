@@ -112,7 +112,7 @@ Handler.prototype.addCost = function(cost) {
                         console.log('ERROR while adding new cost(insert)> ' + err);
                         deferred.reject(err);
                     } else {
-                        deferred.resolve(doc);
+                        deferred.resolve(parsedCost);
                     }
                 });
     });

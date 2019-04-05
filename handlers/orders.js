@@ -500,7 +500,7 @@ Handler.prototype.addOrder = function(order, username, isDraft) {
                     console.log('ERROR while creating new order (adding to DB)> ' + err);
                     deferred.reject(err);
                 } else {
-                    deferred.resolve(doc);
+                    deferred.resolve(parsedOrder);
                 }
             });
     });
