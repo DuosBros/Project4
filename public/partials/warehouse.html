@@ -66,11 +66,11 @@
 						</button>
 						<button type="button" ng-click="openHistoryModal(product.name)" class="btn btn-default btn-xs">History</button>
 						<button type="button" ng-click="removeProduct(product.name)" class="btn btn-default btn-xs"
-							bs-tooltip="'Remove product'" data-placement="bottom" ng-show="loggedUser == 'admin'">
+							bs-tooltip="'Remove product'" data-placement="bottom" ng-show="loggedUser == 'admin' || loggedUser == 'nvxd'">
 							<span class="glyphicon glyphicon-remove"></span>
 						</button>
 						<button type="button" ng-click="openConfigureProductModal(product.name)" class="btn btn-default btn-xs"
-							bs-tooltip="'Configure product'" data-placement="bottom" ng-show="loggedUser == 'admin'">
+							bs-tooltip="'Configure product'" data-placement="bottom" ng-show="loggedUser == 'admin' || loggedUser == 'nvxd'">
 							<span class="glyphicon glyphicon-wrench"></span>
 						</button>
 					</div>
