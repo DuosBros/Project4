@@ -1,0 +1,58 @@
+<div class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"> <strong> Create purchase </strong> </h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-1">
+                    </div>
+                    <div class="col-sm-10">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label for="to">To: </label>
+                                <select name="singleSelect" class="form-control" ng-model="purchase.to">
+                                    <option value="hlasenska@medpharma.cz">hlasenska@medpharma.cz</option>
+                                    <option value="obchody.milota@seznam.cz">obchody.milota@seznam.cz</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="products">Products: </label>
+                                <div ng-repeat="product in purchase.products">
+                                    <div class="row">
+                                        <div class="col-sm-9" style="padding-right: 0px" bs-tooltip="'Product name'">
+                                            <select ng-model="product.productName" class="form-control" ng-options="p as p for p in allProductNames"
+                                                placeholder="Select product" ng-change="addProduct()">
+                                                <option value="" disabled>Select product<option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-2" style="padding-left: 0px; padding-right: 0px" bs-tooltip="'Count'">
+                                            <input type="number" class="form-control" min="1" ng-model="product.count"
+                                                placeholder="Count">
+                                        </div>
+                                        <div class="col-sm-1" style="padding-left: 0px">
+                                            <button ng-if="!$last" class="btn btn-default" data-placement="bottom"
+                                                bs-tooltip="'Remove this product'" ng-click="removeProduct($index)">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="close()">Cancel</button>
+                <button type="button" ng-if="!edit" class="btn btn-default" ng-click="addPurchase()">Create</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -5,7 +5,12 @@
         <div class="col-sm-1">
         </div>
         <div class="col-sm-8">
-            <h1>Purchases</h1>
+            <h1>
+				Purchases
+				<label class="btn btn-default btn-sm" ng-click="openAddModal()">
+					Create purchase
+				</label>
+			</h1>
         </div>
         <div ng-if="loading" class="col-md-2 col-sm-offset-5" style="position: fixed; margin-top: 2em; z-index: 999999">
             <img src="loading.svg" width="40" height="40" style="margin-left: 6.5em"/>
