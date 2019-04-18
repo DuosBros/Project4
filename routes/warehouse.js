@@ -97,4 +97,12 @@ module.exports = function(app) {
             .done();
         //
     });
+
+
+    app.get('/rest/warehouse/v2', function(req, res) {
+        var year = req.params.year;
+        var month = req.params.month;
+
+        
+    });
 }
