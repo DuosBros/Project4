@@ -97,4 +97,29 @@ module.exports = function(app) {
             .done();
         //
     });
+
+
+    app.get('/rest/warehouse/v2', function(req, res) {
+        var year = parseInt(req.query.year);
+        var month = parseInt(req.query.month);
+
+        var currentDate = new Date();
+        if (!year) {
+            year = currentDate.getFullYear();
+        }
+
+        if (!month) {
+            month = currentDate.getMonth();
+        }
+
+        handler.getWarehouseV2(year, month)
+        .then(function(productsData) {
+            res.json(productsData);
+            res.end();
+        })
+        .fail(function(err) {
+            tools.replyError(err, res);
+        })
+        .done();
+    });
 }

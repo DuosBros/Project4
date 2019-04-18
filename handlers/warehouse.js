@@ -152,6 +152,57 @@ Handler.prototype.getProductsCalculationDate = function(productName) {
     return deferred.promise;
 }
 
+Handler.prototype.getProductsInfoForWh = function() {
+    var deferred = Q.defer();
+
+    var products = mongo.collection('products');
+
+    products.find()
+    .toArray(function(err, allProducts) {
+        var productsObject = {};
+        allProducts.forEach(function(product) {
+            productsObject[product.name] = {
+                price: product.price,
+                category: product.category,
+                displayName: product.displayName,
+                id: product.id
+            }
+        });
+
+        if(err) {
+            console.log('ERROR while getting all products> ' + err);
+            deferred.reject(err);
+        } else {
+            deferred.resolve(productsObject);
+        }
+    });
+
+    return deferred.promise;
+}
+
+
+Handler.prototype.getWarehouseV2 = function(year, month) {
+    var deferred = Q.defer();
+
+    var data = {};
+    warehouseHandler.getProductsInfoForWh()
+    .then(function(products) {
+        data = products;
+        return warehouseHandler.getProductsData();
+    })
+    .then(function(productsData) {
+        productsData.forEach(function(product) {
+            data[product.productName].input = (product.history && product.history.length > 0) ? product.history[0].difference : 0;
+        });
+        deferred.resolve(data);
+    })
+    .fail(function(err) {
+        console.log('ERR getting warehouse V2: ' + err);
+        deferred.reject(err);
+    });
+
+    return deferred.promise;
+}
 
 
 exports.Handler = Handler;
