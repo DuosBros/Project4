@@ -157,20 +157,44 @@ Handler.prototype.getProductsCalculationDate = function(productName) {
     return deferred.promise;
 }
 
+function mapWarehouseV2(whData) {
+    var mappedData = {
+        timeSpan: whData.timeSpan,
+        products: [],
+    };
+
+    Object.keys(whData.products).forEach(function(key) {
+        var product = whData.products[key];
+        product.name = key;
+
+        mappedData.products.push(product);
+    });
+
+    return mappedData;
+}
+
 Handler.prototype.getWarehouseV2 = function(year, month) {
     var deferred = Q.defer();
 
-    var data = {};
+    var data = {
+        timeSpan: {
+            month: month,
+            year: year,
+        },
+    };
+
     prodHandler.getAllProductsJson()
     .then(function(products) {
-        data = products;
+        data.products = products;
         return warehouseHandler.getProductsData();
     })
     .then(function(productsData) {
         productsData.forEach(function(product) {
-            data[product.productName].input = (product.history && product.history.length > 0) ? product.history[0].difference : 0;
+            data.products[product.productName].input = (product.history && product.history.length > 0) ? product.history[0].difference : 0;
         });
-        deferred.resolve(data);
+
+
+        deferred.resolve(mapWarehouseV2(data));
     })
     .fail(function(err) {
         console.log('ERR getting warehouse V2: ' + err);
