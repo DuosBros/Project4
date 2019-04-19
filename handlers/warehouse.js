@@ -179,36 +179,38 @@ function mapWarehouseV2(whData) {
     return mappedData;
 }
 
-// Handler.prototype.getWarehouseV2 = function(year, month) {
-//     var deferred = Q.defer();
+Handler.prototype.getWarehouseV2 = function(year, month) {
+    var deferred = Q.defer();
 
-//     var data = {
-//         timeSpan: {
-//             month: month,
-//             year: year,
-//         },
-//     };
+    var data = {
+        timeSpan: {
+            month: month,
+            year: year,
+        },
+    };
 
-//     prodHandler.getAllProductsJson()
-//     .then(function(products) {
-//         data.products = products;
-//         return warehouseHandler.getProductsData();
-//     })
-//     .then(function(productsData) {
-//         productsData.forEach(function(product) {
-//             data.products[product.productName].input = (product.history && product.history.length > 0) ? product.history[0].difference : 0;
-//         });
+    prodHandler.getAllProductsJson()
+    .then(function(products) {
+        var mappedProducts = [];
+
+        Object.keys(products).forEach(function(key) {
+            var product = products[key];
+            product.input = (product.warehouse.history && product.warehouse.history.length > 0) ? product.warehouse.history[0].difference : 0;
+            delete product.warehouse;
+        })
+
+        data.products = products;
 
 
-//         deferred.resolve(mapWarehouseV2(data));
-//     })
-//     .fail(function(err) {
-//         console.log('ERR getting warehouse V2: ' + err);
-//         deferred.reject(err);
-//     });
+        deferred.resolve(mapWarehouseV2(data));
+    })
+    .fail(function(err) {
+        console.log('ERR getting warehouse V2: ' + err);
+        deferred.reject(err);
+    });
 
-//     return deferred.promise;
-// }
+    return deferred.promise;
+}
 
 
 exports.Handler = Handler;

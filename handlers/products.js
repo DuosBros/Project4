@@ -26,7 +26,8 @@ Handler.prototype.getAllProductsJson = function () {
                     category: product.category,
                     invoiceDisplayName: product.invoiceDisplayName,
                     displayName: product.displayName,
-                    id: product.id
+                    id: product.id,
+                    warehouse: product.warehouse,
                 }
             });
 
