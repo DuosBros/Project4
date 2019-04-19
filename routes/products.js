@@ -2,6 +2,11 @@ module.exports = function (app) {
 
     var Handler = require('../handlers/others.js').Handler;
     var handler = new Handler(app);
+
+
+    var ProdHandler = require('../handlers/products.js').Handler;
+    var prodHandler = new ProdHandler(app);
+
     var AuthenticationHandler = require('../handlers/others.js').Handler;
     var authenticationHandler = new AuthenticationHandler(app);
     var tools = require('../tools/tools.js');
@@ -96,7 +101,7 @@ module.exports = function (app) {
         if (token) {
             authenticationHandler.validateToken(token)
                 .then(function () {
-                    return handler.getAllProductsJson()
+                    return prodHandler.getAllProductsJson()
                 })
                 .then(function (products) {
                     res.json(products);

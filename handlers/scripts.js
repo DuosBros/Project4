@@ -25,6 +25,9 @@ var rp = require('request-promise');
 
 var PdfHandler = require('../handlers/pdfGeneration.js').Handler;
 
+var ProdHandler = require('../handlers/products.js').Handler;
+var prodHandler;
+
 require('isomorphic-fetch')
 var Dropbox = require('dropbox').Dropbox;
 var dbx;
@@ -35,6 +38,7 @@ Handler = function(app) {
     mongo = app.get('mongodb');
     pdfGeneration = new PdfHandler(app);
     othersHandler = new OthersHandler(app);
+    prodHandler = new ProdHandler(app);
 
     // cron.schedule('0 1 * * *', function() {
     //     shell.exec('sh scripts/dumpDatabase.sh');
@@ -394,7 +398,7 @@ function exportOrders(joinedDatesString, dateFrom, dateTo, path) {
 
     var allProducts;
 
-    othersHandler.getAllProductsJson()
+    prodHandler.getAllProductsJson()
     .then(function(allProducts) {
         allProducts = allProducts;
 
@@ -528,7 +532,7 @@ Handler.prototype.exportByVS = function(vs) {
     var deferred = Q.defer();
 
     var orders = mongo.collection('orders');
-    var products = mongo.collection('products');
+    var products = mongo.collection('productsV2');
 
     products.find()
     .toArray(function(err, allProducts) {

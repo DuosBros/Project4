@@ -12,12 +12,16 @@ var warehouseHandler;
 var ZaslatHandler = require('../handlers/zaslat-api.js').Handler;
 var zaslatHandler;
 
+var ProdHandler = require('../handlers/products.js').Handler;
+var prodHandler;
+
 Handler = function(app) {
     handler = this;
 
     othersHandler = new OthersHandler(app);
     warehouseHandler = new WarehouseHandler(app);
     zaslatHandler = new ZaslatHandler(app);
+    prodHandler = new ProdHandler(app);
 };
 
 Handler.prototype.getNotPaidNotifications = function() {
@@ -105,7 +109,7 @@ Handler.prototype.getWarehouseNotifications = function() {
 
     var result = [];
 
-    othersHandler.getAllProductsJson()
+    prodHandler.getAllProductsJson()
     .then(function(products) {
         var productsSalesPromises = [];
 

@@ -16,7 +16,7 @@ MongoClient.connect(dbUrl, {}, function(err, db) {
     console.log('MongoDB connected at ' + dbUrl);
 
     var orders = db.collection('orders');
-    var products = db.collection('products');
+    var products = db.collection('productsV2');
 
     products.find()
     .toArray(function(err, allProducts) {

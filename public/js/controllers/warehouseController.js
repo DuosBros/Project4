@@ -129,6 +129,7 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
                 )
                 .then(function() {
                     reloadAllProductAmounts();
+                    loadNotifications();
                     modal.$promise.then(modal.hide);
                 });
             }
