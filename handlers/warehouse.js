@@ -5,10 +5,15 @@ var mongo;
 var ACTIVE_ORDERS_STATE;
 var warehouseHandler;
 
+var ProdHandler = require('../handlers/products.js').Handler;
+var prodHandler;
+
 Handler = function(app) {
     mongo = app.get('mongodb');
     ACTIVE_ORDERS_STATE = app.get('ACTIVE_ORDERS_STATE');
     warehouseHandler = this;
+
+    prodHandler = new ProdHandler(app);
 };
 
 Handler.prototype.saveProductAmount = function(productName, amount, calculationDate, difference, user, notificationThreshold) {
@@ -152,40 +157,11 @@ Handler.prototype.getProductsCalculationDate = function(productName) {
     return deferred.promise;
 }
 
-Handler.prototype.getProductsInfoForWh = function() {
-    var deferred = Q.defer();
-
-    var products = mongo.collection('products');
-
-    products.find()
-    .toArray(function(err, allProducts) {
-        var productsObject = {};
-        allProducts.forEach(function(product) {
-            productsObject[product.name] = {
-                price: product.price,
-                category: product.category,
-                displayName: product.displayName,
-                id: product.id
-            }
-        });
-
-        if(err) {
-            console.log('ERROR while getting all products> ' + err);
-            deferred.reject(err);
-        } else {
-            deferred.resolve(productsObject);
-        }
-    });
-
-    return deferred.promise;
-}
-
-
 Handler.prototype.getWarehouseV2 = function(year, month) {
     var deferred = Q.defer();
 
     var data = {};
-    warehouseHandler.getProductsInfoForWh()
+    prodHandler.getAllProductsJson()
     .then(function(products) {
         data = products;
         return warehouseHandler.getProductsData();

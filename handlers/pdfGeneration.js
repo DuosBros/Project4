@@ -26,11 +26,16 @@ require('isomorphic-fetch')
 var Dropbox = require('dropbox').Dropbox;
 var dbx;
 
+var ProdHandler = require('../handlers/products.js').Handler;
+var prodHandler;
+
 Handler = function(app) {
 	dbx = new Dropbox({ accessToken: app.get('dropbox-token') });
 	others = new OthersHandler(app);
 
-	others.getAllProductsJson()
+	prodHandler = new ProdHandler(app);
+
+	prodHandler.getAllProductsJson()
 	.then(function(products) {
 		allProductsData = products;
 	})
@@ -40,8 +45,9 @@ Handler = function(app, shit2) {
 	if (app) {
 		dbx = new Dropbox({ accessToken: app.get('dropbox-token') });
 		others = new OthersHandler(app);
+		prodHandler = new ProdHandler(app);
 
-		others.getAllProductsJson()
+		prodHandler.getAllProductsJson()
 		.then(function(products) {
 			allProductsData = products;
 		})
