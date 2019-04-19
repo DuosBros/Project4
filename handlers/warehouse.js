@@ -19,37 +19,34 @@ Handler = function(app) {
 Handler.prototype.saveProductAmount = function(productName, amount, calculationDate, difference, user, notificationThreshold) {
     var deferred = Q.defer();
 
-    var warehouseCollection = mongo.collection('warehouse');
+    var productsV2 = mongo.collection('productsV2');
 
-    this.getSingleProductData(productName)
-    .then(function(singleProductData) {
-        warehouseCollection.update(
-            {'productName': productName},
-            {
-                $set: {
-                    'amount': amount, 'calculationDate': new Date(calculationDate),
-                    'notificationThreshold': notificationThreshold
-                },
-                $push: {
-                    history: {
-                        'timestamp': new Date(),
-                        'difference': difference,
-                        'user': user
-                    }
-                }
+    productsV2.update(
+        {'name': productName},
+        {
+            $set: {
+                'warehouse.amount': amount,
+                'warehouse.calculationDate': new Date(calculationDate),
+                'warehouse.notificationThreshold': notificationThreshold
             },
-            { upsert: true },
-            function(err, result) {
-            if(result.result.n == 1) {
-                deferred.resolve(result);
-            } else {
-                var error = new Error('error while updating product ' + productName);
-                console.log(error + '> ' + err);
-                error.status = 400;
-                deferred.reject(error);
+            $push: {
+                'warehouse.history': {
+                    'timestamp': new Date(),
+                    'difference': difference,
+                    'user': user
+                }
             }
-        })
-    })
+        },
+        function(err, result) {
+        if(result.result.n == 1) {
+            deferred.resolve(result);
+        } else {
+            var error = new Error('error while updating product ' + productName);
+            console.log(error + '> ' + err);
+            error.status = 400;
+            deferred.reject(error);
+        }
+    });
 
     return deferred.promise;
 }
@@ -57,13 +54,13 @@ Handler.prototype.saveProductAmount = function(productName, amount, calculationD
 Handler.prototype.getSingleProductData = function(productName) {
     var deferred = Q.defer();
 
-    var warehouseCollection = mongo.collection('warehouse');
+    var productsV2 = mongo.collection('productsV2');
 
-    warehouseCollection.findOne({productName: productName}, function(err, result) {
+    productsV2.findOne({name: productName}, function(err, result) {
         if(err) {
             deferred.reject(err);
         } else {
-            deferred.resolve(result);
+            deferred.resolve(result.warehouse);
         }
     });
     return deferred.promise;
@@ -72,13 +69,22 @@ Handler.prototype.getSingleProductData = function(productName) {
 Handler.prototype.getProductsData = function() {
     var deferred = Q.defer();
 
-    var warehouseCollection = mongo.collection('warehouse');
+    var productsV2 = mongo.collection('productsV2');
 
-    warehouseCollection.find().toArray(function(err, result) {
+    productsV2.find().toArray(function(err, result) {
         if(err) {
             deferred.reject(err);
         } else {
-            deferred.resolve(result);
+            var tmpProductsData = [];
+            for (var i = 0; i < result.length; i++) {
+                if (result[i].category !== 'Nonbillable') {
+                    var prod = result[i].warehouse;
+                    prod.productName = result[i].name;
+                    tmpProductsData.push(prod);
+                }
+            }
+
+            deferred.resolve(tmpProductsData);
         }
     });
 
@@ -140,17 +146,17 @@ Handler.prototype.mapResults = function(productName, results) {
 Handler.prototype.getProductsCalculationDate = function(productName) {
     var deferred = Q.defer();
 
-    var warehouseCollection = mongo.collection('warehouse');
+    var productsV2 = mongo.collection('productsV2');
 
 
-    var match = {'productName' : productName};
-    warehouseCollection.findOne(match, function(err, result) {
+    var match = {'name' : productName};
+    productsV2.findOne(match, function(err, result) {
         if(err) {
             deferred.reject(err);
         } else if (!result) {
             deferred.resolve(new Date());
         } else {
-            deferred.resolve(result.calculationDate);
+            deferred.resolve(result.warehouse.calculationDate);
         }
     });
 
@@ -173,36 +179,36 @@ function mapWarehouseV2(whData) {
     return mappedData;
 }
 
-Handler.prototype.getWarehouseV2 = function(year, month) {
-    var deferred = Q.defer();
+// Handler.prototype.getWarehouseV2 = function(year, month) {
+//     var deferred = Q.defer();
 
-    var data = {
-        timeSpan: {
-            month: month,
-            year: year,
-        },
-    };
+//     var data = {
+//         timeSpan: {
+//             month: month,
+//             year: year,
+//         },
+//     };
 
-    prodHandler.getAllProductsJson()
-    .then(function(products) {
-        data.products = products;
-        return warehouseHandler.getProductsData();
-    })
-    .then(function(productsData) {
-        productsData.forEach(function(product) {
-            data.products[product.productName].input = (product.history && product.history.length > 0) ? product.history[0].difference : 0;
-        });
+//     prodHandler.getAllProductsJson()
+//     .then(function(products) {
+//         data.products = products;
+//         return warehouseHandler.getProductsData();
+//     })
+//     .then(function(productsData) {
+//         productsData.forEach(function(product) {
+//             data.products[product.productName].input = (product.history && product.history.length > 0) ? product.history[0].difference : 0;
+//         });
 
 
-        deferred.resolve(mapWarehouseV2(data));
-    })
-    .fail(function(err) {
-        console.log('ERR getting warehouse V2: ' + err);
-        deferred.reject(err);
-    });
+//         deferred.resolve(mapWarehouseV2(data));
+//     })
+//     .fail(function(err) {
+//         console.log('ERR getting warehouse V2: ' + err);
+//         deferred.reject(err);
+//     });
 
-    return deferred.promise;
-}
+//     return deferred.promise;
+// }
 
 
 exports.Handler = Handler;

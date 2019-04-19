@@ -82,7 +82,7 @@ Handler.prototype.validateToken = function (token) {
 Handler.prototype.getProductsJson = function () {
     var deferred = Q.defer();
 
-    var products = mongo.collection('products');
+    var products = mongo.collection('productsV2');
 
     products.find()
         .toArray(function (err, allProducts) {
@@ -99,7 +99,7 @@ Handler.prototype.getProductsJson = function () {
 Handler.prototype.getProduct = function (id) {
     var deferred = Q.defer();
 
-    var products = mongo.collection('products');
+    var products = mongo.collection('productsV2');
 
     var id = parseInt(id);
 
@@ -118,13 +118,18 @@ Handler.prototype.getProduct = function (id) {
 Handler.prototype.addProduct = function (product) {
     var deferred = Q.defer();
 
-    var products = mongo.collection('products');
+    var products = mongo.collection('productsV2');
 
     var id;
     products.find().sort({ id: -1 }).limit(1).next()
         .then(function (bla) {
             id = bla.id
             product.id = id + 1;
+            product.warehouse = {
+                calculationDate: new Date(),
+                amount: 0,
+                history: [],
+            };
         })
         .then(() => {
             products.insertOne(product, function (err, doc) {
@@ -132,14 +137,7 @@ Handler.prototype.addProduct = function (product) {
                     deferred.reject(err);
                 } else {
                     var calcDate = new Date();
-                    warehouseHandler.saveProductAmount(product.name, 0, calcDate, 0)
-                        .then(function (res) {
-                            deferred.resolve(doc);
-                        })
-                        .fail(function (err) {
-                            deferred.reject(err);
-                        })
-                        .done()
+                    deferred.resolve(calcDate);
                 }
             });
         })
@@ -155,9 +153,6 @@ Handler.prototype.editProduct = function (oldProductName, newProduct) {
             return othersHandler.updateProductsInOrders(oldProductName, newProduct.name);
         })
         .then(function (result) {
-            return othersHandler.updateProductInWarehouse(oldProductName, newProduct.name);
-        })
-        .then(function (result) {
             deferred.resolve(result);
         })
         .catch(function (err) {
@@ -170,7 +165,7 @@ Handler.prototype.editProduct = function (oldProductName, newProduct) {
 Handler.prototype.saveProduct = function (productId, newProduct) {
     var deferred = Q.defer();
 
-    var products = mongo.collection('products');
+    var products = mongo.collection('productsV2');
 
     var id = parseInt(productId);
 
@@ -189,7 +184,7 @@ Handler.prototype.saveProduct = function (productId, newProduct) {
 Handler.prototype.updateProductsCollections = function (oldProductName, newProduct) {
     var deferred = Q.defer();
 
-    var products = mongo.collection('products');
+    var products = mongo.collection('productsV2');
 
     products.update({ 'name': oldProductName },
         {
@@ -245,44 +240,16 @@ Handler.prototype.updateProductsInOrders = function (oldProductName, newProductN
     return deferred.promise;
 }
 
-Handler.prototype.updateProductInWarehouse = function (oldProductName, newProductName) {
-    var deferred = Q.defer();
-
-    var warehouse = mongo.collection('warehouse');
-
-    warehouse.update({ 'productName': oldProductName }, { $set: { 'productName': newProductName } }, { multi: true },
-        function (err, result) {
-            if (err) {
-                var error = new Error('error while updating product ' + oldProductName);
-                console.log(error + '> ' + err);
-                error.status = 400;
-                deferred.reject(error);
-            } else {
-                deferred.resolve(result);
-            }
-        }
-    );
-
-    return deferred.promise;
-}
-
 Handler.prototype.removeProduct = function (product) {
     var deferred = Q.defer();
 
-    var products = mongo.collection('products');
-    var warehouse = mongo.collection('warehouse');
+    var products = mongo.collection('productsV2');
 
     products.removeOne({ 'name': product }, function (err, doc) {
         if (err) {
             deferred.reject(err);
         } else {
-            warehouse.removeOne({ 'productName': product }, function (err, doc) {
-                if (err) {
-                    deferred.reject(err);
-                } else {
-                    deferred.resolve(doc);
-                }
-            })
+            deferred.resolve(doc);
         }
     });
 
@@ -294,7 +261,7 @@ Handler.prototype.removeProduct = function (product) {
 Handler.prototype.deleteProduct = function (productId) {
     var deferred = Q.defer();
 
-    var products = mongo.collection('products');
+    var products = mongo.collection('productsV2');
     console.log(productId)
     products.removeOne({ 'id': parseInt(productId) }, function (err, result) {
         if (result.result.n == 1) {

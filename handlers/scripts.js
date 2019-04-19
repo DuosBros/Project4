@@ -532,7 +532,7 @@ Handler.prototype.exportByVS = function(vs) {
     var deferred = Q.defer();
 
     var orders = mongo.collection('orders');
-    var products = mongo.collection('products');
+    var products = mongo.collection('productsV2');
 
     products.find()
     .toArray(function(err, allProducts) {

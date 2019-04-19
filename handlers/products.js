@@ -12,7 +12,7 @@ Handler = function (app) {
 Handler.prototype.getAllProductsJson = function () {
     var deferred = Q.defer();
 
-    var products = mongo.collection('products');
+    var products = mongo.collection('productsV2');
 
     products.find()
         .toArray(function (err, allProducts) {
