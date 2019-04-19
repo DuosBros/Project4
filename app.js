@@ -87,6 +87,7 @@ MongoClient.connect(dbUrl, {}, function (err, db) {
     require('./routes/orders.js')(app);
     require('./routes/costs.js')(app);
     require('./routes/others.js')(app);
+    require('./routes/products.js')(app);
     require('./routes/pdfGeneration.js')(app);
     require('./routes/charts.js')(app);
     require('./routes/warehouse.js')(app);
