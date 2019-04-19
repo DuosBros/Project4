@@ -7,3 +7,5 @@
 scripts/temp/
 
 package-lock\.json
+
+temp/
