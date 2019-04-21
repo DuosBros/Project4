@@ -122,8 +122,8 @@ Handler.prototype.addProduct = function (product) {
 
     var id;
     products.find().sort({ id: -1 }).limit(1).next()
-        .then(function (bla) {
-            id = bla.id
+        .then((res) => {
+            id = res.id
             product.id = id + 1;
             product.warehouse = {
                 calculationDate: new Date(),
@@ -136,8 +136,7 @@ Handler.prototype.addProduct = function (product) {
                 if (err) {
                     deferred.reject(err);
                 } else {
-                    var calcDate = new Date();
-                    deferred.resolve(calcDate);
+                    deferred.resolve(product);
                 }
             });
         })
