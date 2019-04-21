@@ -9,6 +9,7 @@
 06/04 - 0.5h - manual add of purchases
 18/04 - 0.5h new WH shitt
 19/04 - 3h collections merge
+21/04 - 0.5h small improvement to new WH
 
 
 168USD/year
