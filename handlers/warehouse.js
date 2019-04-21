@@ -179,6 +179,24 @@ function mapWarehouseV2(whData) {
     return mappedData;
 }
 
+function calculateProductInput(warehouse, month, year) {
+    if (!warehouse || !warehouse.history || !warehouse.history.length > 0) {
+        return 0;
+    }
+
+    var history = warehouse.history;
+
+    for (var i = 0; i < history.length; i++) {
+        var timestamp = history[i].timestamp;
+        var difference = history[i].difference;
+        if (timestamp.getFullYear() == year && timestamp.getMonth() == month) {
+            return difference;
+        }
+    }
+
+    return 0;
+}
+
 Handler.prototype.getWarehouseV2 = function(year, month) {
     var deferred = Q.defer();
 
@@ -191,16 +209,13 @@ Handler.prototype.getWarehouseV2 = function(year, month) {
 
     prodHandler.getAllProductsJson()
     .then(function(products) {
-        var mappedProducts = [];
-
         Object.keys(products).forEach(function(key) {
             var product = products[key];
-            product.input = (product.warehouse.history && product.warehouse.history.length > 0) ? product.warehouse.history[0].difference : 0;
+            product.input = calculateProductInput(product.warehouse, month, year);
             delete product.warehouse;
-        })
+        });
 
         data.products = products;
-
 
         deferred.resolve(mapWarehouseV2(data));
     })
