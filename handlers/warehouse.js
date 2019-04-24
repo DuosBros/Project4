@@ -209,10 +209,16 @@ Handler.prototype.getWarehouseV2 = function(year, month) {
 
     prodHandler.getAllProductsJson()
     .then(function(products) {
+        console.log(products)
         Object.keys(products).forEach(function(key) {
-            var product = products[key];
-            product.input = calculateProductInput(product.warehouse, month, year);
-            delete product.warehouse;
+                if(products[key].category === "Nonbillable") {
+                    delete products[key]
+                }
+                else {
+                    var product = products[key];
+                    product.input = calculateProductInput(product.warehouse, month, year);
+                    delete product.warehouse;
+                }
         });
 
         data.products = products;
