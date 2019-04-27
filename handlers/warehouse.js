@@ -260,6 +260,26 @@ Handler.prototype.mapResultsV2 = function (productName, results) {
     return resultObject;
 }
 
+Handler.prototype.getSnapshot = function (year, month) {
+    var deferred = Q.defer();
+
+    var warehouseSnapshots = mongo.collection('warehouseSnapshots');
+
+
+    var match = { 'timeSpan.month': month, 'timeSpan.year': year };
+    warehouseSnapshots.findOne(match, function (err, result) {
+        if (err) {
+            deferred.reject(err);
+        } else if (!result) {
+            deferred.resolve({});
+        } else {
+            deferred.resolve(result.data);
+        }
+    });
+
+    return deferred.promise;
+}
+
 Handler.prototype.getWarehouseV2 = function (year, month) {
     var deferred = Q.defer();
 
@@ -295,6 +315,15 @@ Handler.prototype.getWarehouseV2 = function (year, month) {
         .then(function(productsInOrders) {
             productsInOrders.forEach(function(productInOrders) {
                 data.products[productInOrders.productName].output = productInOrders.paid + productInOrders.notPaid;
+            });
+
+            return warehouseHandler.getSnapshot(year, month);
+        })
+        .then(function(snapshotData) {
+            Object.keys(snapshotData).forEach(function(key) {
+                if (data.products[key]) {
+                    data.products[key].beginning = snapshotData[key];
+                }
             });
 
             deferred.resolve(mapWarehouseV2(data));

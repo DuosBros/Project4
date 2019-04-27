@@ -11,6 +11,7 @@
 19/04 - 3h collections merge
 21/04 - 0.5h small improvement to new WH
 27/04 - 1h output added to new WH
+27/04 - 2h wh snapshow
 
 
 168USD/year
