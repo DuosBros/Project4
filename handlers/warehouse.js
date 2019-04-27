@@ -195,6 +195,71 @@ function calculateProductInput(warehouse, month, year) {
     return 0;
 }
 
+Handler.prototype.getProductsInOrdersV2 = function (productName, month, year) {
+    var deferred = Q.defer();
+
+    var fromDate = new Date(year, month, 1);
+    var toDate = new Date(year, month, 1);
+    toDate = toDate.setMonth(toDate.getMonth() + 1);
+    toDate = new Date(toDate);
+
+    var ordersCollection = mongo.collection('orders');
+    var match;
+    var unwind = { $unwind: "$products" };
+    var projection = { $project: { 'products.productName': 1, 'products.count': 1, 'paymentDate': { $ifNull: ['$payment.paymentDate', 'notPaid'] }, '_id': 0 } };
+    var projection2 = { $project: { 'products.productName': 1, 'products.count': 1, 'paymentDate': { $cond: { if: { $eq: ["$paymentDate", 'notPaid'] }, then: 'notPaid', else: 'paid' } }, '_id': 0 } };
+    var match2 = { $match: { 'products.productName': productName } };
+    var group = { $group: { _id: { paymentDate: "$paymentDate", product: "$products.productName" }, count: { $sum: "$products.count" } } };
+    var projection3 = { $project: { 'product': "$_id.product", 'payment': '$_id.paymentDate', 'count': 1, _id: 0 } };
+    var pipeline = [];
+
+    match = {
+        $match: {
+            'state': ACTIVE_ORDERS_STATE,
+            'payment.orderDate': {
+                '$gte': fromDate,
+                '$lt': toDate,
+            }
+        }
+    };
+
+    pipeline.push(match);
+    pipeline.push(projection);
+    pipeline.push(projection2);
+    pipeline.push(unwind);
+    pipeline.push(match2);
+    pipeline.push(group);
+    pipeline.push(projection3);
+
+    ordersCollection.aggregate(pipeline, function (err, result) {
+        if (err) {
+            deferred.reject(err);
+        } else {
+            deferred.resolve(warehouseHandler.mapResultsV2(productName, result));
+        }
+    });
+
+    return deferred.promise;
+}
+
+Handler.prototype.mapResultsV2 = function (productName, results) {
+    var resultObject = {
+        productName: productName,
+        paid: 0,
+        notPaid: 0,
+    };
+
+    results.forEach(function (result) {
+        if (result.payment === 'paid') {
+            resultObject.paid = result.count;
+        } else {
+            resultObject.notPaid = result.count;
+        }
+    });
+
+    return resultObject;
+}
+
 Handler.prototype.getWarehouseV2 = function (year, month) {
     var deferred = Q.defer();
 
@@ -219,6 +284,18 @@ Handler.prototype.getWarehouseV2 = function (year, month) {
             });
 
             data.products = products;
+
+            var getProductsInOrdersPromises = [];
+            Object.keys(data.products).forEach(function(key) {
+                getProductsInOrdersPromises.push(warehouseHandler.getProductsInOrdersV2(key, month, year));
+            });
+
+            return Q.all(getProductsInOrdersPromises);
+        })
+        .then(function(productsInOrders) {
+            productsInOrders.forEach(function(productInOrders) {
+                data.products[productInOrders.productName].output = productInOrders.paid + productInOrders.notPaid;
+            });
 
             deferred.resolve(mapWarehouseV2(data));
         })
