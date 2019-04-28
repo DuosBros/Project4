@@ -3,9 +3,6 @@ module.exports = function(app) {
     var Handler = require('../handlers/warehouse').Handler;
     var handler = new Handler(app);
 
-    var WHV2Handler = require('../handlers/warehouseV2.js').Handler;
-    var whv2Handler = new WHV2Handler(app);
-
     var AuthenticationHandler = require('../handlers/others.js').Handler;
     var authenticationHandler = new AuthenticationHandler(app);
 
