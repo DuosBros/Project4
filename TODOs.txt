@@ -10,6 +10,11 @@
 18/04 - 0.5h new WH shitt
 19/04 - 3h collections merge
 21/04 - 0.5h small improvement to new WH
+27/04 - 1h output added to new WH
+27/04 - 2h wh snapshow
+28/04 - 2h scripts, architecture
+28/04 - 0.5h shits bleh
+30/04 - 0.5h id added
 
 
 168USD/year

@@ -54,9 +54,9 @@ Handler = function(app) {
         });
     });
 
-    cron.schedule('0 2 * * *', function() {
-        expireOrders();
-    });
+    // cron.schedule('0 2 * * *', function() {
+    //     expireOrders();
+    // });
 };
 
 function expireOrders() {

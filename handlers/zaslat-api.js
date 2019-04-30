@@ -20,6 +20,8 @@ var ACTIVE_ORDERS_STATE;
 var socketIoListener;
 var mongo;
 
+var env;
+
 var rp = require('request-promise');
 
 Handler = function(app) {
@@ -43,6 +45,8 @@ Handler = function(app) {
     ordersHandler = new OrdersHandler(app);
     mongo = app.get('mongodb');
     handler = this;
+
+    env = app.get('env');
 
     // setInterval(function() {
     //     var allShipments;
@@ -98,6 +102,10 @@ Handler.prototype.getAllPickups = function() {
 
 Handler.prototype.getAllShipments = function(offset) {
     var deferred = Q.defer();
+
+    if (env == 'test' || env == 'development') {
+        resolve();
+    }
 
     var uri = zaslatApiBaseUri + zaslatApiGetAllShipmentsUri;
     if (offset) {
