@@ -206,11 +206,13 @@ Handler.prototype.getProductsInOrdersV2 = function (productName, month, year) {
     var ordersCollection = mongo.collection('orders');
     var match;
     var unwind = { $unwind: "$products" };
-    var projection = { $project: { 'products.productName': 1, 'products.count': 1, 'paymentDate': { $ifNull: ['$payment.paymentDate', 'notPaid'] }, '_id': 0 } };
-    var projection2 = { $project: { 'products.productName': 1, 'products.count': 1, 'paymentDate': { $cond: { if: { $eq: ["$paymentDate", 'notPaid'] }, then: 'notPaid', else: 'paid' } }, '_id': 0 } };
+    var projection = { $project: { 'products.productName': 1, 'products.count': 1, 'products.id': 1, 'paymentDate': { $ifNull: ['$payment.paymentDate', 'notPaid'] }, '_id': 0 } };
+    var projection2 = { $project: { 'products.productName': 1, 'products.count': 1, 'products.id': 1,
+        'paymentDate': { $cond: { if: { $eq: ["$paymentDate", 'notPaid'] }, then: 'notPaid', else: 'paid' } }, '_id': 0 } };
     var match2 = { $match: { 'products.productName': productName } };
-    var group = { $group: { _id: { paymentDate: "$paymentDate", product: "$products.productName" }, count: { $sum: "$products.count" } } };
-    var projection3 = { $project: { 'product': "$_id.product", 'payment': '$_id.paymentDate', 'count': 1, _id: 0 } };
+    var group = { $group: { _id: { paymentDate: "$paymentDate", product: "$products.productName", id: "$products.id" },
+        count: { $sum: "$products.count" } } };
+    var projection3 = { $project: { 'product': "$_id.product", 'payment': '$_id.paymentDate', 'count': 1, _id: 0, "id": "$_id.id" } };
     var pipeline = [];
 
     match = {

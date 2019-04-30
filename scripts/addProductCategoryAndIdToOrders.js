@@ -1,8 +1,8 @@
 
 var MongoClient = require('mongodb').MongoClient;
-var dbUrl = 'mongodb://medpharma2:TranMedGroup12e@ds153890.mlab.com:53890/heroku_gvlqrgxg';
+//var dbUrl = 'mongodb://medpharma2:TranMedGroup12e@ds153890.mlab.com:53890/heroku_gvlqrgxg';
 //var dbUrl = 'mongodb://medpharma2:TranMedGroup12e@ds137483.mlab.com:37483/heroku_q57klscp'
-//var dbUrl = 'mongodb://localhost:27017/medpharma';
+var dbUrl = 'mongodb://localhost:27017/medpharma';
 
 MongoClient.connect(dbUrl, {}, function (err, db) {
     if (err) {
