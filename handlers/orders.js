@@ -312,12 +312,13 @@ Handler.prototype.getAllOrderedOrdersMonthly = function() {
     return deferred.promise;
 }
 
-Handler.prototype.getAllOrderedOrdersDaily = function() {
+Handler.prototype.getAllOrderedOrdersDaily = function(from, to) {
     var deferred = Q.defer();
     var orders = mongo.collection('orders');
     var filter = {$match:
                     {
-                        'state': ACTIVE_ORDERS_STATE
+                        'state': ACTIVE_ORDERS_STATE,
+                        'payment.orderDate': {'$gt': new Date(from), '$lt': new Date(to)},
                     }
                  };
     var group = { $group: {
