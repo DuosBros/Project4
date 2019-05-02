@@ -31,10 +31,15 @@ Handler.prototype.getAllProductsData = function(fromDate, toDate) {
     }
 
     var match = {$match: matchDefinition };
-    var project1 = {$project: {'products.productName': 1, 'products.totalPricePerProduct': 1, _id: 0, 'products.count': 1}};
+    var project1 = {$project: {'products.productName': 1, 'products.totalPricePerProduct': 1, _id: 0, 'products.count': 1, 'products.id': 1}};
     var unwind = {$unwind: "$products"};
-    var project2 = {$project: {'productName': '$products.productName', 'price': '$products.totalPricePerProduct', 'count': '$products.count'}};
-    var group = {$group: {_id: "$productName", totalAmount: {$sum: "$price"}, totalCount: {$sum: "$count"}}};
+    var project2 = {$project: {'productName': '$products.productName', 'price': '$products.totalPricePerProduct', 'count': '$products.count', 'id': '$products.id'}};
+    var group = { $group: {
+        _id: "$productName",
+        id: {$last: '$id'},
+        totalAmount: {$sum: "$price"},
+        totalCount: {$sum: "$count"}
+    }};
 
     pipeline.push(match);
     pipeline.push(project1);
