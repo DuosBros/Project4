@@ -312,6 +312,40 @@ Handler.prototype.getAllOrderedOrdersMonthly = function() {
     return deferred.promise;
 }
 
+Handler.prototype.getAllOrderedOrdersDaily = function() {
+    var deferred = Q.defer();
+    var orders = mongo.collection('orders');
+    var filter = {$match:
+                    {
+                        'state': ACTIVE_ORDERS_STATE
+                    }
+                 };
+    var group = { $group: {
+                              _id: {
+                                  day: { $dayOfMonth: "$payment.orderDate" },
+                                  month: { $month: "$payment.orderDate" },
+                                  year: { $year: "$payment.orderDate" }
+                              },
+                              turnover: { $sum: '$totalPrice' },
+                              totalDeliveryCosts: { $sum: "$payment.price" },
+                              cashOrders: { $addToSet: { $cond : [ {$eq: ['$deliveryType', 'Cash']}, '$id', undefined] } },
+                              vsOrders: { $addToSet: { $cond : [ {$eq: ['$deliveryType', 'VS']}, '$id', undefined] } }
+                          },
+                };
+
+    orders.aggregate([filter, group])
+    .toArray(function(err, orders) {
+        if(err) {
+            console.log('ERROR while getting all orders grouped by month> ' + err);
+            deferred.reject(err);
+        } else {
+            deferred.resolve(orders);
+        }
+    });
+
+    return deferred.promise;
+}
+
 Handler.prototype.getOrder = function(orderId) {
     var deferred = Q.defer();
 

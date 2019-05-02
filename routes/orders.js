@@ -99,6 +99,29 @@ module.exports = function(app) {
         }
     });
 
+    app.get('/rest/orders/ordered/filter/daily', function(req, res) {
+        var token = tools.extractToken(req);
+        var from = req.query.from;
+        var to = req.query.to;
+
+        if(token) {
+            authenticationHandler.validateToken(token)
+            .then(function() {
+                return handler.getAllOrderedOrdersDaily(from, to);
+            })
+            .then(function(orders) {
+                res.json(orders);
+                res.end();
+            })
+            .fail(function(err) {
+                tools.replyError(err, res);
+            })
+            .done();
+        } else {
+            res.status(403).send({message: 'No authentication token!'});
+        }
+    });
+
     app.get('/rest/orders/vs/next', function(req, res) {
         var token = tools.extractToken(req);
         if(token) {
