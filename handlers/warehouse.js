@@ -199,13 +199,8 @@ function calculateProductInput(warehouse, month, year) {
     return 0;
 }
 
-Handler.prototype.getProductsInOrdersV2 = function (productName, month, year) {
+Handler.prototype.getProductsInOrdersBetweenDates = function (productName, fromDate, toDate) {
     var deferred = Q.defer();
-
-    var fromDate = new Date(year, month, 1);
-    var toDate = new Date(year, month, 1);
-    toDate = toDate.setMonth(toDate.getMonth() + 1);
-    toDate = new Date(toDate);
 
     var ordersCollection = mongo.collection('orders');
     var match;
@@ -295,9 +290,13 @@ Handler.prototype.getWarehouseV2 = function (year, month) {
 
             data.products = products;
 
+            var fromDate = new Date(year, month, 1);
+            var toDate = new Date(year, month, 1);
+            toDate = toDate.setMonth(toDate.getMonth() + 1);
+            toDate = new Date(toDate);
             var getProductsInOrdersPromises = [];
             Object.keys(data.products).forEach(function(key) {
-                getProductsInOrdersPromises.push(warehouseHandler.getProductsInOrdersV2(key, month, year));
+                getProductsInOrdersPromises.push(warehouseHandler.getProductsInOrdersBetweenDates(key, fromDate, toDate));
             });
 
             return Q.all(getProductsInOrdersPromises);
