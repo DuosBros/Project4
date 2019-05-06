@@ -287,7 +287,7 @@ Handler.prototype.getWarehouseV2 = function (year, month) {
                     product.input = calculateProductInput(product.warehouse, month, year);
 
                     //beginning + currentavailable
-                    product.beginning = calculateBeginning(product.warehouse);
+                    product.beginning = calculateBeginning(product.warehouse, year, month);
                     product.available = product.beginning + product.input;
                     delete product.warehouse;
                 }
@@ -319,9 +319,21 @@ Handler.prototype.getWarehouseV2 = function (year, month) {
     return deferred.promise;
 }
 
-function calculateBeginning(whData) {
+function calculateBeginning(whData, year, month) {
+    var toDate = new Date(year, month, 1);
+
+    var history = whData.history;
+
+    var beginning = 0;
+    for (var i = 0; i < history.length; i++) {
+        if (history[i].timestamp < toDate) {
+            beginning += history[i].difference;
+        }
+    }
+
+
     //TODO extend this
-    return whData.amount;
+    return beginning;
 }
 
 exports.Handler = Handler;
