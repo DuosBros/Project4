@@ -187,16 +187,17 @@ function calculateProductInput(warehouse, month, year) {
     }
 
     var history = warehouse.history;
+    var input = 0;
 
     for (var i = 0; i < history.length; i++) {
-        var timestamp = history[i].timestamp;
+        var timestamp = new Date(history[i].timestamp);
         var difference = history[i].difference;
-        if (timestamp.getFullYear() == year && timestamp.getMonth() == month) {
-            return difference;
+        if (timestamp.getFullYear() == year && timestamp.getMonth() == month && !isNaN(difference)) {
+            input += difference;
         }
     }
 
-    return 0;
+    return input;
 }
 
 Handler.prototype.getProductsInOrdersBetweenDates = function (productName, fromDate, toDate) {
@@ -261,6 +262,7 @@ Handler.prototype.mapResultsV2 = function (productName, results) {
     return resultObject;
 }
 
+//test beginning
 Handler.prototype.getWarehouseV2 = function (year, month) {
     var deferred = Q.defer();
 
@@ -271,6 +273,7 @@ Handler.prototype.getWarehouseV2 = function (year, month) {
         },
     };
 
+    var calculateBeginningPromises = [];
     prodHandler.getAllProductsJson()
         .then(function (products) {
             Object.keys(products).forEach(function (key) {
@@ -280,15 +283,24 @@ Handler.prototype.getWarehouseV2 = function (year, month) {
                 else {
                     var product = products[key];
                     product.input = calculateProductInput(product.warehouse, month, year);
-
-                    //beginning + currentavailable
-                    product.beginning = calculateBeginning(product.warehouse, year, month);
-                    product.available = product.beginning + product.input;
+                    calculateBeginningPromises.push(calculateBeginning(product.warehouse, year, month, key));
                     delete product.warehouse;
                 }
             });
 
             data.products = products;
+
+            return Q.all(calculateBeginningPromises);
+        })
+        .then(function(beginningPromisesResults) {
+            Object.keys(data.products).forEach(function (key) {
+                for (var i = 0; i < beginningPromisesResults.length; i++) {
+                    if (beginningPromisesResults[i].product == key) {
+                        data.products[key].beginning = beginningPromisesResults[i].beginning;
+                        data.products[key].available = data.products[key].beginning + data.products[key].input;
+                    }
+                }
+            });
 
             var fromDate = new Date(year, month, 1);
             var toDate = new Date(year, month, 1);
@@ -318,21 +330,33 @@ Handler.prototype.getWarehouseV2 = function (year, month) {
     return deferred.promise;
 }
 
-function calculateBeginning(whData, year, month) {
+function calculateBeginning(whData, year, month, key) {
+    var deferred = Q.defer();
+
     var toDate = new Date(year, month, 1);
 
     var history = whData.history;
 
     var beginning = 0;
     for (var i = 0; i < history.length; i++) {
-        if (history[i].timestamp < toDate) {
+        if (history[i].timestamp < toDate && !isNaN(history[i].difference)) {
             beginning += history[i].difference;
         }
     }
 
+    var result = {
+        product: key,
+        beginning: beginning,
+    };
 
-    //TODO extend this
-    return beginning;
+    warehouseHandler.getProductsInOrdersBetweenDates(key, whData.calculationDate, toDate)
+    .then(function(productInOrders) {
+        result.beginning -= productInOrders.paid;
+
+        deferred.resolve(result);
+    });
+
+    return deferred.promise;
 }
 
 exports.Handler = Handler;
