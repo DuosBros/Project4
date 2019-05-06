@@ -102,6 +102,7 @@ module.exports = function(app) {
     app.get('/rest/warehouse/v2', function(req, res) {
         var year = parseInt(req.query.year);
         var month = parseInt(req.query.month);
+        month -= 1;
 
         var currentDate = new Date();
         if (!year) {
