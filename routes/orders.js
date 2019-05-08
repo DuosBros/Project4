@@ -79,7 +79,7 @@ module.exports = function(app) {
         }
     });
 
-    app.get('/rest/orders/ordered/filter/month', function(req, res) {
+    app.get('/rest/orders/ordered/filter/monthly', function(req, res) {
         var token = tools.extractToken(req);
         if(token) {
             authenticationHandler.validateToken(token)
