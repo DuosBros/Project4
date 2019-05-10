@@ -48,12 +48,16 @@ Handler.prototype.getProductsMonthly = function () {
             _id: {
                 month: { $month: "$date" },
                 year: { $year: "$date" },
-                name: "$productName"
             },
-            productId: { $first: "$id" },
-            category: { $first: "$category" },
-            totalAmount: { $sum: "$price" },
-            totalCount: { $sum: "$count" }
+            products: {
+                $addToSet: {
+                    name: "$productName",
+                    productId: "$id",
+                    category: "$category",
+                    totalAmount: { $sum: "$price" },
+                    totalCount: { $sum: "$count" }
+                }
+            }
         }
     };
 
@@ -120,12 +124,17 @@ Handler.prototype.getProductsDaily = function (fromDate, toDate) {
                 day: { $dayOfMonth: "$date" },
                 month: { $month: "$date" },
                 year: { $year: "$date" },
-                name: "$productName"
             },
-            productId: { $first: "$id" },
-            category: { $first: "$category" },
-            totalAmount: { $sum: "$price" },
-            totalCount: { $sum: "$count" }
+            products: {
+                $addToSet: {
+                    name: "$productName",
+                    productId: "$id",
+                    category: "$category",
+                    totalAmount: { $sum: "$price" },
+                    totalCount: { $sum: "$count" }
+                }
+            }
+
         }
     };
 
