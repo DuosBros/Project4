@@ -51,11 +51,14 @@ Handler.prototype.getProductsMonthly = function () {
             },
             products: {
                 $addToSet: {
-                    name: "$productName",
-                    productId: "$id",
-                    category: "$category",
-                    totalAmount: { $sum: "$price" },
-                    totalCount: { $sum: "$count" }
+                    $cond: [{ $ne: ['$category', 'Nonbillable'] },
+                    {
+                        name: "$productName",
+                        productId: "$id",
+                        category: "$category",
+                        totalAmount: { $sum: "$price" },
+                        totalCount: { $sum: "$count" }
+                    }, undefined]
                 }
             }
         }
@@ -127,11 +130,14 @@ Handler.prototype.getProductsDaily = function (fromDate, toDate) {
             },
             products: {
                 $addToSet: {
-                    name: "$productName",
-                    productId: "$id",
-                    category: "$category",
-                    totalAmount: { $sum: "$price" },
-                    totalCount: { $sum: "$count" }
+                    $cond: [{ $ne: ['$category', 'Nonbillable'] },
+                    {
+                        name: "$productName",
+                        productId: "$id",
+                        category: "$category",
+                        totalAmount: { $sum: "$price" },
+                        totalCount: { $sum: "$count" }
+                    }, undefined]
                 }
             }
 
