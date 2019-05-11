@@ -31,7 +31,6 @@ module.exports = function (app) {
     })
 
     app.get('/rest/charts/products/monthly', (req, res) => {
-        console.log("called")
         var token = tools.extractToken(req);
 
         if (token) {

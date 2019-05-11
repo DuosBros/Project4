@@ -19,6 +19,7 @@
 06/05 - 0.5h tada
 06/05 - 1.5h wh2
 07/05 - 0.5h test
+11/05 - 0.5h bug investigating
 
 
 168USD/year
