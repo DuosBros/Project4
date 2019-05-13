@@ -268,7 +268,7 @@ Handler.prototype.getWarehouseV2 = function (year, month) {
 
     var data = {
         timeSpan: {
-            month: month,
+            month: month + 1,
             year: year,
         },
     };
