@@ -119,6 +119,44 @@ Handler.prototype.getAllOrdersInQueue = function(from, to) {
     return deferred.promise;
 }
 
+Handler.prototype.getAllNotPaidOrders = function(from, to) {
+    var deferred = Q.defer();
+    var orders = mongo.collection('orders');
+
+    var pipeline = [];
+
+    if (from && to) {
+        query = {'payment.paymentDate': {$exists: false}, 'payment.orderDate': {'$gt': new Date(from), '$lt': new Date(to)}};
+    } else if(from) {
+        query = {'payment.paymentDate': {$exists: false}, 'payment.orderDate': {'$gt': new Date(from)}}
+    } else if(to) {
+        query = {'payment.paymentDate': {$exists: false}, 'payment.orderDate': {'$lt': new Date(to)}}
+    } else {
+        query = {'payment.paymentDate': {$exists: false}};
+    }
+    query.state = {$eq: ACTIVE_ORDERS_STATE};
+
+    var filter = {
+        $match: query
+    };
+
+    var sort = {$sort: { 'id': -1}};
+
+    pipeline.push(filter);
+    pipeline.push(sort);
+
+    orders.aggregate(pipeline)
+    .toArray(function(err, orders) {
+        if(err) {
+            console.log('ERROR while getting all not paid orders> ' + err);
+            deferred.reject(err);
+        } else {
+            deferred.resolve(orders);
+        }
+    });
+    return deferred.promise;
+}
+
 Handler.prototype.getAllOrders = function(from, to, limit, sinceId) {
     var deferred = Q.defer();
     var orders = mongo.collection('orders');

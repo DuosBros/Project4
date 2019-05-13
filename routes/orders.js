@@ -59,6 +59,26 @@ module.exports = function(app) {
         }
     });
 
+    app.get('/rest/orders/notpaid', function(req, res) {
+        var token = tools.extractToken(req);
+        if(token) {
+            authenticationHandler.validateToken(token)
+            .then(function() {
+                return handler.getAllNotPaidOrders()
+            })
+            .then(function(orders) {
+                res.json(orders);
+                res.end();
+            })
+            .fail(function(err) {
+                tools.replyError(err, res);
+            })
+            .done();
+        } else {
+            res.status(403).send({message: 'No authentication token!'});
+        }
+    });
+
     app.get('/rest/orders/paid/filter/month', function(req, res) {
         var token = tools.extractToken(req);
         if(token) {
