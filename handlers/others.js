@@ -149,7 +149,7 @@ Handler.prototype.editProduct = function (oldProductName, newProduct) {
 
     this.updateProductsCollections(oldProductName, newProduct)
         .then(function (result) {
-            return othersHandler.updateProductsInOrders(oldProductName, newProduct.name);
+            return othersHandler.updateProductsInOrders(oldProductName, newProduct.name, newProduct.category);
         })
         .then(function (result) {
             deferred.resolve(result);
@@ -195,7 +195,6 @@ Handler.prototype.updateProductsCollections = function (oldProductName, newProdu
                 category: newProduct.category,
                 invoiceDisplayName: newProduct.invoiceDisplayName,
                 displayName: newProduct.displayName,
-                id: newProduct.id
             }
         },
         function (err, result) {
@@ -218,12 +217,14 @@ Handler.prototype.updateProductsCollections = function (oldProductName, newProdu
     return deferred.promise;
 }
 
-Handler.prototype.updateProductsInOrders = function (oldProductName, newProductName) {
+Handler.prototype.updateProductsInOrders = function (oldProductName, newProductName, newProductCategory) {
     var deferred = Q.defer();
 
     var orders = mongo.collection('orders');
 
-    orders.update({ 'products.productName': oldProductName }, { $set: { 'products.$.productName': newProductName } }, { multi: true },
+    orders.update({ 'products.productName': oldProductName },
+        { $set: { 'products.$.productName': newProductName, 'products.$.category': newProductCategory} },
+        { multi: true },
         function (err, result) {
             if (err) {
                 var error = new Error('error while updating product ' + oldProductName);

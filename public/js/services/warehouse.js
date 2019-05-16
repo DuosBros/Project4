@@ -106,14 +106,14 @@ medPharmaServices.factory('medPharmaWarehouse', ['$http', '$q', 'medPharmaUtilit
             return deferred.promise;
         };
 
-        medPharmaWarehouse.editProductConfig = function(originalName, newName, newPrice, weight, tax) {
+        medPharmaWarehouse.editProductConfig = function(originalName, newName, newPrice, weight, tax, category) {
             var deferred = $q.defer();
 
             var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
             $http({
                 method : 'PUT',
                 url : '/rest/products/' + originalName,
-                data : { name: newName, price: newPrice, weight: weight, tax: tax },
+                data : { name: newName, price: newPrice, weight: weight, tax: tax, category: category },
                 headers: requestHeaders,
                 cache : false
                 })

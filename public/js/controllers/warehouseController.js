@@ -50,7 +50,8 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
                 name: productName,
                 price: $scope.products[productName].price,
                 weight: $scope.products[productName].weight,
-                tax: $scope.products[productName].tax
+                tax: $scope.products[productName].tax,
+                category: $scope.products[productName].category
             }
             var modal = $modal({
                             scope: $modalScope,
@@ -63,7 +64,8 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
                 medPharmaWarehouse.editProductConfig($modalScope.originalName,$modalScope.product.name,
                                                      $modalScope.product.price,
                                                      $modalScope.product.weight,
-                                                     $modalScope.product.tax)
+                                                     $modalScope.product.tax,
+                                                     $modalScope.product.category)
                 .then(function() {
                     loadAllProducts();
                     reloadAllProductAmounts();
