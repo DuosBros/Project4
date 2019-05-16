@@ -126,6 +126,8 @@ medPharmaController.controller('orderController',
         if($scope.order.products[$scope.order.products.length - 2].productName == index) {
             $scope.order.products[$scope.order.products.length - 2].pricePerOne = $scope.allProducts[index].price;
             $scope.order.products[$scope.order.products.length - 2].count = 1;
+            $scope.order.products[$scope.order.products.length - 2].id = $scope.allProducts[index].id;
+            $scope.order.products[$scope.order.products.length - 2].category = $scope.allProducts[index].category;
             $scope.calculateTotalPricePerProduct($scope.order.products[$scope.order.products.length - 2]);
             $scope.calculateTotalPrice();
         }

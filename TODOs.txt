@@ -20,11 +20,14 @@
 06/05 - 1.5h wh2
 07/05 - 0.5h test
 11/05 - 0.5h bug investigating
+16/05 - 0.5h added id + category to order products
 
 
 168USD/year
 
 new todo list:
+2. pri vytvoreni produktu posilat mandatory category, id by se melo vytvorit automaticky
+3. pri update produkt updatnout i produkt v order - done, ale ne pro id + category
 
 
 
