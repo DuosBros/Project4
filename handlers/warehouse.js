@@ -22,7 +22,7 @@ Handler.prototype.saveProductAmount = function (filterBy, calculationDate, diffe
     let parsed = parseInt(filterBy);
 
     let filter;
-    if(parsed === NaN) {
+    if(isNaN(parsed)) {
         filter = { 'name': filterBy }
     }
     else {
