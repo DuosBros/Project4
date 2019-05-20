@@ -26,7 +26,6 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
 
             $modalScope.editAmount = function() {
                 medPharmaWarehouse.editProductAmount(productName,
-                    $modalScope.productInfo.newValue + $scope.productSales[productName].paid,
                     $modalScope.productInfo.calculationDate,
                     $modalScope.productInfo.newValue - $modalScope.productInfo.oldValue,
                     $scope.loggedUser,
@@ -124,10 +123,10 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
 
             $modalScope.editAmount = function() {
                 medPharmaWarehouse.editProductAmount(productName,
-                    $modalScope.productInfo.oldValue + $modalScope.productInfo.newValue + $scope.productSales[productName].paid,
                     $modalScope.productInfo.calculationDate,
                     $modalScope.productInfo.newValue,
-                    $scope.loggedUser
+                    $scope.loggedUser,
+                    $modalScope.productInfo.notificationThreshold,
                 )
                 .then(function() {
                     reloadAllProductAmounts();
