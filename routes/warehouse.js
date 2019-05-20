@@ -8,9 +8,9 @@ module.exports = function(app) {
 
     var tools = require('../tools/tools.js');
 
-    app.put('/rest/warehouse/products/:productName', function(req, res) {
+    app.put('/rest/warehouse/products/:filterBy', function(req, res) {
         var token = tools.extractToken(req);
-        var productName = req.params.productName;
+        var filterBy = req.params.filterBy;
         var calculationDate = req.body.calculationDate;
         var difference = req.body.difference;
         var user = req.body.user;
@@ -19,7 +19,7 @@ module.exports = function(app) {
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.saveProductAmount(productName, calculationDate, difference, user, notificationThreshold);
+                return handler.saveProductAmount(filterBy, calculationDate, difference, user, notificationThreshold);
             })
             .then(function() {
                 res.json();

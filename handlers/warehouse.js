@@ -14,13 +14,23 @@ Handler = function (app) {
     prodHandler = new ProdHandler(app);
 };
 
-Handler.prototype.saveProductAmount = function (productName, calculationDate, difference, user, notificationThreshold) {
+Handler.prototype.saveProductAmount = function (filterBy, calculationDate, difference, user, notificationThreshold) {
     var deferred = Q.defer();
 
     var productsV2 = mongo.collection('productsV2');
 
+    let parsed = parseInt(filterBy);
+
+    let filter;
+    if(parsed === NaN) {
+        filter = { 'name': filterBy }
+    }
+    else {
+        filter = { 'id': parsed }
+    }
+
     productsV2.update(
-        { 'name': productName },
+        filter,
         {
             $set: {
                 'warehouse.calculationDate': new Date(calculationDate),
@@ -40,7 +50,7 @@ Handler.prototype.saveProductAmount = function (productName, calculationDate, di
             if (result.result.n == 1) {
                 deferred.resolve(result);
             } else {
-                var error = new Error('error while updating product ' + productName);
+                var error = new Error('error while updating product ' + filterBy);
                 console.log(error + '> ' + err);
                 error.status = 400;
                 deferred.reject(error);
