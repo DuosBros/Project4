@@ -10,7 +10,6 @@ module.exports = function(app) {
 
     app.put('/rest/warehouse/products/:productName', function(req, res) {
         var token = tools.extractToken(req);
-        var amount = req.body.newValue;
         var productName = req.params.productName;
         var calculationDate = req.body.calculationDate;
         var difference = req.body.difference;
@@ -20,7 +19,7 @@ module.exports = function(app) {
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.saveProductAmount(productName, amount, calculationDate, difference, user, notificationThreshold);
+                return handler.saveProductAmount(productName, calculationDate, difference, user, notificationThreshold);
             })
             .then(function() {
                 res.json();

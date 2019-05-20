@@ -14,7 +14,7 @@ Handler = function (app) {
     prodHandler = new ProdHandler(app);
 };
 
-Handler.prototype.saveProductAmount = function (productName, amount, calculationDate, difference, user, notificationThreshold) {
+Handler.prototype.saveProductAmount = function (productName, calculationDate, difference, user, notificationThreshold) {
     var deferred = Q.defer();
 
     var productsV2 = mongo.collection('productsV2');
@@ -23,16 +23,17 @@ Handler.prototype.saveProductAmount = function (productName, amount, calculation
         { 'name': productName },
         {
             $set: {
-                'warehouse.amount': amount,
                 'warehouse.calculationDate': new Date(calculationDate),
-                'warehouse.notificationThreshold': notificationThreshold
+                'warehouse.notificationThreshold': notificationThreshold,
             },
             $push: {
                 'warehouse.history': {
                     'timestamp': new Date(),
                     'difference': difference,
-                    'user': user
+                    'user': user,
                 }
+            }, $inc: {
+                'warehouse.amount': difference,
             }
         },
         function (err, result) {
