@@ -164,18 +164,18 @@ Handler.prototype.editProduct = function (oldProductName, newProduct) {
 Handler.prototype.saveProduct = function (productId, newProduct) {
     var deferred = Q.defer();
 
-    var products = mongo.collection('productsV2');
-
     var id = parseInt(productId);
 
-    products.replaceOne({ 'id': id }, newProduct, function (err, res) {
-        if (err) {
-            console.log('ERROR while updating product with ID: ' + productId + '> ' + err);
+    this.updateProductsCollectionsV2(id, newProduct)
+        .then(function (result) {
+            return othersHandler.updateProductsInOrdersV2(id, newProduct.name, newProduct.category);
+        })
+        .then(function (result) {
+            deferred.resolve(result);
+        })
+        .catch(function (err) {
             deferred.reject(err);
-        } else {
-            deferred.resolve(res);
-        }
-    });
+        })
 
     return deferred.promise;
 }
@@ -195,6 +195,7 @@ Handler.prototype.updateProductsCollections = function (oldProductName, newProdu
                 category: newProduct.category,
                 invoiceDisplayName: newProduct.invoiceDisplayName,
                 displayName: newProduct.displayName,
+                isActive: newProduct.isActive,
             }
         },
         function (err, result) {
@@ -210,6 +211,67 @@ Handler.prototype.updateProductsCollections = function (oldProductName, newProdu
                 console.log(error + '> ' + err);
                 error.status = 400;
                 deferred.reject(error);
+            }
+        }
+    );
+
+    return deferred.promise;
+}
+
+Handler.prototype.updateProductsCollectionsV2 = function (id, newProduct) {
+    var deferred = Q.defer();
+
+    var products = mongo.collection('productsV2');
+
+    products.update({ 'id': id },
+        {
+            $set: {
+                name: newProduct.name,
+                price: newProduct.price,
+                weight: newProduct.weight,
+                tax: newProduct.tax,
+                category: newProduct.category,
+                invoiceDisplayName: newProduct.invoiceDisplayName,
+                displayName: newProduct.displayName,
+                isActive: newProduct.isActive,
+            }
+        },
+        function (err, result) {
+            if (result.result.n == 1) {
+                deferred.resolve(result);
+            } else if (result.result.n == 0) {
+                var error = new Error('error while updating product, not found: ' + id);
+                console.log(error + '> ' + err);
+                error.status = 404;
+                deferred.reject(error);
+            } else {
+                var error = new Error('error while updating product ' + id);
+                console.log(error + '> ' + err);
+                error.status = 400;
+                deferred.reject(error);
+            }
+        }
+    );
+
+    return deferred.promise;
+}
+
+Handler.prototype.updateProductsInOrdersV2 = function (id, newProductName, newProductCategory) {
+    var deferred = Q.defer();
+
+    var orders = mongo.collection('orders');
+
+    orders.update({ 'products.id': id },
+        { $set: { 'products.$.productName': newProductName, 'products.$.category': newProductCategory} },
+        { multi: true },
+        function (err, result) {
+            if (err) {
+                var error = new Error('error while updating product ' + id);
+                console.log(error + '> ' + err);
+                error.status = 400;
+                deferred.reject(error);
+            } else {
+                deferred.resolve(result);
             }
         }
     );
