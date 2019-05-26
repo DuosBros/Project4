@@ -23,6 +23,7 @@
 16/05 - 0.5h added id + category to order products
 16/05 - 1h sumshits
 20/05 - 0.5h
+26/05 - 0.5h bugfixing and other minor shits
 
 
 168USD/year

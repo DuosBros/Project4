@@ -33,7 +33,7 @@ medPharmaServices.factory('medPharmaSummaries', ['$http', '$q', 'medPharmaUtilit
         var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
         $http({
             method : 'GET',
-            url : '/rest/orders/ordered/filter/month',
+            url : '/rest/orders/ordered/filter/monthly',
             headers: requestHeaders,
             cache : false,
             })
