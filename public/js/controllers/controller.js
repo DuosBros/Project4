@@ -723,6 +723,6 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
     }
 
     $scope.loadWarehouseInfoForNotifications();
-    $scope.loadZaslatDataForNotifications();
+    //$scope.loadZaslatDataForNotifications();
 
 }]);
