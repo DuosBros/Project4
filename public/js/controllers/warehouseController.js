@@ -14,7 +14,6 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
             $modalScope.productInfo = {
                 oldValue: $scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid,
                 newValue: $scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid,
-                calculationDate: new Date($scope.mappedProductsCounts[productName].calculationDate),
                 notificationThreshold: $scope.mappedProductsCounts[productName].notificationThreshold
             };
             var modal = $modal({
@@ -26,7 +25,6 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
 
             $modalScope.editAmount = function() {
                 medPharmaWarehouse.editProductAmount(productName,
-                    $modalScope.productInfo.calculationDate,
                     $modalScope.productInfo.newValue - $modalScope.productInfo.oldValue,
                     $scope.loggedUser,
                     $modalScope.productInfo.notificationThreshold
@@ -111,8 +109,7 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
             $modalScope.productName = productName;
             $modalScope.productInfo = {
                 oldValue: $scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid,
-                newValue: 0,
-                calculationDate: new Date($scope.mappedProductsCounts[productName].calculationDate)
+                newValue: 0)
             };
             var modal = $modal({
                             scope: $modalScope,
@@ -123,7 +120,6 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
 
             $modalScope.editAmount = function() {
                 medPharmaWarehouse.editProductAmount(productName,
-                    $modalScope.productInfo.calculationDate,
                     $modalScope.productInfo.newValue,
                     $scope.loggedUser,
                     $modalScope.productInfo.notificationThreshold,
@@ -237,9 +233,6 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
                 return medPharmaWarehouse.mapProductNamesToAmountsPromise($scope.allProductNames, databaseProductsData);
             })
             .then(function(mappedProductsCountsFromPromise) {
-                Object.keys(mappedProductsCountsFromPromise).forEach(function(product) {
-                    mappedProductsCountsFromPromise[product].calculationDate = new Date(mappedProductsCountsFromPromise[product].calculationDate);
-                });
                 $scope.mappedProductsCounts = mappedProductsCountsFromPromise;
 
                 $scope.productsCountArray = [];
@@ -249,7 +242,6 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
                         var item = {
                             name: key,
                             total: $scope.mappedProductsCounts[key].total,
-                            calculationDate: $scope.mappedProductsCounts[key].calculationDate,
                         }
                         $scope.productsCountArray.push(item);
                     }

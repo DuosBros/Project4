@@ -84,7 +84,6 @@ function mapProductNamesToAmounts(productNames, productsData) {
     productsData.forEach(function(product) {
         mappedDatabaseObject[product.productName] = {
             total: product.amount,
-            calculationDate: new Date(product.calculationDate),
             notificationThreshold: product.notificationThreshold
         };
     })
@@ -92,7 +91,7 @@ function mapProductNamesToAmounts(productNames, productsData) {
     var mappedDefaultProductsCounts = {};
 
     productNames.forEach(function(productName) {
-        mappedDefaultProductsCounts[productName] = {total: 0, booked: 0, calculationDate: new Date()};
+        mappedDefaultProductsCounts[productName] = {total: 0, booked: 0};
     })
 
     return Object.assign({}, mappedDefaultProductsCounts, mappedDatabaseObject);

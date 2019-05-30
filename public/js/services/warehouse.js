@@ -7,7 +7,7 @@ medPharmaServices.factory('medPharmaWarehouse', ['$http', '$q', 'medPharmaUtilit
 
         var medPharmaWarehouse = {};
 
-        medPharmaWarehouse.editProductAmount = function(productName, calculationDate, difference, user, notificationThreshold) {
+        medPharmaWarehouse.editProductAmount = function(productName, difference, user, notificationThreshold) {
             var deferred = $q.defer();
 
             var requestHeaders = medPharmaUtilities.createAuthorizedRequestHeaders();
@@ -16,7 +16,7 @@ medPharmaServices.factory('medPharmaWarehouse', ['$http', '$q', 'medPharmaUtilit
                 url : '/rest/warehouse/products/' + productName,
                 headers: requestHeaders,
                 cache : false,
-                data : {calculationDate: calculationDate,
+                data : {
                     difference: difference, user: user, notificationThreshold: notificationThreshold}
                 })
                 .then(function() {

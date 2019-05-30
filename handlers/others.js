@@ -126,7 +126,6 @@ Handler.prototype.addProduct = function (product) {
             id = res.id
             product.id = id + 1;
             product.warehouse = {
-                calculationDate: new Date(),
                 amount: 0,
                 history: [],
             };

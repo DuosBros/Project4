@@ -14,7 +14,7 @@ Handler = function (app) {
     prodHandler = new ProdHandler(app);
 };
 
-Handler.prototype.saveProductAmount = function (filterBy, calculationDate, difference, user, notificationThreshold) {
+Handler.prototype.saveProductAmount = function (filterBy, difference, user, notificationThreshold) {
     var deferred = Q.defer();
 
     var productsV2 = mongo.collection('productsV2');
@@ -33,7 +33,6 @@ Handler.prototype.saveProductAmount = function (filterBy, calculationDate, diffe
         filter,
         {
             $set: {
-                'warehouse.calculationDate': new Date(calculationDate),
                 'warehouse.notificationThreshold': notificationThreshold,
             },
             $push: {
@@ -115,26 +114,23 @@ Handler.prototype.getProductsInOrders = function (productName) {
     var projection3 = { $project: { 'product': "$_id.product", 'payment': '$_id.paymentDate', 'count': 1, _id: 0, "id": "$_id.id" } };
     var pipeline = [];
 
-    this.getProductsCalculationDate(productName)
-        .then(function (calculationDate) {
-            match = { $match: { 'state': ACTIVE_ORDERS_STATE, 'payment.orderDate': { '$gte': calculationDate } } };
+    match = { $match: { 'state': ACTIVE_ORDERS_STATE } };
 
-            pipeline.push(match);
-            pipeline.push(projection);
-            pipeline.push(projection2);
-            pipeline.push(unwind);
-            pipeline.push(match2);
-            pipeline.push(group);
-            pipeline.push(projection3);
+    pipeline.push(match);
+    pipeline.push(projection);
+    pipeline.push(projection2);
+    pipeline.push(unwind);
+    pipeline.push(match2);
+    pipeline.push(group);
+    pipeline.push(projection3);
 
-            ordersCollection.aggregate(pipeline, function (err, result) {
-                if (err) {
-                    deferred.reject(err);
-                } else {
-                    deferred.resolve(warehouseHandler.mapResults(productName, result));
-                }
-            });
-        })
+    ordersCollection.aggregate(pipeline, function (err, result) {
+        if (err) {
+            deferred.reject(err);
+        } else {
+            deferred.resolve(warehouseHandler.mapResults(productName, result));
+        }
+    });
 
     return deferred.promise;
 }
@@ -154,26 +150,6 @@ Handler.prototype.mapResults = function (productName, results) {
     });
 
     return resultObject;
-}
-
-Handler.prototype.getProductsCalculationDate = function (productName) {
-    var deferred = Q.defer();
-
-    var productsV2 = mongo.collection('productsV2');
-
-
-    var match = { 'name': productName };
-    productsV2.findOne(match, function (err, result) {
-        if (err) {
-            deferred.reject(err);
-        } else if (!result) {
-            deferred.resolve(new Date());
-        } else {
-            deferred.resolve(result.warehouse.calculationDate);
-        }
-    });
-
-    return deferred.promise;
 }
 
 function mapWarehouseV2(whData) {
@@ -345,6 +321,8 @@ function calculateBeginning(whData, year, month, key) {
     var deferred = Q.defer();
 
     var toDate = new Date(year, month, 1);
+    var from = new Date(2000, month, 1);
+
 
     var history = whData.history;
 
@@ -360,7 +338,7 @@ function calculateBeginning(whData, year, month, key) {
         beginning: beginning,
     };
 
-    warehouseHandler.getProductsInOrdersBetweenDates(key, whData.calculationDate, toDate)
+    warehouseHandler.getProductsInOrdersBetweenDates(key, from, toDate)
     .then(function(productInOrders) {
         result.beginning -= productInOrders.paid;
 

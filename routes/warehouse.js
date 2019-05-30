@@ -11,7 +11,6 @@ module.exports = function(app) {
     app.put('/rest/warehouse/products/:filterBy', function(req, res) {
         var token = tools.extractToken(req);
         var filterBy = req.params.filterBy;
-        var calculationDate = req.body.calculationDate;
         var difference = req.body.difference;
         var user = req.body.user;
         var notificationThreshold = req.body.notificationThreshold;
@@ -19,7 +18,7 @@ module.exports = function(app) {
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.saveProductAmount(filterBy, calculationDate, difference, user, notificationThreshold);
+                return handler.saveProductAmount(filterBy, difference, user, notificationThreshold);
             })
             .then(function() {
                 res.json();
