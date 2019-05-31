@@ -109,7 +109,7 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
             $modalScope.productName = productName;
             $modalScope.productInfo = {
                 oldValue: $scope.mappedProductsCounts[productName].total - $scope.productSales[productName].paid,
-                newValue: 0)
+                newValue: 0
             };
             var modal = $modal({
                             scope: $modalScope,
