@@ -3,8 +3,8 @@
 
 var myApp = angular.module('medPharmaController');
 
-myApp.controller('BankCtrl', ['$scope', '$modal', 'medPharmaBank', 'medPharmaOthers', 'medPharmaOrders', '$filter', 'medPharmaCosts',
-    function($scope, $modal, medPharmaBank, medPharmaOthers, medPharmaOrders, $filter, medPharmaCosts) {
+myApp.controller('BankCtrl', ['$scope', '$q', 'medPharmaBank', 'medPharmaOthers', 'medPharmaOrders', '$filter', 'medPharmaCosts',
+    function($scope, $q, medPharmaBank, medPharmaOthers, medPharmaOrders, $filter, medPharmaCosts) {
 
         $scope.isMobile = medPharmaOthers.isMobile();
 
@@ -22,36 +22,27 @@ myApp.controller('BankCtrl', ['$scope', '$modal', 'medPharmaBank', 'medPharmaOth
             }
         }
 
+        var ordersPromise = medPharmaOrders.getAllOrders('September 31, 2017 23:59:59', 'December 31, 2019 23:59:59');
+        var bankPromise = medPharmaBank.getAllTransactions();
+        var promises = [];
+        promises.push(ordersPromise);
+        promises.push(bankPromise);
+
         if (medPharmaOthers.getLoggedInUser()) {
             $scope.loading = true;
+            $q.all(promises)
+            .then(function(results) {
+                $scope.orders = $scope.filterVsOrders(results[0]);
+                $scope.bankAccountInfo = results[1].accountStatement.info;
+                $scope.transactions = $scope.mapTransactions(results[1].accountStatement.transactionList.transaction);
 
-            $scope.loadingOrders = true;
-            $scope.loadingBankInfo = true;
-            medPharmaOrders.getAllOrders('September 31, 2017 23:59:59', 'December 31, 2019 23:59:59')
-            .then(function(orders) {
-                $scope.orders = $scope.filterVsOrders(orders);
-                $scope.loadingOrders = false;
-                if (!$scope.loadingBankInfo) {
-                    $scope.loading = false;
-                }
-            });
-
-            medPharmaBank.getAllTransactions()
-            .then(function(transactions) {
-                $scope.bankAccountInfo = transactions.accountStatement.info;
-                $scope.transactions = $scope.mapTransactions(transactions.accountStatement.transactionList.transaction);
-                console.log(transactions.accountStatement.transactionList.transaction);
-                console.log($scope.bankAccountInfo);
-                console.log($scope.transactions);
-                $scope.loadingBankInfo = false;
-                if (!$scope.loadingOrders) {
-                    $scope.loading = false;
-                }
-            })
-            .catch(function(err) {
-                alert('Error loading the data: ' + JSON.stringify(err.data) + ' The Bank API does not allow multiple requests in the short period of time' +
-                 'try again in a few seconds');
-            })
+                $scope.loading = false;
+           })
+           .catch(function(err) {
+            alert('Error loading the data: ' + JSON.stringify(err.data)
+                + ' The Bank API does not allow multiple requests in the short period of time' +
+                'try again in a few seconds');
+           })
         } else {
             medPharmaOthers.redirectToLoginPage();
         }

@@ -7,6 +7,9 @@ var bankBaseUri;
 
 var rp = require('request-promise');
 
+const NodeCache = require( "node-cache" );
+const myCache = new NodeCache();
+
 Handler = function(app) {
     handler = this;
     bankBaseUri = app.get('bank-base-uri');
@@ -16,19 +19,26 @@ Handler = function(app) {
 Handler.prototype.getAllTransactions = function() {
     var deferred = Q.defer();
 
-    var options = {
-        uri: bankBaseUri + '2018-01-01/2020-12-31/transactions.json',
-        json: true
-    };
+    var cachedTransactions = myCache.get('bank');
 
-    rp(options)
-    .then(function(response) {
-        deferred.resolve(response);
-    })
-    .catch(function(err) {
-        console.log('error fetching all transactions > ' + err.message);
-        deferred.reject(err.message);
-    })
+    if (cachedTransactions) {
+        deferred.resolve(cachedTransactions)
+    } else {
+        var options = {
+            uri: bankBaseUri + '2019-01-01/2020-12-31/transactions.json',
+            json: true,
+        };
+
+        rp(options)
+        .then(function(response) {
+            myCache.set('bank', response, 15);
+            deferred.resolve(response);
+        })
+        .catch(function(err) {
+            console.log('error fetching all transactions > ' + err.message);
+            deferred.reject(err.message);
+        })
+    }
 
     return deferred.promise;
 }
