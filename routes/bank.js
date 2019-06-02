@@ -10,10 +10,12 @@ module.exports = function(app) {
 
     app.get('/rest/bank/transactions', function(req, res) {
         var token = tools.extractToken(req);
+        var from = req.query.from;
+
         if (token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.getAllTransactions();
+                return handler.getAllTransactions(from);
             })
             .then(function(transactions) {
                 res.json(transactions);

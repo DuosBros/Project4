@@ -16,8 +16,15 @@ Handler = function(app) {
 };
 
 
-Handler.prototype.getAllTransactions = function() {
+Handler.prototype.getAllTransactions = function(from) {
     var deferred = Q.defer();
+
+    if (!from) {
+        var oneYearOld = new Date();
+        oneYearOld.setFullYear(oneYearOld.getFullYear() - 1);
+        var isodate = oneYearOld.toISOString()
+        from = isodate.split('T')[0];
+    }
 
     var cachedTransactions = myCache.get('bank');
 
@@ -25,7 +32,7 @@ Handler.prototype.getAllTransactions = function() {
         deferred.resolve(cachedTransactions)
     } else {
         var options = {
-            uri: bankBaseUri + '2019-01-01/2020-12-31/transactions.json',
+            uri: bankBaseUri + from + '/2020-12-31/transactions.json',
             json: true,
         };
 
