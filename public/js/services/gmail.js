@@ -88,7 +88,7 @@ medPharmaServices.factory('medPharmaGmail', ['$http', '$q', 'medPharmaUtilities'
                 cache : false,
                 })
                 .then(function(resp) {
-                    deferred.resolve(resp);
+                    deferred.resolve(resp.data);
                 },
                 function(err) {
                     deferred.reject(err);
