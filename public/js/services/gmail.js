@@ -88,14 +88,7 @@ medPharmaServices.factory('medPharmaGmail', ['$http', '$q', 'medPharmaUtilities'
                 cache : false,
                 })
                 .then(function(resp) {
-                    var expiryDate = new Date(resp.data);
-                    var currentDate = new Date();
-
-                    if (expiryDate > currentDate) {
-                        deferred.resolve(true);
-                    } else {
-                        deferred.resolve(false);
-                    }
+                    deferred.resolve(resp);
                 },
                 function(err) {
                     deferred.reject(err);

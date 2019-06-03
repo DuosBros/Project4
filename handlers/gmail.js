@@ -191,7 +191,14 @@ Handler.prototype.isLogged = function() {
                 deferred.reject(err);
             } else {
                 if (res) {
-                    deferred.resolve(res.expiry_date);
+                    var expiryDate = new Date(res.expiry_date);
+                    var currentDate = new Date();
+
+                    if (expiryDate > currentDate) {
+                        deferred.resolve(true);
+                    } else {
+                        deferred.resolve(false);
+                    }
                 } else {
                     deferred.resolve(undefined);
                 }
