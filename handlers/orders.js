@@ -39,7 +39,7 @@ Handler = function(app) {
             .done();
         });
 
-        socket.on('refresh_orders_2017', function(data) {
+        socket.on('refresh_orders', function(data) {
             authenticationHandler.validateToken(data.token)
             .then(function() {
                 return ordersHandler.getOrder(data.orderId)

@@ -161,7 +161,7 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
             } else {
                 medPharmaOrders.deleteOrder(orderId)
                 .then(function(res) {
-                    socket.emit('refresh_orders_2017', {
+                    socket.emit('refresh_orders', {
                         'action': 'delete',
                         'token': medPharmaOthers.getLoggedInUsersToken(),
                         'orderId': orderId
@@ -248,7 +248,7 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
                 .then(function(res) {
                     scopeOrder.payment.paid = order.payment.paid;
                     scopeOrder.payment.paymentDate = order.payment.paymentDate;
-                    socket.emit('refresh_orders_2017', {
+                    socket.emit('refresh_orders', {
                         'action': 'setPaid',
                         'token': medPharmaOthers.getLoggedInUsersToken(),
                         'orderId': orderId
@@ -441,7 +441,7 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
                         $modalScope.working = false;
                         $modalScope.finished = true;
                         $modalScope.zaslatError = false;
-                        socket.emit('refresh_orders_2017', {
+                        socket.emit('refresh_orders', {
                             'action': 'setZaslat',
                             'token': medPharmaOthers.getLoggedInUsersToken(),
                             'orderId': $modalScope.order.id
@@ -548,7 +548,7 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
         $modalScope.removeFromQueue = function(orderId) {
             medPharmaZaslat.removeFromQueue([orderId])
             .then(function() {
-                socket.emit('refresh_orders_2017', {
+                socket.emit('refresh_orders', {
                     'action': 'delete',
                     'token': medPharmaOthers.getLoggedInUsersToken(),
                     'orderId': orderId

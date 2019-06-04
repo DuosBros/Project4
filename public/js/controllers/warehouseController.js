@@ -5,7 +5,7 @@ var myApp = angular.module('medPharmaController');
 
 myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharmaWarehouse', '$modal', '$q', 'medPharmaNotifications',
 	function($scope, medPharmaOthers, medPharmaWarehouse, $modal, $q, medPharmaNotifications) {
-		$scope.isMobile = medPharmaOthers.isMobile();
+        $scope.isMobile = medPharmaOthers.isMobile();
 
         $scope.openEditModal = function(productName) {
 

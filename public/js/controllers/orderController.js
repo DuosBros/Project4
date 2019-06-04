@@ -281,7 +281,7 @@ medPharmaController.controller('orderController',
             return medPharmaOrders.addOrder($scope.order, $scope.user);
         })
         .then(function(order) {
-            socket.emit('refresh_orders_2017', {
+            socket.emit('refresh_orders', {
                 'action': 'addNew',
                 'token': medPharmaOthers.getLoggedInUsersToken(),
                 'orderId': undefined
@@ -299,7 +299,7 @@ medPharmaController.controller('orderController',
             return medPharmaOrders.saveOrder($scope.orderId, $scope.order, $scope.user)
         })
         .then(function(order) {
-            socket.emit('refresh_orders_2017', {
+            socket.emit('refresh_orders', {
                 'action': 'edit',
                 'token': medPharmaOthers.getLoggedInUsersToken(),
                 'orderId': $scope.orderId

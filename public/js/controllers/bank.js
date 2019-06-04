@@ -131,7 +131,7 @@ myApp.controller('BankCtrl', ['$scope', '$q', 'medPharmaBank', 'medPharmaOthers'
                     .then(function(res) {
                         matchingOrder.payment.paid = order.payment.paid;
                         matchingOrder.payment.paymentDate = order.payment.paymentDate;
-                        socket.emit('refresh_orders_2017', {
+                        socket.emit('refresh_orders', {
                             'action': 'setPaid',
                             'token': medPharmaOthers.getLoggedInUsersToken(),
                             'orderId': matchingOrder.id
