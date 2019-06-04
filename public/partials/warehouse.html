@@ -7,10 +7,10 @@
 		<div class="col-sm-10">
 			<h1>
 				Warehouse
-				<button style="float: right" type="button" ng-click="openAddProductModal()" class="btn btn-primary"
+				<!-- <button style="float: right" type="button" ng-click="openAddProductModal()" class="btn btn-primary"
 						ng-show="loggedUser == 'admin' || loggedUser == 'nvxd'">
 					Add product
-				</button>
+				</button> -->
 			</h1>
         </div>
     </div>
@@ -58,7 +58,7 @@
 						<span ng-show="isMobile"><small>In store: </small></span>
 						{{product.total - productSales[product.name].paid}}
 					</div>
-					<div class="col-sm-2" style="text-align: center">
+					<!-- <div class="col-sm-2" style="text-align: center">
 						<button type="button" ng-click="openAddModal(product.name)" class="btn btn-default btn-xs">Add</button>
 						<button type="button" ng-click="openEditModal(product.name)" class="btn btn-default btn-xs"
 							ng-show="loggedUser == 'admin' || loggedUser == 'nvxd'">
@@ -73,7 +73,7 @@
 							bs-tooltip="'Configure product'" data-placement="bottom" ng-show="loggedUser == 'admin' || loggedUser == 'nvxd'">
 							<span class="glyphicon glyphicon-wrench"></span>
 						</button>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</div>

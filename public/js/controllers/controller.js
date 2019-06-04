@@ -11,7 +11,7 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
     var socket = io.connect();
     socket.on('orders', function(data) {
         $scope.parseNewOrder(data.order, data.id);
-        $scope.loadZaslatDataForNotifications();
+        //$scope.loadZaslatDataForNotifications();
         //$scope.buildQueue(data.allOrders);
     });
 
