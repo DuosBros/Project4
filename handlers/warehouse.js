@@ -14,7 +14,7 @@ Handler = function (app) {
     prodHandler = new ProdHandler(app);
 };
 
-Handler.prototype.saveProductAmount = function (filterBy, difference, user, notificationThreshold) {
+Handler.prototype.saveProductAmount = function (filterBy, difference, user) {
     var deferred = Q.defer();
 
     var productsV2 = mongo.collection('productsV2');
@@ -32,9 +32,6 @@ Handler.prototype.saveProductAmount = function (filterBy, difference, user, noti
     productsV2.update(
         filter,
         {
-            $set: {
-                'warehouse.notificationThreshold': notificationThreshold,
-            },
             $push: {
                 'warehouse.history': {
                     'timestamp': new Date(),

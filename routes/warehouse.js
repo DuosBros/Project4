@@ -13,12 +13,11 @@ module.exports = function(app) {
         var filterBy = req.params.filterBy;
         var difference = req.body.difference;
         var user = req.body.user;
-        var notificationThreshold = req.body.notificationThreshold;
 
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.saveProductAmount(filterBy, difference, user, notificationThreshold);
+                return handler.saveProductAmount(filterBy, difference, user);
             })
             .then(function() {
                 res.json();
