@@ -38,8 +38,6 @@ Handler.prototype.saveProductAmount = function (filterBy, difference, user) {
                     'difference': difference,
                     'user': user,
                 }
-            }, $inc: {
-                'warehouse.amount': difference,
             }
         },
         function (err, result) {
@@ -268,7 +266,6 @@ Handler.prototype.getWarehouseV2 = function (year, month) {
                     var product = products[key];
                     product.input = calculateProductInput(product.warehouse, month, year);
                     calculateBeginningPromises.push(calculateBeginning(product.warehouse, year, month, key));
-                    product.notificationThreshold = product.warehouse.notificationThreshold;
                     delete product.warehouse;
                 }
             });

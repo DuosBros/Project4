@@ -126,7 +126,6 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
                 )
                 .then(function() {
                     reloadAllProductAmounts();
-                    loadNotifications();
                     modal.$promise.then(modal.hide);
                 });
             }
@@ -196,13 +195,6 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
             return '';
         }
 
-        function loadNotifications() {
-            medPharmaNotifications.getWarehouseNotifications()
-            .then(function(notifications) {
-                $scope.notifications = notifications;
-            })
-        }
-
         function loadAllProducts() {
             medPharmaOthers.getAllProductsJson()
             .then(function(products) {
@@ -255,6 +247,5 @@ myApp.controller('warehouseController', ['$scope', 'medPharmaOthers', 'medPharma
             $scope.loggedUser = medPharmaOthers.getLoggedInUser();
             loadAllProducts();
             reloadAllProductAmounts();
-            loadNotifications();
         }
 }]);

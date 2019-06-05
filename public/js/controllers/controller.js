@@ -703,15 +703,6 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
         $scope.reoder();
     }
 
-    $scope.loadWarehouseInfoForNotifications = function() {
-        medPharmaNotifications.getWarehouseNotifications()
-        .then(function(notifications) {
-            if (notifications.length > 0) {
-                $scope.showWarehouseNotification = true;
-            }
-        });
-    }
-
     $scope.loadZaslatDataForNotifications = function() {
         medPharmaNotifications.getNotPaidNotifications()
         .then(function(notifications) {
@@ -721,8 +712,6 @@ myApp.controller('AppCtrl', ['$scope', '$modal', 'medPharmaOrders', 'medPharmaOt
             });
         });
     }
-
-    $scope.loadWarehouseInfoForNotifications();
     //$scope.loadZaslatDataForNotifications();
 
 }]);
