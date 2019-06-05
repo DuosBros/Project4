@@ -28,6 +28,7 @@
 02/06 - 1.5h bank cache improvements
 03/06 - 0.5h gmail handling
 04/06 - 1.5h sockets for wh + cleanups
+05/06 - 0.5h wh improvements
 
 
 168USD/year
