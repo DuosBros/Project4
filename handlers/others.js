@@ -233,6 +233,7 @@ Handler.prototype.updateProductsCollectionsV2 = function (id, newProduct) {
                 invoiceDisplayName: newProduct.invoiceDisplayName,
                 displayName: newProduct.displayName,
                 isActive: newProduct.isActive,
+                'warehouse.notificationThreshold': newProduct.notificationThreshold,
             }
         },
         function (err, result) {
