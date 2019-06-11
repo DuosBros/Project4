@@ -48,4 +48,27 @@ module.exports = function(app) {
             res.status(403).send({message: 'No authentication token!'});
         }
     });
+
+    app.delete('/rest/purchases/:id', function(req, res) {
+        var token = tools.extractToken(req);
+
+        var id = req.params.id;
+
+        if(token) {
+            authenticationHandler.validateToken(token)
+            .then(function() {
+                return handler.deletePurchase(id)
+            })
+            .then(function(result) {
+                res.json(result);
+                res.end();
+            })
+            .fail(function(err) {
+                tools.replyError(err, res);
+            })
+            .done();
+        } else {
+            res.status(403).send({message: 'No authentication token!'});
+        }
+    });
 }
