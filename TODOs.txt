@@ -30,6 +30,7 @@
 04/06 - 1.5h sockets for wh + cleanups
 05/06 - 1h wh improvements
 11/06 - 0.5h purchases
+12/06 - 0.5h purchases
 
 
 168USD/year

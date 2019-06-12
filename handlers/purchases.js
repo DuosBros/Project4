@@ -31,6 +31,28 @@ Handler.prototype.getAllPurchases = function() {
     return deferred.promise;
 }
 
+Handler.prototype.updatePurchase = function(id, purchase) {
+    var deferred = Q.defer();
+    var purchases = mongo.collection('purchases');
+
+    delete purchase._id;
+
+    if (!purchase.id) {
+        purchase.id = id;
+    }
+
+    purchases.replaceOne({'id' : id}, purchase, function(err, res) {
+            if (err) {
+                console.log('ERROR while updating purchase with ID: ' + id + '> ' + err);
+                deferred.reject(err);
+            } else {
+                deferred.resolve(purchase);
+            }
+    });
+
+    return deferred.promise;
+}
+
 Handler.prototype.deletePurchase = function(id) {
     var deferred = Q.defer();
 

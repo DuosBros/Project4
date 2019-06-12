@@ -49,6 +49,29 @@ module.exports = function(app) {
         }
     });
 
+    app.put('/rest/purchases/:id', function(req, res) {
+        var token = tools.extractToken(req);
+        var purchase = req.body;
+        var id = parseInt(req.params.id);
+
+        if (token) {
+            authenticationHandler.validateToken(token)
+            .then(function() {
+                return handler.updatePurchase(id, purchase)
+            })
+            .then(function(editedPurchase) {
+                res.json(editedPurchase);
+                res.end();
+            })
+            .fail(function(err) {
+                tools.replyError(err, res);
+            })
+            .done();
+        } else {
+            res.status(403).send({message: 'No authentication token!'});
+        }
+    });
+
     app.delete('/rest/purchases/:id', function(req, res) {
         var token = tools.extractToken(req);
 
