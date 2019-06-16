@@ -83,7 +83,9 @@ Handler.prototype.addPurchase = function(purchase) {
     var purchases = mongo.collection('purchases');
     var id;
     var parsedPurchase = purchase;
-    parsedPurchase.date = new Date();
+    if(!purchase.date) {
+        parsedPurchase.date = new Date();
+    }
 
     for (var i = 0; i < parsedPurchase.products.length; i++) {
         var prod = parsedPurchase.products[i];
