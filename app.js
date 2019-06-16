@@ -27,7 +27,7 @@ app.set('ACTIVE_ORDERS_STATE', 'active');
 app.set('DRAFT_ORDERS_STATE', 'draft');
 app.set('ARCHIVED_ORDERS_STATE', 'archived');
 app.set('EXPIRED_ORDERS_STATE', 'expired');
-app.set('zaslat-base-uri', 'https://test.zaslat.cz/api/v1/');
+app.set('zaslat-base-uri', 'https://www.zaslat.cz/api/v1/');
 app.set('zaslat-pickup-uri', 'pickups/add');
 app.set('zaslat-get-pickups-uri', 'pickups/list')
 app.set('zaslat-rates-uri', 'rates/get')
@@ -48,7 +48,6 @@ if (env == 'production') {
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
     app.set('mongodb.url', 'mongodb://medpharma2:TranMedGroup12e@ds153890.mlab.com:53890/heroku_gvlqrgxg');
     app.set('gmail-redirect-uri', 'https://medpharmavn.herokuapp.com/rest/gmail/oauthcallback');
-    app.set('zaslat-base-uri', 'https://www.zaslat.cz/api/v1/');
     app.set('zaslat-address-id', 50470);
 }
 
