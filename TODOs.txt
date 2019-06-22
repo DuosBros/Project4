@@ -31,6 +31,7 @@
 05/06 - 1h wh improvements
 11/06 - 0.5h purchases
 12/06 - 0.5h purchases
+22/06 - 0.5h bank analysis
 
 
 168USD/year
