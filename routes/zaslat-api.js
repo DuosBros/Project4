@@ -103,7 +103,7 @@ module.exports = function(app) {
             authenticationHandler.validateToken(token)
             .then(function() {
                 return handler.createShipment(createShipmentData.shipment, createShipmentData.orderId,
-                    createShipmentData.shipmentType, createShipmentData.note);
+                    createShipmentData.shipmentType);
             })
             .then(function(response) {
                 res.json(response);

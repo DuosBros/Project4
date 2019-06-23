@@ -186,7 +186,7 @@ Handler.prototype.getTrackingInfo = function(shipments) {
     return deferred.promise;
 }
 
-Handler.prototype.createShipment = function(shipment, orderId, shipmentType, note) {
+Handler.prototype.createShipment = function(shipment, orderId, shipmentType) {
     var deferred = Q.defer();
     var zaslatResponse;
 
