@@ -57,32 +57,4 @@ Handler.prototype.getNotPaidNotifications = function() {
     return deferred.promise;
 }
 
-Handler.prototype.mapProductNamesToAmountsPromise = function(productNames, productsData) {
-    var deferred = Q.defer();
-
-    var mappedProductNamesToAmounts = mapProductNamesToAmounts(productNames, productsData);
-    deferred.resolve(mappedProductNamesToAmounts);
-
-    return deferred.promise;
-}
-
-function mapProductNamesToAmounts(productNames, productsData) {
-    var mappedDatabaseObject = {};
-    productsData.forEach(function(product) {
-        mappedDatabaseObject[product.productName] = {
-            total: product.amount,
-            notificationThreshold: product.notificationThreshold
-        };
-    })
-
-    var mappedDefaultProductsCounts = {};
-
-    productNames.forEach(function(productName) {
-        mappedDefaultProductsCounts[productName] = {total: 0, booked: 0};
-    })
-
-    return Object.assign({}, mappedDefaultProductsCounts, mappedDatabaseObject);
-}
-
-
 exports.Handler = Handler;

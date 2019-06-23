@@ -8,29 +8,6 @@ module.exports = function(app) {
 
     var tools = require('../tools/tools.js');
 
-    app.post('/rest/mapProductNamesToAmounts', function(req, res) {
-
-        var token = tools.extractToken(req);
-
-        var productNames = req.body.productNames;
-        var productData = req.body.productData;
-
-        if (token) {
-            authenticationHandler.validateToken(token)
-            .then(function() {
-                return handler.mapProductNamesToAmountsPromise(productNames, productData);
-            })
-            .then(function(mappedProductNamesToAmounts) {
-                res.json(mappedProductNamesToAmounts);
-                res.end();
-            })
-            .fail(function(err) {
-                tools.replyError(err, res);
-            })
-            .done();
-        }
-    })
-
     app.get('/rest/notPaidNotifications', function(req, res) {
         var token = tools.extractToken(req);
 

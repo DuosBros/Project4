@@ -26,6 +26,7 @@
     "express": "^4.13.4",
     "express-brute": "^1.0.1",
     "express-sslify": "^1.2.0",
+    "express-winston": "^3.2.0",
     "forever": "^0.15.2",
     "fs": "0.0.2",
     "googleapis": "^27.0.0",
@@ -37,7 +38,6 @@
     "lodash": "^4.17.2",
     "method-override": "^2.3.5",
     "mongodb": "^2.1.4",
-    "morgan": "^1.7.0",
     "node-cache": "^4.2.0",
     "node-cron": "^1.2.1",
     "node-gmail-api": "^0.6.1",
@@ -52,6 +52,7 @@
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "shelljs": "^0.8.2",
-    "socket.io": "^1.5.1"
+    "socket.io": "^1.5.1",
+    "winston": "^3.2.1"
   }
 }

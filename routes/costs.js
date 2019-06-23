@@ -48,28 +48,6 @@ module.exports = function(app) {
         }
     });
 
-    app.get('/rest/costs/:costId', function(req, res) {
-        var token = tools.extractToken(req);
-        var costId = req.params.costId;
-
-        if(token) {
-            authenticationHandler.validateToken(token)
-            .then(function() {
-                return handler.getCost(costId)
-            })
-            .then(function(cost) {
-                res.json(cost);
-                res.end();
-            })
-            .fail(function(err) {
-                tools.replyError(err, res);
-            })
-            .done();
-        } else {
-            res.status(403).send({message: 'No authentication token!'});
-        }
-    });
-
     app.post('/rest/costs', function(req, res) {
         var token = tools.extractToken(req);
         var cost = req.body;
@@ -136,5 +114,4 @@ module.exports = function(app) {
             res.status(403).send({message: 'No authentication token!'});
         }
     });
-
 }

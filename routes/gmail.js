@@ -112,5 +112,4 @@ module.exports = function(app) {
             res.status(403).send({message: 'No authentication token!'});
         }
     });
-
 }

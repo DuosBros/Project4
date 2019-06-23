@@ -1,5 +1,3 @@
-
-
 var Q = require('q');
 var mongo;
 
@@ -46,24 +44,6 @@ Handler.prototype.getAllCostsMonthly = function() {
         }
     });
 
-    return deferred.promise;
-}
-
-Handler.prototype.getCost = function(costId) {
-    var deferred = Q.defer();
-
-    var costs = mongo.collection('costs');
-    var id = parseInt(costId);
-
-    costs.findOne({id: id}, {},
-            function(err, cost) {
-                if(err) {
-                    console.log('ERROR while getting cost with ID: ' + costId + '> ' + err);
-                    deferred.reject(err);
-                } else {
-                    deferred.resolve(cost);
-                }
-            });
     return deferred.promise;
 }
 
