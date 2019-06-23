@@ -60,7 +60,7 @@ if (env == 'test') {
 
 //app.disable('etag');
 
-expressWinston.requestWhitelist = ['url', 'method', 'httpVersion', 'originalUrl', 'query'];
+expressWinston.requestWhitelist = ['url', 'method', 'httpVersion', 'originalUrl', 'query', 'body'];
 app.use(expressWinston.logger({
     transports: [
       new winston.transports.Console()
