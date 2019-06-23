@@ -32,19 +32,10 @@
 11/06 - 0.5h purchases
 12/06 - 0.5h purchases
 22/06 - 0.5h bank analysis
+23/06 - 0.5h redirecting and shits
 
 
 168USD/year
-
-new todo list:
-
-
-
-pozor: nove se nepocitaji ty ordery, ktere jsou abandoned - cerne
-Booked: produkty na aktivnich orderach po calculation date, ktere nejsou zaplacene
-Available for booking: hodnota ve warehouse kolekci v DB
-    - pocty produktu na vsech objednavkach (aktivnich, po calculation date - paid i not paid)
-In store: hodnota ve warehouse kolekci v DB - produkty na zaplacenych aktivnich orderach od calc date
 
 
 zralok - 86g
