@@ -472,7 +472,7 @@ Handler.prototype.setOrderLock = function(orderId, username, seconds) {
     return deferred.promise;
 }
 
-Handler.prototype.setZaslatData = function(orderId, shipmentId, shipmentType, note) {
+Handler.prototype.setZaslatData = function(orderId, shipmentId, shipmentType) {
     var deferred = Q.defer();
 
     var orders = mongo.collection('orders');
@@ -480,7 +480,6 @@ Handler.prototype.setZaslatData = function(orderId, shipmentId, shipmentType, no
     var setObject = {
         'zaslatDate': new Date(),
         'zaslatShipmentId': shipmentId,
-        'note': note,
         'state': 'active'
     }
     if(shipmentType == 'OCCASIONAL') {

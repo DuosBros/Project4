@@ -200,7 +200,7 @@ Handler.prototype.createShipment = function(shipment, orderId, shipmentType, not
     rp(options)
     .then(function(response) {
         zaslatResponse = response.data;
-        return ordersHandler.setZaslatData(orderId, zaslatResponse.shipments[0], shipmentType, note);
+        return ordersHandler.setZaslatData(orderId, zaslatResponse.shipments[0], shipmentType);
     })
     .then(function() {
         deferred.resolve(zaslatResponse);
