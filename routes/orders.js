@@ -39,26 +39,6 @@ module.exports = function(app) {
         }
     });
 
-    app.get('/rest/orders/turnover', function(req, res) {
-        var token = tools.extractToken(req);
-        if(token) {
-            authenticationHandler.validateToken(token)
-            .then(function() {
-                return handler.getTotalTurnover()
-            })
-            .then(function(turnover) {
-                res.json(turnover);
-                res.end();
-            })
-            .fail(function(err) {
-                tools.replyError(err, res);
-            })
-            .done();
-        } else {
-            res.status(403).send({message: 'No authentication token!'});
-        }
-    });
-
     app.get('/rest/orders/notpaid', function(req, res) {
         var token = tools.extractToken(req);
         if(token) {

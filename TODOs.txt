@@ -33,6 +33,7 @@
 12/06 - 0.5h purchases
 22/06 - 0.5h bank analysis
 23/06 - 1h redirecting and shits + logging
+24/06 - 2h cleanup + prod support
 
 
 168USD/year

@@ -1,7 +1,6 @@
 
 
 var Q = require('q');
-var cron = require('node-cron');
 var AuthenticationHandler = require('../handlers/others.js').Handler;
 var authenticationHandler;
 var mongo;
@@ -53,44 +52,7 @@ Handler = function(app) {
             .done();
         });
     });
-
-    // cron.schedule('0 2 * * *', function() {
-    //     expireOrders();
-    // });
 };
-
-function expireOrders() {
-    var deferred = Q.defer();
-    var orders = mongo.collection('orders');
-
-    var expirationDate = new Date();
-    expirationDate.setDate(expirationDate.getDate() - 14);
-
-    var testDate = new Date();
-    testDate.setDate(testDate.getDate() - 90);
-
-    var query = {
-        'payment.orderDate': {'$gt': testDate, '$lt': expirationDate},
-        'state': {$in: [ACTIVE_ORDERS_STATE]},
-        'payment.paymentDate': {$exists: false},
-        'zaslatShipmentId': {$exists: false}
-    };
-
-    orders.update(query, {$set: {state: 'expired'}}, {multi: true},
-        function(err, result) {
-            if (err) {
-                var error = new Error('error while expiring order');
-                console.log(error + '> ' + err);
-                error.status = 500;
-                deferred.reject(error);
-            } else {
-                deferred.resolve(result);
-            }
-        }
-    );
-
-    return deferred.promise;
-}
 
 Handler.prototype.getAllOrdersInQueue = function(from, to) {
     var deferred = Q.defer();
@@ -194,34 +156,6 @@ Handler.prototype.getAllOrders = function(from, to, limit, sinceId) {
     }
 
     orders.aggregate(pipeline)
-    .toArray(function(err, orders) {
-        if(err) {
-            console.log('ERROR while getting all orders> ' + err);
-            deferred.reject(err);
-        } else {
-            deferred.resolve(orders);
-        }
-    });
-    return deferred.promise;
-}
-
-Handler.prototype.getTotalTurnover = function() {
-    var deferred = Q.defer();
-    var orders = mongo.collection('orders');
-
-
-    var filter = {$match:
-                    {
-                        'payment.paymentDate': {$exists: true}, 'state': ACTIVE_ORDERS_STATE
-                    }
-                 };
-    var group = { $group: {_id:
-                            {
-                              turnover : {$sum: '$totalPrice'}
-                            },
-                        }
-                };
-    orders.aggregate([filter, group])
     .toArray(function(err, orders) {
         if(err) {
             console.log('ERROR while getting all orders> ' + err);

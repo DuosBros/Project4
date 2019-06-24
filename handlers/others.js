@@ -143,23 +143,6 @@ Handler.prototype.addProduct = function (product) {
     return deferred.promise;
 }
 
-Handler.prototype.editProduct = function (oldProductName, newProduct) {
-    var deferred = Q.defer();
-
-    this.updateProductsCollections(oldProductName, newProduct)
-        .then(function (result) {
-            return othersHandler.updateProductsInOrders(oldProductName, newProduct.name, newProduct.category);
-        })
-        .then(function (result) {
-            deferred.resolve(result);
-        })
-        .catch(function (err) {
-            deferred.reject(err);
-        })
-
-    return deferred.promise;
-}
-
 Handler.prototype.saveProduct = function (productId, newProduct) {
     var deferred = Q.defer();
 
@@ -298,22 +281,6 @@ Handler.prototype.updateProductsInOrders = function (oldProductName, newProductN
             }
         }
     );
-
-    return deferred.promise;
-}
-
-Handler.prototype.removeProduct = function (product) {
-    var deferred = Q.defer();
-
-    var products = mongo.collection('productsV2');
-
-    products.removeOne({ 'name': product }, function (err, doc) {
-        if (err) {
-            deferred.reject(err);
-        } else {
-            deferred.resolve(doc);
-        }
-    });
 
     return deferred.promise;
 }

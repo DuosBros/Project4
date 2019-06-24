@@ -124,6 +124,3 @@ MongoClient.connect(dbUrl, {}, function (err, db) {
 
     console.log("Server running!");
 });
-
-
-
