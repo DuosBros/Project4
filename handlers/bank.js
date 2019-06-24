@@ -50,4 +50,17 @@ Handler.prototype.getAllTransactions = function(from) {
     return deferred.promise;
 }
 
+Handler.prototype.createDomesticTransaction = function(amount, accountTo, bankCode, comment) {
+    var deferred = Q.defer();
+
+    console.log('amount: ' + amount);
+    console.log('accountTo: ' + accountTo);
+    console.log('bankCode: ' + bankCode);
+    console.log('comment: ' + comment);
+
+    deferred.resolve();
+
+    return deferred.promise;
+}
+
 exports.Handler = Handler;
