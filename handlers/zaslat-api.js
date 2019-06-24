@@ -13,11 +13,9 @@ var zaslatGetPickupsUri;
 var zaslatRatesUri;
 var zaslatToken;
 var zaslatHeaders;
-var handler;
 
 var ordersHandler;
 var ACTIVE_ORDERS_STATE;
-var socketIoListener;
 var mongo;
 
 var env;
@@ -47,35 +45,6 @@ Handler = function(app) {
     handler = this;
 
     env = app.get('env');
-
-    // setInterval(function() {
-    //     var allShipments;
-    //     var allOrdersInQueue;
-    //     var orderIdsToRemoveFromQueue = [];
-    //     Q.all([handler.getAllShipments(), ordersHandler.getAllOrdersInQueue('December 31, 2016 23:59:59')])
-    //     .then(function(results) {
-    //         var shipments = results[0];
-    //         var orders = results[1];
-    //         orders.forEach(function(order) {
-    //             if(shipments[order.zaslatShipmentId]) {
-    //                 if(shipments[order.zaslatShipmentId].status == 'INTRANSIT') {
-    //                     orderIdsToRemoveFromQueue.push(order.id);
-    //                 }
-    //             }
-    //         });
-    //         return handler.deleteFromQueue(orderIdsToRemoveFromQueue, true);
-    //     })
-    //     .then(function(res) {
-    //         return ordersHandler.getAllOrders('December 31, 2016 23:59:59')
-    //     })
-    //     .then(function(allData) {
-    //         socketIoListener.emit('orders', {'allOrders': allData});
-    //     })
-    //     .catch(function(err) {
-    //         console.log('ERROR WHILE REMOVING ITEMS FROM QUEUE');
-    //         console.log(err);
-    //     })
-    // }, 1000 * 60);
 };
 
 Handler.prototype.getAllPickups = function() {
@@ -285,36 +254,6 @@ Handler.prototype.getAllZaslatOrders = function() {
             deferred.reject(err);
         } else {
             deferred.resolve(orders);
-        }
-    });
-
-    return deferred.promise;
-}
-
-Handler.prototype.deleteFromQueue = function(orderIds, autoDelete) {
-    console.log(orderIds);
-    var deferred = Q.defer();
-    var orders = mongo.collection('orders');
-
-    var filter = {
-        'inQueue': true, 'state': ACTIVE_ORDERS_STATE, id: {$in: orderIds}
-    }
-
-    var unsetObject = {
-        'inQueue': ""
-    }
-
-    if(!autoDelete) {
-        unsetObject.zaslatDate = "",
-        unsetObject.zaslatShipmentId = ""
-    }
-
-    orders.update(filter, {$unset: unsetObject},
-                        {multi: true}, function(err, result) {
-        if(err) {
-            deferred.reject(err);
-        } else {
-            deferred.resolve(result);
         }
     });
 

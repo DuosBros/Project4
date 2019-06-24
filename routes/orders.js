@@ -142,36 +142,6 @@ module.exports = function(app) {
         }
     });
 
-    app.get('/rest/orders/vs/check/:vs/:orderId', function(req, res) {
-        var token = tools.extractToken(req);
-        var vs = req.params.vs;
-        var orderId = req.params.orderId;
-        if(orderId) {
-            orderId = parseInt(orderId);
-        }
-        if(vs == undefined) {
-            res.json();
-            res.end();
-        } else {
-            if(token) {
-                authenticationHandler.validateToken(token)
-                .then(function() {
-                    return handler.isValidVS(parseInt(vs), orderId);
-                })
-                .then(function(vs) {
-                    res.json(vs);
-                    res.end();
-                })
-                .fail(function(err) {
-                    tools.replyError(err, res);
-                })
-                .done();
-            } else {
-                res.status(403).send({message: 'No authentication token!'});
-            }
-        }
-    });
-
     app.get('/rest/orders/:orderId', function(req, res) {
         var token = tools.extractToken(req);
         var orderId = req.params.orderId;

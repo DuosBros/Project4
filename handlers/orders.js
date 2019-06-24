@@ -24,20 +24,6 @@ Handler = function(app) {
     ordersHandler = this;
 
     socketIoListener.on('connection', function(socket) {
-        socket.on('refresh_orders_2016', function(data) {
-            authenticationHandler.validateToken(data.token)
-            .then(function() {
-                return ordersHandler.getAllOrders(undefined, 'December 31, 2016 23:59:59');
-            })
-            .then(function(allData) {
-                socketIoListener.emit('orders', {'allOrders': allData});
-            })
-            .fail(function(err) {
-                console.log(err);
-            })
-            .done();
-        });
-
         socket.on('refresh_orders', function(data) {
             authenticationHandler.validateToken(data.token)
             .then(function() {
@@ -53,33 +39,6 @@ Handler = function(app) {
         });
     });
 };
-
-Handler.prototype.getAllOrdersInQueue = function(from, to) {
-    var deferred = Q.defer();
-    var orders = mongo.collection('orders');
-
-    if(from) {
-        query = {'payment.orderDate': {'$gt': new Date(from)}}
-    } else if(to) {
-        query = {'payment.orderDate': {'$lt': new Date(to)}}
-    } else {
-        query = {};
-    }
-    query.state = {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE]};
-    query.inQueue = true;
-
-    orders.find(query)
-    .toArray(function(err, orders) {
-        if(err) {
-            console.log('ERROR while getting all orders> ' + err);
-            deferred.reject(err);
-        } else {
-            deferred.resolve(orders);
-        }
-    });
-
-    return deferred.promise;
-}
 
 Handler.prototype.getAllNotPaidOrders = function(from, to) {
     var deferred = Q.defer();
@@ -186,31 +145,6 @@ Handler.prototype.getNextHighestVS = function() {
             } else {
                 var newVS = parseInt(order[order.length - 1].payment.vs) + 1;
                 deferred.resolve(newVS);
-            }
-        }
-    });
-
-    return deferred.promise;
-}
-
-Handler.prototype.isValidVS = function(vs, orderId) {
-    var deferred= Q.defer();
-    var orders = mongo.collection('orders');
-
-    var match = {'payment.vs': vs, state: {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE, DRAFT_ORDERS_STATE]}};
-    if(orderId || orderId == 0) {
-        match.id = {$ne: orderId};
-    }
-
-    orders.find(match).toArray(function(err, order) {
-        if(err) {
-            console.log('ERROR while getting next VS> ' + err);
-            deferred.reject(err);
-        } else {
-            if(!order || order.length == 0) {
-                deferred.resolve(true);
-            } else {
-                deferred.reject(false);
             }
         }
     });

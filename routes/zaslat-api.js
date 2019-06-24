@@ -183,26 +183,4 @@ module.exports = function(app) {
             res.status(403).send({message: 'No authentication token!'});
         }
     });
-
-    app.post('/rest/zaslat/queue/delete', function(req, res) {
-        var token = tools.extractToken(req);
-        var orderIds = req.body;
-
-        if(token) {
-            authenticationHandler.validateToken(token)
-            .then(function() {
-                return handler.deleteFromQueue(orderIds);
-            })
-            .then(function(response) {
-                res.json(response);
-                res.end();
-            })
-            .fail(function(err) {
-                tools.replyError(err, res);
-            })
-            .done();
-        } else {
-            res.status(403).send({message: 'No authentication token!'});
-        }
-    });
 }
