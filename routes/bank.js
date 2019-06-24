@@ -38,6 +38,8 @@ module.exports = function(app) {
         var accountTo = transaction.accountTo;
         var bankCode = transaction.bankCode;
         var comment = transaction.comment
+        var vs = transaction.vs;
+
         if (!amount) {
             res.status(400).send({ message: 'You must provide parameter amount!' });
         }
@@ -54,7 +56,11 @@ module.exports = function(app) {
             res.status(400).send({ message: 'You must provide parameter comment!' });
         }
 
-        handler.createDomesticTransaction(amount, accountTo, bankCode, comment)
+        if (!vs) {
+            res.status(400).send({ message: 'You must provide parameter vs!' });
+        }
+
+        handler.createDomesticTransaction(amount, accountTo, bankCode, comment, vs)
         .then(function(response) {
             res.json(response);
             res.end();
