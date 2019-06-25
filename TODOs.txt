@@ -34,6 +34,7 @@
 22/06 - 0.5h bank analysis
 23/06 - 1h redirecting and shits + logging
 24/06 - 2.5h cleanup + prod support + skeleton for domestic transactions
+25/06 - 1h domestic transactions jebacka
 
 
 168USD/year

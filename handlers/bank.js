@@ -7,12 +7,22 @@ var bankBaseUri;
 
 var rp = require('request-promise');
 
+var fs = require('fs');
+var path = require('path');
+var templatePath = path.join(__dirname, '/../domestic_transaction_template.xml');
+var actualFilePath = path.join(__dirname, '/../domestic_transaction.xml');
+
 const NodeCache = require( "node-cache" );
 const myCache = new NodeCache();
 
+const CURRENCY = 'CZK';
+const ACCOUNT_FROM = 2401089228;
+const MESSAGE_FOR_RECIPIENT = 'TranMedGroup s.r.o.';
+const PAYMENT_TYPE = 431001;
+
 Handler = function(app) {
     handler = this;
-    bankBaseUri = app.get('bank-base-uri');
+    bankBaseUri = app.get('bank-transactions-uri');
 };
 
 
@@ -53,13 +63,47 @@ Handler.prototype.getAllTransactions = function(from) {
 Handler.prototype.createDomesticTransaction = function(amount, accountTo, bankCode, comment, vs) {
     var deferred = Q.defer();
 
-    console.log('amount: ' + amount);
-    console.log('accountTo: ' + accountTo);
-    console.log('bankCode: ' + bankCode);
-    console.log('comment: ' + comment);
-    console.log('vs: ' + vs);
+    var date = new Date().toISOString().split('T')[0];
+
+    createFile(amount, accountTo, bankCode, comment, vs, date)
+    .then(function() {
+        deferred.resolve();
+    })
+    .fail(function(err) {
+        deferred.reject(err);
+    })
 
     deferred.resolve();
+
+    return deferred.promise;
+}
+
+function createFile(amount, accountTo, bankCode, comment, vs, date) {
+    var deferred = Q.defer();
+
+    fs.readFile(templatePath, {encoding: 'utf-8'}, function(err,data) {
+        if (!err) {
+            console.log('received data: ' + data);
+            var withAmount = data.replace('{amount}', amount);
+            var withAccountTo = withAmount.replace('{accountTo}', accountTo);
+            var withBankCode = withAccountTo.replace('{bankCode}', bankCode);
+            var withComment = withBankCode.replace('{comment}', comment);
+            var withVs = withComment.replace('{vs}', vs);
+            var withDate = withVs.replace('{date}', date);
+
+            fs.writeFile(actualFilePath, withDate, function(err) {
+                if (err) {
+                    console.log(err)
+                    deferred.reject(err);
+                }
+                deferred.resolve();
+            });
+        } else {
+            console.log(err);
+            deferred.reject(err);
+        }
+    });
+
 
     return deferred.promise;
 }
