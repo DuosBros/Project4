@@ -1,30 +1,22 @@
-
-
 var Q = require('q');
-
-var handler;
-var bankBaseUri;
-
 var rp = require('request-promise');
-
 var fs = require('fs');
 var path = require('path');
-var templatePath = path.join(__dirname, '/../domestic_transaction_template.xml');
-var actualFilePath = path.join(__dirname, '/../domestic_transaction.xml');
-
 const NodeCache = require( "node-cache" );
-const myCache = new NodeCache();
 
-const CURRENCY = 'CZK';
-const ACCOUNT_FROM = 2401089228;
-const MESSAGE_FOR_RECIPIENT = 'TranMedGroup s.r.o.';
-const PAYMENT_TYPE = 431001;
+const myCache = new NodeCache();
+var mongo;
+var bankBaseUri;
+
+var templatePath = path.join(__dirname, '/../domestic_transaction_template.xml');
+var actualFilePath = path.join(__dirname, '/../domestic_transaction_{timestamp}.xml');
+
 
 Handler = function(app) {
     handler = this;
     bankBaseUri = app.get('bank-transactions-uri');
+    mongo = app.get('mongodb');
 };
-
 
 Handler.prototype.getAllTransactions = function(from) {
     var deferred = Q.defer();
@@ -65,15 +57,58 @@ Handler.prototype.createDomesticTransaction = function(amount, accountTo, bankCo
 
     var date = new Date().toISOString().split('T')[0];
 
-    createFile(amount, accountTo, bankCode, comment, vs, date)
+    var filenameToDelete;
+    var response;
+    createFile(amount, accountTo, bankCode, comment, vs, date)//save file to DB and save that shit
+    .then(function(result) {
+        filenameToDelete = result.filename;
+
+        return writeTransactionToDb(result);
+    })
+    .then(function(transaction) {
+        response = transaction;
+
+        return deleteFile(filenameToDelete);
+    })
     .then(function() {
-        deferred.resolve();
+        deferred.resolve(response);
     })
     .fail(function(err) {
         deferred.reject(err);
     })
 
-    deferred.resolve();
+    return deferred.promise;
+}
+
+function writeTransactionToDb(data) {
+    var deferred = Q.defer();
+
+    data.date = new Date();
+
+    var transactions = mongo.collection('transactions');
+
+    transactions.insertOne(data, function(err) {
+        if(err) {
+            console.log('ERROR while creating transaction in database> ' + err);
+            deferred.reject(err);
+        } else {
+            deferred.resolve(data);
+        }
+    });
+
+    return deferred.promise;
+}
+
+function deleteFile(filename) {
+    var deferred = Q.defer();
+
+    fs.unlink(filename, function(err) {
+        if (err) {
+            console.log('Error deleting file: ' + filename + ' Err: ' + err);
+            deferred.reject(err);
+        }
+        deferred.resolve()
+    });
 
     return deferred.promise;
 }
@@ -81,9 +116,10 @@ Handler.prototype.createDomesticTransaction = function(amount, accountTo, bankCo
 function createFile(amount, accountTo, bankCode, comment, vs, date) {
     var deferred = Q.defer();
 
-    fs.readFile(templatePath, {encoding: 'utf-8'}, function(err,data) {
+    var result = {};
+
+    fs.readFile(templatePath, {encoding: 'utf-8'}, function(err, data) {
         if (!err) {
-            console.log('received data: ' + data);
             var withAmount = data.replace('{amount}', amount);
             var withAccountTo = withAmount.replace('{accountTo}', accountTo);
             var withBankCode = withAccountTo.replace('{bankCode}', bankCode);
@@ -91,12 +127,17 @@ function createFile(amount, accountTo, bankCode, comment, vs, date) {
             var withVs = withComment.replace('{vs}', vs);
             var withDate = withVs.replace('{date}', date);
 
-            fs.writeFile(actualFilePath, withDate, function(err) {
+            var actualFilePathWithTimestamp = actualFilePath.replace('{timestamp}', new Date().getTime());
+            fs.writeFile(actualFilePathWithTimestamp, withDate, function(err) {
                 if (err) {
                     console.log(err)
                     deferred.reject(err);
                 }
-                deferred.resolve();
+
+                result.transaction = withDate;
+                result.filename = actualFilePathWithTimestamp;
+
+                deferred.resolve(result);
             });
         } else {
             console.log(err);
