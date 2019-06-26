@@ -59,8 +59,8 @@ Handler.prototype.createDomesticTransaction = function(amount, accountTo, bankCo
 
     var filenameToDelete;
     var response;
-    createFile(amount, accountTo, bankCode, comment, vs, date)//save file to DB and save that shit
-    .then(function(result) {
+    createFile(amount, accountTo, bankCode, comment, vs, date)
+    .then(function(result) {//TODO DON'T FORGET TOKEN!
         filenameToDelete = result.filename;
 
         return writeTransactionToDb(result);
