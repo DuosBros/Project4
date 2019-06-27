@@ -8,6 +8,7 @@ const curl = new (require( 'curl-request' ))();
 const myCache = new NodeCache();
 var mongo;
 var bankTransactionUri;
+var bankCreateUri;
 var bankToken;
 
 var templatePath = path.join(__dirname, '/../domestic_transaction_template.xml');
@@ -17,6 +18,7 @@ var actualFilePath = path.join(__dirname, '/../domestic_transaction_{timestamp}.
 Handler = function(app) {
     handler = this;
     bankTransactionUri = app.get('bank-transactions-uri');
+    bankCreateUri = app.get('bank-create-uri');
     bankToken = app.get('bank-token');
 
     mongo = app.get('mongodb');
@@ -94,7 +96,24 @@ function createTransaction(pathToFile, token) {
     console.log('creating....')
     console.log('file: ' + pathToFile);
 
-    deferred.resolve({hh:'pico'});
+    curl
+    .setHeaders([
+        'Content-Type: multipart/form-data'
+    ])
+    .setMultipartBody([{
+        token: token,
+        file: pathToFile,
+        type: 'xml',
+    }])
+    .post(bankCreateUri)
+    .then(({statusCode, body, headers}) => {
+        console.log(statusCode, body, headers);
+        deferred.resolve({statusCode, body, headers});
+    })
+    .catch((e) => {
+        console.log('Error creating transaction: ' + e);
+        deferred.reject(e);
+    });
 
     return deferred.promise;
 }
