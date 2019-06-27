@@ -60,14 +60,21 @@ module.exports = function(app) {
             res.status(400).send({ message: 'You must provide parameter vs!' });
         }
 
-        handler.createDomesticTransaction(amount, accountTo, bankCode, comment, vs)
-        .then(function(response) {
-            res.json(response);
-            res.end();
-        })
-        .fail(function(err) {
-            tools.replyError(err, res);
-        })
-        .done();
+        if (token) {
+            authenticationHandler.validateToken(token)
+            .then(function() {
+                return handler.createDomesticTransaction(amount, accountTo, bankCode, comment, vs);
+            })
+            .then(function(transactions) {
+                res.json(transactions);
+                res.end();
+            })
+            .fail(function(err) {
+                tools.replyError(err, res);
+            })
+            .done();
+        } else {
+            res.status(403).send({message: 'No authentication token!'});
+        }
     });
 }

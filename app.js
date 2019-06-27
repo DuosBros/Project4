@@ -37,7 +37,10 @@ app.set('zaslat-get-shipments-tracking-uri', 'shipments/tracking');
 app.set('zaslat-create-shipment', 'shipments/create');
 app.set('zaslat-label', 'shipments/label');
 app.set('zaslat-address-id', 8);
-app.set('bank-transactions-uri', 'https://www.fio.cz/ib_api/rest/periods/o3mjc3g69SqnDBaE7Ul7AvafQldh3MUDanF9A837CfmRMsG0idVjPIh0TAb7WVE4/');
+app.set('bank-token', 'o3mjc3g69SqnDBaE7Ul7AvafQldh3MUDanF9A837CfmRMsG0idVjPIh0TAb7WVE4')
+app.set('bank-transactions-uri', 'https://www.fio.cz/ib_api/rest/periods/');
+app.set('bank-create-uri', 'https://www.fio.cz/ib_api/rest/import/');
+
 
 app.set('zaslat-token', 'cLqoi4we0JEaJTCLY25uk7QXdSzgNt5qevOxAlLA');
 app.set('dropbox-token', 'iNhg1bcaxL8AAAAAAABAS-Nu_J1oDWWOrMvcFXGvmwnHc8iDr2sKNIMaYdafoWN-');

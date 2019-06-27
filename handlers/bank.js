@@ -3,10 +3,12 @@ var rp = require('request-promise');
 var fs = require('fs');
 var path = require('path');
 const NodeCache = require( "node-cache" );
+const curl = new (require( 'curl-request' ))();
 
 const myCache = new NodeCache();
 var mongo;
-var bankBaseUri;
+var bankTransactionUri;
+var bankToken;
 
 var templatePath = path.join(__dirname, '/../domestic_transaction_template.xml');
 var actualFilePath = path.join(__dirname, '/../domestic_transaction_{timestamp}.xml');
@@ -14,7 +16,9 @@ var actualFilePath = path.join(__dirname, '/../domestic_transaction_{timestamp}.
 
 Handler = function(app) {
     handler = this;
-    bankBaseUri = app.get('bank-transactions-uri');
+    bankTransactionUri = app.get('bank-transactions-uri');
+    bankToken = app.get('bank-token');
+
     mongo = app.get('mongodb');
 };
 
@@ -34,7 +38,7 @@ Handler.prototype.getAllTransactions = function(from) {
         deferred.resolve(cachedTransactions)
     } else {
         var options = {
-            uri: bankBaseUri + from + '/2020-12-31/transactions.json',
+            uri: bankTransactionUri + bankToken + '/' + from + '/2020-12-31/transactions.json',
             json: true,
         };
 
@@ -60,13 +64,17 @@ Handler.prototype.createDomesticTransaction = function(amount, accountTo, bankCo
     var filenameToDelete;
     var response;
     createFile(amount, accountTo, bankCode, comment, vs, date)
-    .then(function(result) {//TODO DON'T FORGET TOKEN!
+    .then(function(result) {
         filenameToDelete = result.filename;
+        response = result;
 
-        return writeTransactionToDb(result);
+        return createTransaction(filenameToDelete, bankToken);
     })
-    .then(function(transaction) {
-        response = transaction;
+    .then(function(createTransactionResult) {
+        response.result = createTransactionResult;
+        return writeTransactionToDb(response);
+    })
+    .then(function() {
 
         return deleteFile(filenameToDelete);
     })
@@ -80,14 +88,27 @@ Handler.prototype.createDomesticTransaction = function(amount, accountTo, bankCo
     return deferred.promise;
 }
 
+function createTransaction(pathToFile, token) {
+    var deferred = Q.defer();
+
+    console.log('creating....')
+    console.log('file: ' + pathToFile);
+
+    deferred.resolve({hh:'pico'});
+
+    return deferred.promise;
+}
+
 function writeTransactionToDb(data) {
     var deferred = Q.defer();
 
-    data.date = new Date();
+    var mappedData = Object.assign({}, data, {
+        date: new Date(),
+    });
 
     var transactions = mongo.collection('transactions');
 
-    transactions.insertOne(data, function(err) {
+    transactions.insertOne(mappedData, function(err) {
         if(err) {
             console.log('ERROR while creating transaction in database> ' + err);
             deferred.reject(err);
