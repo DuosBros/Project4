@@ -70,6 +70,7 @@ module.exports = function(app) {
                 res.end();
             })
             .fail(function(err) {
+                console.log(err);
                 tools.replyError(err, res);
             })
             .done();

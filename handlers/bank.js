@@ -93,7 +93,6 @@ Handler.prototype.createDomesticTransaction = function(amount, accountTo, bankCo
 function createTransaction(pathToFile, token) {
     var deferred = Q.defer();
 
-    console.log('creating....')
     console.log('file: ' + pathToFile);
 
     curl
@@ -101,17 +100,22 @@ function createTransaction(pathToFile, token) {
         'Content-Type: multipart/form-data'
     ])
     .setMultipartBody([{
-        token: token,
+        name: 'file',
         file: pathToFile,
         type: 'xml',
+    }, {
+        name: 'token',
+        contents: token,
     }])
     .post(bankCreateUri)
     .then(({statusCode, body, headers}) => {
+        console.log('errrr');
         console.log(statusCode, body, headers);
         deferred.resolve({statusCode, body, headers});
     })
     .catch((e) => {
         console.log('Error creating transaction: ' + e);
+        console.log(e);
         deferred.reject(e);
     });
 
