@@ -37,6 +37,8 @@
 25/06 - 1h domestic transactions jebacka
 26/06 - 1h bank almost done
 27/06 - 2h another bank work
+--------------------------
+37h
 
 
 curl -v -X POST -F "type=xml" -F "token=rXKbieu4Kvb3mPUayN46775gHiPn2hbH11AtLGizamVGzmGqkghvVoF6zbQITwtZ"
