@@ -94,7 +94,7 @@ Handler.prototype.getProductsDaily = function (fromDate, toDate) {
     toDate = toDate ? new Date(toDate) : new Date()
 
     var matchDefinition = {
-        'payment.paymentDate': { $exists: true }, 'state': ACTIVE_ORDERS_STATE,
+        'state': ACTIVE_ORDERS_STATE,
         'payment.orderDate': { '$gte': fromDate, '$lte': toDate }
     }
 
