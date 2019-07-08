@@ -1,44 +1,4 @@
-﻿05/03 - 0.5h
-10/03 - 1h test api
-16/03 - 0.5h heroku analysis
-18/03 - 1h CORS + support
-26/03 - 0.5h general shits
-27/03 - 1h charts + WH improvements
-
-05/04 - 1.5h blaaaa
-06/04 - 0.5h - manual add of purchases
-18/04 - 0.5h new WH shitt
-19/04 - 3h collections merge
-21/04 - 0.5h small improvement to new WH
-27/04 - 1h output added to new WH
-27/04 - 2h wh snapshow
-28/04 - 2h scripts, architecture
-28/04 - 0.5h shits bleh
-30/04 - 0.5h id added
-01/05 - 0.5h id to charts
-06/05 - 0.5h tada
-06/05 - 1.5h wh2
-07/05 - 0.5h test
-11/05 - 0.5h bug investigating
-16/05 - 0.5h added id + category to order products
-16/05 - 1h sumshits
-20/05 - 0.5h
-26/05 - 0.5h bugfixing and other minor shits
-31/05 - 1h wh shiets
-02/06 - 1.5h bank cache improvements
-03/06 - 0.5h gmail handling
-04/06 - 1.5h sockets for wh + cleanups
-05/06 - 1h wh improvements
-11/06 - 0.5h purchases
-12/06 - 0.5h purchases
-22/06 - 0.5h bank analysis
-23/06 - 1h redirecting and shits + logging
-24/06 - 2.5h cleanup + prod support + skeleton for domestic transactions
-25/06 - 1h domestic transactions jebacka
-26/06 - 1h bank almost done
-27/06 - 2h another bank work
---------------------------
-37h
+﻿08/07 - issue anal.
 
 
 curl -v -X POST -F "type=xml" -F "token=rXKbieu4Kvb3mPUayN46775gHiPn2hbH11AtLGizamVGzmGqkghvVoF6zbQITwtZ"
