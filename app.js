@@ -19,7 +19,8 @@ app.engine('html', require('ejs').renderFile);
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(methodOverride());
 app.use(express.static(__dirname + "/public"));
-app.set('mongodb.url', 'mongodb://localhost:27017/medpharma');
+app.set('mongodb.url', 'mongodb://localhost:27017');
+app.set('mongodb.name', 'medpharma');
 //app.set('mongodb.url', 'mongodb://localhost:27017/tranmedgroup');
 app.set('salt', 'superSer123.bullsh18t');
 app.set('tokenExpiracy', 60 * 30 * 2 * 2 * 12 * 2);
@@ -51,6 +52,7 @@ app.set('gmail-base-uri', 'https://www.googleapis.com/gmail/v1/users/tnmephagrou
 if (env == 'production') {
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
     app.set('mongodb.url', 'mongodb://medpharma2:TranMedGroup12e@ds153890.mlab.com:53890/heroku_gvlqrgxg');
+    app.set('mongodb.name', 'heroku_gvlqrgxg');
     app.set('gmail-redirect-uri', 'https://medpharmavn.herokuapp.com/rest/gmail/oauthcallback');
     app.set('zaslat-address-id', 50470);
 }
@@ -58,6 +60,7 @@ if (env == 'production') {
 if (env == 'test') {
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
     app.set('mongodb.url', 'mongodb://medpharma2:TranMedGroup12e@ds137483.mlab.com:37483/heroku_q57klscp');
+    app.set('mongodb.name', 'heroku_q57klscp');
     app.set('gmail-redirect-uri', 'https://medpharmavn-test.herokuapp.com/rest/gmail/oauthcallback');
 }
 
@@ -84,14 +87,15 @@ app.use(bodyParser.urlencoded({ 'extended': 'true' }));
 
 var MongoClient = require('mongodb').MongoClient;
 var dbUrl = app.get('mongodb.url');
+var dbName = app.get('mongodb.name');
 
-MongoClient.connect(dbUrl, {}, function (err, db) {
+MongoClient.connect(dbUrl, {}, function (err, client) {
     if (err) {
         console.log("Cannot connect to MongoDB at " + dbUrl);
         throw err;
     }
     console.log("MongoDB connected at " + dbUrl);
-    app.set('mongodb', db);
+    app.set('mongodb', client.db(dbName));
 
     var server = require('http').createServer(app);
     server.listen(process.env.PORT || 3000);
