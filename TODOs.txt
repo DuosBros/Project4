@@ -1,6 +1,7 @@
 ﻿08/07 - 0.5h issue anal.
 09/07 - 1h new node
 10/07 - 0.5h mongodb issue
+12/02 - 0.5h string int issue
 
 
 curl -v -X POST -F "type=xml" -F "token=rXKbieu4Kvb3mPUayN46775gHiPn2hbH11AtLGizamVGzmGqkghvVoF6zbQITwtZ"
