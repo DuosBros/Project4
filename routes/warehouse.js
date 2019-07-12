@@ -17,7 +17,7 @@ module.exports = function(app) {
         if(token) {
             authenticationHandler.validateToken(token)
             .then(function() {
-                return handler.saveProductAmount(filterBy, difference, user);
+                return handler.saveProductAmount(filterBy, parseInt(difference), user);
             })
             .then(function() {
                 res.json();

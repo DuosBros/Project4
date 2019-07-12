@@ -82,7 +82,7 @@ function calculateProductInput(warehouse, month, year) {
         var timestamp = new Date(history[i].timestamp);
         var difference = history[i].difference;
         if (timestamp.getFullYear() == year && timestamp.getMonth() == month && !isNaN(difference)) {
-            input += difference;
+            input += parseInt(difference);
         }
     }
 
@@ -231,7 +231,7 @@ function calculateBeginning(whData, year, month, key) {
     var beginning = 0;
     for (var i = 0; i < history.length; i++) {
         if (history[i].timestamp < toDate && !isNaN(history[i].difference)) {
-            beginning += history[i].difference;
+            beginning += parseInt(history[i].difference);
         }
     }
 
