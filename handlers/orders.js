@@ -451,7 +451,7 @@ Handler.prototype.deleteOrder = function(orderId) {
     var deferred = Q.defer();
 
     var orders = mongo.collection('orders');
-    orders.update({'id': parseInt(orderId)}, {$set: {'state': DELETED_ORDERS_STATE}}, function(err, result) {
+    orders.update({'id': parseInt(orderId)}, {$set: {'state': DELETED_ORDERS_STATE}, $unset: {'payment.vs': ''}}, function(err, result) {
         if(result.result.n == 1) {
             deferred.resolve(result);
         } else if (result.result.n == 0) {
