@@ -130,26 +130,75 @@ Handler.prototype.getNextHighestVS = function() {
     var deferred= Q.defer();
     var orders = mongo.collection('orders');
 
-    var options = {
-        "sort": ["payment.vs", 'ascending']
+    var match = {
+        state: {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE, DRAFT_ORDERS_STATE, DELETED_ORDERS_STATE]},
+        'payment.vs': {$exists: true},
     };
 
-    orders.find({state: {$in: [ACTIVE_ORDERS_STATE, EXPIRED_ORDERS_STATE, DRAFT_ORDERS_STATE]}}, options)
-        .toArray(function(err, order) {
-        if(err) {
+    var pipeline = [];
+    var match = {$match: match};
+    var sort = {$sort: {'payment.vs': -1}};
+    var project = {$project: {payment: 1, state: 1}};
+    var limit = {$limit: 20};
+
+    pipeline.push(match);
+    pipeline.push(sort);
+    pipeline.push(project);
+    pipeline.push(limit);
+
+    //fetch 20 latest VS orders, descending
+    orders.aggregate(pipeline)
+        .toArray(function(err, orders) {
+        if (err) {
             console.log('ERROR while getting next VS> ' + err);
             deferred.reject(err);
         } else {
-            if(!order || order.length == 0) {
+            if (!orders || orders.length == 0) {
                 deferred.resolve(1);
             } else {
-                var newVS = parseInt(order[order.length - 1].payment.vs) + 1;
-                deferred.resolve(newVS);
+                var reversedOrders = orders.reverse();
+                var currentOrder;
+                var currentVS;
+                for (var i = 0; i < reversedOrders.length; i++) {
+                    currentOrder = reversedOrders[i];
+                    currentVS = parseInt(currentOrder.payment.vs);
+                    if (isValidNextVs(currentVS, currentOrder, reversedOrders)) {
+                        deferred.resolve(currentVS);
+                        return;
+                    }
+                }
+                //no available VS on recently deleted orders found, return latest + 1
+                deferred.resolve(currentVS + 1)
             }
         }
     });
 
     return deferred.promise;
+}
+
+function isValidNextVs(currentVS, currentOrder, orders) {
+    //if order with given VS is NOT DELETED, don't even consider it
+    if (currentOrder.state != DELETED_ORDERS_STATE) {
+        return false;
+    }
+
+    var fromTime = new Date();
+    fromTime.setDate(fromTime.getDate() - 2);
+
+    //if order is older than given days, NOT valid
+    if (currentOrder.payment.orderDate <= fromTime) {
+        return false;
+    }
+
+    for (var i = 0; i < orders.length; i++) {
+        var order = orders[i];
+        //if there is any NOT deleted order with given VS, NOT valid
+        if (parseInt(orders[i].payment.vs) == currentVS && order.state != DELETED_ORDERS_STATE) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 Handler.prototype.getAllPaidOrdersMonthly = function() {
@@ -451,7 +500,7 @@ Handler.prototype.deleteOrder = function(orderId) {
     var deferred = Q.defer();
 
     var orders = mongo.collection('orders');
-    orders.update({'id': parseInt(orderId)}, {$set: {'state': DELETED_ORDERS_STATE}, $unset: {'payment.vs': ''}}, function(err, result) {
+    orders.update({'id': parseInt(orderId)}, {$set: {'state': DELETED_ORDERS_STATE}}, function(err, result) {
         if(result.result.n == 1) {
             deferred.resolve(result);
         } else if (result.result.n == 0) {
