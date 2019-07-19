@@ -1,5 +1,5 @@
 {
-  "name": "medpharma",
+  "name": "",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -74,7 +74,6 @@
     "winston": "^3.2.1"
   },
   "scripts": {
-    "init": "..\\MedpharmaOrders\\scripts\\copyToLocal2.sh && node ..\\MedpharmaOrders\\app.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
